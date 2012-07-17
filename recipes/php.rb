@@ -18,6 +18,7 @@
 #
 
 include_recipe "php"
+include_recipe "php::curl"
 include_recipe "php::module_mysql"
 include_recipe "php::module_memcache"
-include_recipe "chef-php-extra::module_mcrypt"
+include_recipe "chef-php-extra"
