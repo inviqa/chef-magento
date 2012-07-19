@@ -37,7 +37,7 @@ if node[:mysql][:master]
     password node[:magento][:db][:password]
     database_name node[:magento][:db][:database]
     host 'localhost'
-    privileges [:select,:update,:insert]
+    privileges [:select,:update,:insert,:create,:alter,:delete,:drop]
     action :grant
   end
 end
