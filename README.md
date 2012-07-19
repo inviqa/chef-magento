@@ -11,6 +11,8 @@ Chef 0.10.0 or higher required (for Chef environment use).
 * Debian, Ubuntu
 * CentOS, Red Hat, Fedora
 
+Your basebox must have the `mysql` gem installed.
+
 ## Cookbooks
 
 The following Opscode cookbooks are dependencies:
