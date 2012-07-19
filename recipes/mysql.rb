@@ -21,11 +21,6 @@ include_recipe "mysql::server"
 
 if node[:mysql][:master]
 
-  gem_package "mysql" do
-    action :install
-    ignore_failure true
-  end
-
   mysql_database "#{node[:magento][:db][:database]}" do
     connection ({:host => "localhost", :username => "root", :password => node['mysql']['server_root_password']})
     action :create
