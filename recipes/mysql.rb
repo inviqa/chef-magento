@@ -21,29 +21,23 @@ include_recipe "mysql::server"
 
 if node[:mysql][:master]
 
+  mysql_connection_info = {
+    :host => "localhost",
+    :username => "root",
+    :password => node['mysql']['server_root_password']
+  }
+
   mysql_database "#{node[:magento][:db][:database]}" do
-    connection ({:host => "localhost", :username => "root", :password => node['mysql']['server_root_password']})
+    connection (mysql_connection_info)
     action :create
   end
 
-  grants_path = value_for_platform(
-    ["centos", "redhat", "suse", "fedora" ] => {
-      "default" => "/etc/mage-grants.sql"
-    },
-    "default" => "/etc/mysql/mage-grants.sql"
-  )
-
-  template "/etc/mysql/mage-grants.sql" do
-    path grants_path
-    source "mage-grants.sql.erb"
-    owner "root"
-    group "root"
-    mode "0600"
-    variables(:database => node[:magento][:db])
-  end
-
-  execute "mysql-install-mage-privileges" do
-      command "/usr/bin/mysql -u root #{node['mysql']['server_root_password'].empty? ? '' : '-p' }#{node['mysql']['server_root_password']} < #{grants_path}"
-      action :run
+  mysql_database_user node[:magento][:db][:username] do
+    connection mysql_connection_info
+    password node[:magento][:db][:password]
+    database_name node[:magento][:db][:database]
+    host 'localhost'
+    privileges [:select,:update,:insert]
+    action :grant
   end
 end
