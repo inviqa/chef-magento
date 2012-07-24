@@ -17,8 +17,9 @@
 # limitations under the License.
 #
 
-include_recipe "php"
-include_recipe "php::module_curl"
-include_recipe "php::module_mysql"
-include_recipe "php::module_memcache"
 include_recipe "chef-php-extra"
+if platform?("ubuntu", "debian")
+  include_recipe "php::module_curl"
+end
+include_recipe "chef-php-extra::module_mysql"
+include_recipe "php::module_memcache"

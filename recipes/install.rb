@@ -17,7 +17,7 @@
 # limitations under the License.
 #
 
-include_recipe "php"
+include_recipe "chef-php-extra"
 
 unless File.exists?("#{node[:magento][:dir]}/app/etc/local.xml")
 
