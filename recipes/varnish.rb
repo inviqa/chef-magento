@@ -17,7 +17,7 @@
 # limitations under the License.
 #
 
-include_recipe "varnish"
+include_recipe "chef-varnish"
 
 template "#{node[:varnish][:dir]}/default.vcl" do
   source "varnish.vcl.erb"
