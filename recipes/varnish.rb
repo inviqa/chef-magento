@@ -24,4 +24,5 @@ template "#{node[:varnish][:dir]}/default.vcl" do
   owner "root"
   group "root"
   mode 0644
+  notifies :restart, resources(:service => "varnish")
 end
