@@ -18,6 +18,7 @@
 #
 
 include_recipe "mysql::server"
+include_recipe "database"
 
 if node[:mysql][:master]
 
@@ -27,7 +28,7 @@ if node[:mysql][:master]
     :password => node['mysql']['server_root_password']
   }
 
-  mysql_database "#{node[:magento][:db][:database]}" do
+  mysql_database node[:magento][:db][:database] do
     connection (mysql_connection_info)
     action :create
   end

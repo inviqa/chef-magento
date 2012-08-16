@@ -1,5 +1,5 @@
 # General settings
-default[:magento][:dir] = "/var/www/magento"
+default[:magento][:dir] = "/var/www/magento.development.local/public"
 
 default[:magento][:app][:locale] = "en_GB"
 default[:magento][:app][:timezone] = "Europe/London"
