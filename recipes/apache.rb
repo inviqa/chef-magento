@@ -22,13 +22,31 @@ include_recipe "apache2"
 web_app "#{node[:magento][:apache][:servername]}" do
   template "apache-vhost.conf.erb"
   ssl false
+  site node[:magento][:apache]
   notifies :reload, resources("service[apache2]"), :delayed
 end
 
 web_app "#{node[:magento][:apache][:servername]}.ssl" do
   template "apache-vhost.conf.erb"
   ssl true
+  site node[:magento][:apache]
   notifies :reload, resources("service[apache2]"), :delayed
+end
+
+node[:magento][:sites].each do |site|
+    web_app "#{site[:servername]}" do
+      template "apache-vhost.conf.erb"
+      ssl false
+      site site
+      notifies :reload, resources("service[apache2]"), :delayed
+    end
+
+    web_app "#{site[:servername]}.ssl" do
+      template "apache-vhost.conf.erb"
+      ssl true
+      site site
+      notifies :reload, resources("service[apache2]"), :delayed
+    end
 end
 
 %w{default 000-default}.each do |site|
