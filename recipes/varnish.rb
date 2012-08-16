@@ -19,7 +19,7 @@
 
 include_recipe "chef-varnish"
 
-template "#{node[:varnish][:dir]}/default.vcl" do
+template "#{node['varnish']['config_dir']}/default.vcl" do
   source "varnish.vcl.erb"
   owner "root"
   group "root"
