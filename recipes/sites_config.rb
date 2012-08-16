@@ -1,8 +1,8 @@
 #
 # Cookbook Name:: chef-magento
-# Recipe:: varnish
+# Recipe:: sites_config
 #
-# Copyright 2012, Alistair Stead
+# Copyright 2012, Rupert Jones
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,12 +17,24 @@
 # limitations under the License.
 #
 
-include_recipe "chef-varnish"
+if File.exists?("#{node[:magento][:dir]}/app/etc/local.xml")
 
-template "#{node[:varnish][:dir]}/default.vcl" do
-  source "varnish.vcl.erb"
-  owner "root"
-  group "root"
-  mode 0644
-  notifies :restart, resources(:service => "varnish")
+  node[:magento][:sites].each do |site|
+
+    template "/tmp/site_config.sql" do
+      source "sites_config.sql.erb"
+      mode 0644
+      variables({
+        :site => site
+      })
+    end
+
+    bash "magento-sites-config" do
+      code <<-EOH
+/usr/bin/mysql -u root -p#{node[:mysql][:server_root_password]} #{node[:magento][:db][:database]} -v < /tmp/site_config.sql
+EOH
+    end
+
+  end
+
 end
