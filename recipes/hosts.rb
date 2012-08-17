@@ -1,6 +1,6 @@
 #
 # Cookbook Name:: chef-magento
-# Recipe:: download
+# Recipe:: hosts
 #
 # Copyright 2012, Alistair Stead
 #
@@ -17,29 +17,13 @@
 # limitations under the License.
 #
 
-
-unless File.exists?("#{node['magento']['dir']}/index.php")
-
-  remote_file "#{Chef::Config[:file_cache_path]}/magento.tar.gz" do
-    source node['magento']['downloader']['url']
-    mode "0644"
-  end
-
-  directory node['magento']['dir'] do
-    owner "root"
-    group "www-data"
-    mode "0755"
-    action :create
-    recursive true
-  end
-
-  execute "untar-magento" do
-    cwd node['magento']['dir']
-    command "tar -zxvf #{Chef::Config[:file_cache_path]}/magento.tar.gz"
-  end
-
-  execute "set-perms" do
-    command "chmod o+w var var/.htaccess app/etc"
-    command "chmod -R o+w media"
-  end
+template "/etc/hosts" do
+  source "hosts.erb"
+  owner "root"
+  group "root"
+  mode 0644
+  variables(
+    :fqdn => node['fqdn'],
+    :hostname => node['magento']['apache']['servername']
+  )
 end
