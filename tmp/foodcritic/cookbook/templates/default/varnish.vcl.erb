@@ -1,0 +1,228 @@
+probe healthcheck {
+   .url = "/LICENSE.txt";
+   .interval = 120s;
+   .timeout = 90s; # High values due to expected slow responses
+   .window = 8;
+   .threshold = 3;
+   .initial = 3;
+   #.expected_response = 200; # Still want the magento maintenance page to display so no response code check
+}
+# Setup a cluster of backend servers
+<% node[:magento][:varnish][:backend_servers].each do |server| %>
+backend <%= server[:name] %> {
+    .host = "<%= server[:ip] %>";
+    .port = "<%= node[:magento][:apache][:unsecure_port] %>";
+    .connect_timeout = 240s; # High values due to expected slow responses
+    .first_byte_timeout = 240s; # High values due to expected slow responses
+    .between_bytes_timeout = 240s; # High values due to expected slow responses
+    .probe = healthcheck;
+}
+<% end %>
+
+# Create a backend directory to implement loadbalancing across
+# the cluster of servers round-robin | random
+director backend_director random {
+    .retries = 5;
+    <% node[:magento][:varnish][:backend_servers].each do |server| %>
+    { .backend = <%= server[:name] %>; .weight = 1; }
+    <% end %>
+}
+# Limit the perge request to trusted servers
+acl purge {
+  <% node[:magento][:varnish][:trusted_servers].each do |server| %>
+  "<%= server %>";
+  <% end %>
+}
+
+sub vcl_recv {
+    set req.backend = backend_director;
+
+    if (req.restarts == 0) {
+        if (req.http.x-forwarded-for) {
+            set req.http.X-Forwarded-For =
+            req.http.X-Forwarded-For + ", " + client.ip;
+        } else {
+            set req.http.X-Forwarded-For = client.ip;
+        }
+    }
+
+    # Do not cache none standard verbs
+    if (req.request != "GET" &&
+        req.request != "HEAD" &&
+        req.request != "PUT" &&
+        req.request != "POST" &&
+        req.request != "TRACE" &&
+        req.request != "OPTIONS" &&
+        req.request != "DELETE") {
+            return (pipe);
+    }
+
+    if (req.request == "PURGE") {
+        # Allow only purge requests from trusted servers
+        if (!client.ip ~ purge) {
+            error 405 "Not allowed.";
+        }
+        if (!req.url ~ "/key/<%= node[:magento][:varnish][:perge_key] %>") {
+        }
+        ban("obj.http.x-url ~ " + req.url);
+        return (lookup);
+    }
+
+    # We should not cache any page for Magento backend
+    if (req.url ~ "^/(index.php/)?(<%= node[:magento][:app][:admin_frontname] %>|varnish)") {
+        return (pipe);
+    }
+
+    if (req.backend.healthy) {
+        set req.grace = 30s;
+    } else {
+        set req.grace = 60s;
+    }
+
+    # Set a HTTP header so the server knows we can process ESI
+    set req.http.Surrogate-Capability = "magento=ESI/1.0";
+
+    if (req.http.Authorization) {
+        # Not cacheable by default
+        return (pass);
+    }
+
+    # Cache only GET or HEAD requests
+    if (req.request != "GET" && req.request != "HEAD") {
+        # We only deal with GET and HEAD by default
+        return (pass);
+    }
+
+    # Even though there are few possible values for Accept-Encoding, Varnish treats
+    # them literally rather than semantically, so even a small difference which makes
+    # no difference to the backend can reduce cache efficiency by making Varnish cache
+    # too many different versions of an object.
+    # http://varnish.projects.linpro.no/wiki/FAQ/Compression
+    if (req.http.Accept-Encoding) {
+        if (req.url ~ "\.(jpg|png|gif|gz|tgz|bz2|tbz|mp3|ogg|swf|flv)$") {
+            # No point in compressing these
+            remove req.http.Accept-Encoding;
+        } elsif (req.http.Accept-Encoding ~ "gzip") {
+            set req.http.Accept-Encoding = "gzip";
+        } elsif (req.http.Accept-Encoding ~ "deflate" && req.http.user-agent !~ "MSIE") {
+            set req.http.Accept-Encoding = "deflate";
+        } else {
+            # unkown algorithm
+            remove req.http.Accept-Encoding;
+        }
+    }
+
+    # Rules for static files
+     if (req.url ~ "\.(jpeg|jpg|png|gif|ico|swf|js|css|gz|rar|txt|bzip|pdf)(\?.*|)$") {
+        set req.http.staticmarker = "1";
+        unset req.http.Https;
+        unset req.http.Cookie;
+
+        return (lookup);
+    }
+
+    # We should not cache any page for checkout and customer modules
+    # TODO With the completed CSI this should no longer be the case
+    if (req.url ~ "^/(index.php/)?(checkout|onestepcheckout|customer|catalog/product_compare|wishlist|postcode|staging)") {
+        return (pass);
+    }
+
+    # Unique identifier which tells Varnish to use cache or not
+    if (req.http.cookie ~ "(nocache_stable|nocache|NEWMESSAGE)") {
+        return (pass);
+    }
+
+    # Remove cookie
+    unset req.http.Cookie;
+    set req.http.magicmarker = "1"; #Instruct varnish force caching
+
+    # remove Google gclid parameters
+    set req.url = regsuball(req.url,"\?gclid=[^&]+$",""); # strips when QS = "?gclid=AAA"
+    set req.url = regsuball(req.url,"\?gclid=[^&]+&","?"); # strips when QS = "?gclid=AAA&foo=bar"
+    set req.url = regsuball(req.url,"&gclid=[^&]+",""); # strips when QS = "?foo=bar&gclid=AAA" or QS = "?foo=bar&gclid=AAA&bar=baz"
+
+    return (lookup);
+}
+
+# Called after a cache lookup if the req. document was found in the cache.
+sub vcl_hit {
+    if (req.request == "PURGE") {
+        purge;
+        error 200 "Purged";
+    }
+
+    return (deliver);
+}
+
+# Called after a cache lookup and odc was not found in cache.
+sub vcl_miss {
+    if (req.request == "PURGE"){
+        error 200 "Not in cache";
+    }
+    return (fetch);
+}
+
+# Called after document was retreived from backend
+sub vcl_fetch {
+    # These status codes should always pass through and never cache.
+    if (beresp.status == 503 || beresp.status == 500) {
+         set beresp.saintmode = 20s;
+         return (deliver);
+    }
+
+    set beresp.grace = 60s;
+    set beresp.http.x-url = req.url;
+    # Backend response includes ESI tags
+    if (beresp.http.Surrogate-Control ~ "ESI/1.0") {
+        set beresp.do_esi = true;
+    }
+
+    # Current response should not be cached
+    if(beresp.http.Set-Cookie ~ "(nocache=1|NEWMESSAGE)") {
+        return (deliver);
+    }
+
+    # Flag set when we want to delete cache headers received from backend
+    if (req.http.magicmarker) {
+        unset beresp.http.magicmarker;
+        unset beresp.http.Set-Cookie;
+    }
+    if (req.http.staticmarker) {
+        unset beresp.http.staticmarker;
+        if (beresp.status != 200) {
+            return(deliver);
+        }
+        # Force caching
+        set beresp.ttl = 30d; # static file cache expires in 30 days
+        remove beresp.http.Pragma;
+        remove beresp.http.Set-Cookie;
+    }
+
+    return (deliver);
+}
+
+# Called after a cached document is delivered to the client.
+sub vcl_deliver {
+    # Set a cache header to allow us to inspect the response
+    # headers during testing
+    if (resp.http.X-Cache-Debug ~ "debug") {
+        # Set a cache header to allow us to inspect the response
+        # headers during testing
+        set resp.http.X-Cache-Debug-URL = req.url;
+        if (obj.hits > 0) {
+            set resp.http.X-Cache = "HIT";
+            set resp.http.X-Cache-Hits = obj.hits;
+        } else {
+            set resp.http.X-Cache = "MISS";
+        }
+    } else {
+        unset resp.http.Age;
+        unset resp.http.Via;
+        unset resp.http.Server;
+        unset resp.http.X-Powered-By;
+        unset resp.http.X-Varnish;
+        unset resp.http.Surrogate-Control;
+    }
+
+    return (deliver);
+}

@@ -1,0 +1,282 @@
+<% if @params[:ssl] %>
+<VirtualHost *:<%= node[:magento][:apache][:secure_port] %>>
+  SSLEngine on
+  SSLCertificateKeyFile ssl/<%= node[:magento][:apache][:servername] %>.key
+  SSLCertificateFile ssl/<%= node[:magento][:apache][:servername] %>.pem
+  SSLProtocol all
+  SSLCipherSuite ALL:!ADH:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv2:+EXP:+eNULL
+
+<% else %>
+<VirtualHost *:<%= node[:magento][:apache][:unsecure_port] %>>
+<% end %>
+
+  ServerName <%= node[:magento][:apache][:servername] %>
+  ServerAlias <% node[:magento][:apache][:server_alias].each do |a| %><%= "#{a}" %> <% end %>
+
+  DocumentRoot <%= node[:magento][:apache][:docroot] %>/<%= node[:magento][:apache][:servername] %><%= node[:magento][:apache][:path] %>
+
+  LogLevel info
+  ErrorLog <%= node[:apache][:log_dir] %>/<%= node[:magento][:apache][:servername] %>-error.log
+  CustomLog <%= node[:apache][:log_dir] %>/<%= node[:magento][:apache][:servername] %>-access.log combined
+
+  ServerSignature Off
+
+<% if node[:magento][:apache][:developer_mode] %>
+  SetEnv MAGE_IS_DEVELOPER_MODE true
+<% end %>
+
+  <Directory />
+    Options FollowSymLinks
+    AllowOverride All
+  </Directory>
+
+  <Directory <%= node[:magento][:apache][:docroot] %>/<%= node[:magento][:apache][:servername] %><%= node[:magento][:apache][:path] %>>
+    Options FollowSymLinks
+
+    <% if node[:apache][:basic_username] %>
+        AuthUserFile <%= node[:magento][:apache][:docroot] %>/<%= node[:magento][:apache][:servername] %><%= node[:magento][:apache][:path] %>/.htpasswd
+        AuthType Basic
+        AuthName "Protected System"
+        Require valid-user
+    <% end  %>
+
+    ## Apache optimisation by disabling the .htaccess parsing
+    ## Directives for securing directorys have been added to this file
+    AllowOverride None
+    Order allow,deny
+    Allow from all
+
+    ############################################
+    ## uncomment these lines for CGI mode
+    ## make sure to specify the correct cgi php binary file name
+    ## it might be /cgi-bin/php-cgi
+
+    #    Action php5-cgi /cgi-bin/php5-cgi
+    #    AddHandler php5-cgi .php
+
+    ############################################
+    ## GoDaddy specific options
+
+    #   Options -MultiViews
+
+    ## you might also need to add this line to php.ini
+    ##     cgi.fix_pathinfo = 1
+    ## if it still doesn't work, rename php.ini to php5.ini
+
+    ############################################
+    ## this line is specific for 1and1 hosting
+
+    #AddType x-mapp-php5 .php
+    #AddHandler x-mapp-php5 .php
+
+    ############################################
+    ## default index file
+
+    DirectoryIndex index.php
+
+    <IfModule mod_php5.c>
+
+        ############################################
+        ## adjust memory limit
+
+        #    php_value memory_limit 64M
+        php_value memory_limit <%= node[:magento][:php][:memory_limit] %>
+        
+        
+        ############################################
+        ## php tuning
+        
+        php_value max_execution_time <%= node[:magento][:php][:max_execution_time] %>
+        php_value display_errors <%= node[:magento][:php][:display_errors] %>
+        php_value html_errors <%= node[:magento][:php][:html_errors] %>
+        php_value upload_max_filesize <%= node[:magento][:php][:upload_max_filesize] %>
+
+        ############################################
+        ## disable magic quotes for php request vars
+
+        php_flag magic_quotes_gpc off
+
+        ############################################
+        ## disable automatic session start
+        ## before autoload was initialized
+
+        php_flag session.auto_start off
+        
+        php_flag session.gc_maxlifetime 3600
+
+        ############################################
+        ## enable resulting html compression
+
+        #php_flag zlib.output_compression on
+
+        ###########################################
+        # disable user agent verification to not break multiple image upload
+
+        php_flag suhosin.session.cryptua off
+
+        ###########################################
+        # turn off compatibility with PHP4 when dealing with objects
+
+        php_flag zend.ze1_compatibility_mode Off
+
+    </IfModule>
+
+    <IfModule mod_security.c>
+        ###########################################
+        # disable POST processing to not break multiple image upload
+
+        SecFilterEngine Off
+        SecFilterScanPOST Off
+    </IfModule>
+
+    <IfModule mod_deflate.c>
+
+        ############################################
+        ## enable apache served files compression
+        ## http://developer.yahoo.com/performance/rules.html#gzip
+
+        # Insert filter on all content
+        ###SetOutputFilter DEFLATE
+        # Insert filter on selected content types only
+        AddOutputFilterByType DEFLATE text/css application/x-javascript text/x-component text/html text/richtext image/svg+xml text/plain text/xsd text/xsl text/xml image/x-icon
+        #
+        # Netscape 4.x has some problems...
+        BrowserMatch ^Mozilla/4 gzip-only-text/html
+        
+        # Netscape 4.06-4.08 have some more problems
+        BrowserMatch ^Mozilla/4\.0[678] no-gzip
+        
+        # MSIE masquerades as Netscape, but it is fine
+        BrowserMatch \bMSIE !no-gzip !gzip-only-text/html
+        
+        # Don't compress images
+        SetEnvIfNoCase Request_URI \.(?:gif|jpe?g|png)$ no-gzip dont-vary
+        
+        # Make sure proxies don't deliver the wrong content
+        Header append Vary User-Agent env=!dont-vary
+
+    </IfModule>
+
+    <IfModule mod_ssl.c>
+
+        ############################################
+        ## make HTTPS env vars available for CGI mode
+
+        SSLOptions StdEnvVars
+
+    </IfModule>
+
+    <IfModule mod_rewrite.c>
+
+        ############################################
+        ## enable rewrites
+
+        Options +FollowSymLinks
+        RewriteEngine on
+
+        # RewriteLog <%= node[:apache][:log_dir] %>/<%= @application_name %>-rewrite.log
+        # RewriteLogLevel 0
+
+        ############################################
+        ## you can put here your magento root folder
+        ## path relative to web root
+
+        #RewriteBase /
+        
+        <% if node[:magento][:apache][:additional_rewites] != "" %>
+        # Write any additional rewrite configuration
+        <%= node[:magento][:apache][:additional_rewites] %>
+        <% end %>
+        
+        RewriteRule ^server-status - [L]
+
+        ############################################
+        ## workaround for HTTP authorization
+        ## in CGI environment
+
+        RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+        ############################################
+        ## always send 404 on missing files in these folders
+
+        RewriteCond %{REQUEST_URI} !^/(media|skin|js)/
+
+        ############################################
+        ## never rewrite for existing files, directories and links
+
+        RewriteCond %{REQUEST_FILENAME} !-f
+        RewriteCond %{REQUEST_FILENAME} !-d
+        RewriteCond %{REQUEST_FILENAME} !-l
+
+        ############################################
+        ## rewrite everything else to index.php
+
+        RewriteRule .* index.php [L]
+
+    </IfModule>
+    
+    <IfModule mod_expires.c>
+        ExpiresActive on
+        ExpiresByType image/jpg "access plus 6 months"
+        ExpiresByType image/png "access plus 6 months"
+        ExpiresByType image/jpeg "access plus 6 months"
+        ExpiresByType image/gif "access plus 6 months"
+        ExpiresByType image/png "access plus 6 months"
+        ExpiresByType text/plain "access plus 6 months"
+        ExpiresByType text/ico "access plus 6 months"
+        ExpiresByType image/ico "access plus 6 months"
+        ExpiresByType image/icon "access plus 6 months"
+        ExpiresByType image/x-icon "access plus 6 months"
+        ExpiresByType application/x-shockwave-flash "modification plus 6 months"
+        ExpiresByType text/css "access plus 1 week"
+        ExpiresByType text/javascript "access plus 1 week"
+        ExpiresByType text/xml "modification plus 2 hours"
+        ExpiresByType image/vnd.microsoft.icon "access plus 6 months"
+    </IfModule>
+    
+    <IfModule mod_headers.c>
+        Header append Vary User-Agent env=!dont-vary
+        
+        <FilesMatch "\.(ico|jpe?g|png|gif|swf|css|gz|js)$">
+            Header set Cache-Control  "public, max-age=2592000"
+        </FilesMatch>
+    </IfModule>
+
+    ############################################
+    ## Prevent character encoding issues from server overrides
+    ## If you still have problems, use the second line instead
+
+    AddDefaultCharset Off
+    #AddDefaultCharset UTF-8
+
+    ############################################
+    ## By default allow all access
+
+    Order allow,deny
+    Allow from all
+
+    ############################################
+    ## If running in cluster environment, uncomment this
+    ## http://developer.yahoo.com/performance/rules.html#etags
+
+    FileETag none
+    # FileETag MTime Size
+    
+  </Directory>
+
+  <DirectoryMatch ^<%= node[:magento][:apache][:docroot] %>/<%= node[:magento][:apache][:servername] %><%= node[:magento][:apache][:path] %>/(app|downloader|error|includes|lib|media|var)$>
+      Order deny,allow
+      Deny from all
+    </DirectoryMatch>
+    
+    <Directory <%= node[:magento][:apache][:docroot] %>/<%= node[:magento][:apache][:servername] %><%= node[:magento][:apache][:path] %>/staging>
+          AllowOverride All
+          Order allow,deny
+          Allow from all
+    </Directory>
+    
+    <% if node[:magento][:apache][:additional_config_path] != "" %>
+    # Include any additional configuration for the project
+    Include <%= node[:magento][:apache][:additional_config_path] %>/*.conf
+    <% end %>
+</VirtualHost>

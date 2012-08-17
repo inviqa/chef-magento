@@ -1,6 +1,6 @@
 #
 # Cookbook Name:: chef-magento
-# Recipe:: hosts
+# Recipe:: config_local
 #
 # Copyright 2012, Alistair Stead
 #
@@ -17,13 +17,7 @@
 # limitations under the License.
 #
 
-template "/etc/hosts" do
-  source "hosts.erb"
-  owner "root"
-  group "root"
+template "#{node['magento']['dir']}/app/etc/local.xml" do
+  source "local.xml.erb"
   mode 0644
-  variables(
-    :fqdn => node['fqdn'],
-    :hostname => node['magento']['apache']['servername']
-  )
 end
