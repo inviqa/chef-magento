@@ -80,36 +80,29 @@ if File.exists?("#{node['magento']['dir']}/install.php")
   log(is_installed?.to_s) {level :info }
 
   if !is_installed?
-    file "#{node['magento']['dir']}/app/etc/local.xml" do
-      action :delete
-    end
     bash "magento-install-site" do
-      cwd "#{node['magento']['dir']}/"
+      cwd node['magento']['dir']
       code <<-EOH
       cd #{node['magento']['dir']}/ && \
       #{install}
       EOH
     end
   else
-    if File.exists?("#{node['magento']['dir']}/shell/indexer.php")
-      if !File.exists?("#{node['magento']['dir']}/app/etc/local.xml")
-        include_recipe "chef-magento::config_local"
-      end
+    if File.exists?("#{node['magento']['dir']}/shell/indexer.php") && File.exists?("#{node['magento']['dir']}/app/etc/local.xml")
       indexsite = <<-EOH
       php -f shell/indexer.php -- reindexall
       EOH
 
       bash "magento-index-site" do
-        cwd "#{node['magento']['dir']}/"
-        code <<-EOH
-        cd #{node['magento']['dir']}/ && \
-        #{indexsite}
-        EOH
+        cwd node['magento']['dir']
+        code indexsite
       end
     else
       log("Magento index skipped as index file does not exist") { level :warn }
     end
   end
+
+  include_recipe "chef-magento::config_local"
 
   if !is_installed? && File.exists?("#{node['magento']['dir']}/app/etc/local.xml")
     log("There may be a problem with your setup as no admin users exist after install") { level :warn }
