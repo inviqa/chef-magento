@@ -1,7 +1,6 @@
 # Description
 
 
-
 # Requirements
 
 Chef 0.10.0 or higher required (for Chef environment use).
@@ -21,7 +20,7 @@ The following Opscode cookbooks are dependencies:
 * mysql
 * database
 * apache2
-* mamcached
+* memcached
 
 # Attributes
 

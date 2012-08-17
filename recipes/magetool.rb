@@ -17,13 +17,14 @@
 # limitations under the License.
 #
 
+include_recipe "chef-php-extra::pear"
 include_recipe "chef-php-extra::zendframework"
 
-mt = php_pear_channel "pear.magetool.co.uk" do
+mt = chef_php_extra_pear_channel "pear.magetool.co.uk" do
   action :discover
 end
 
-php_pear "magetool" do
+chef_php_extra_pear "magetool" do
   preferred_state "beta"
   channel mt.channel_name
   action :install
@@ -37,8 +38,8 @@ filePath = "/home/user/.zf.ini"
 user = "user"
 
 if File.exists?("/home/vagrant/")
-    filePath = "/home/vagrant/.zf.ini" 
-    user = "vagrant" 
+    filePath = "/home/vagrant/.zf.ini"
+    user = "vagrant"
 end
 
 file filePath do

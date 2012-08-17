@@ -18,8 +18,9 @@
 #
 
 include_recipe "mysql::server"
+include_recipe "database"
 
-if node[:mysql][:master]
+if node['mysql']['master']
 
   mysql_connection_info = {
     :host => "localhost",
@@ -27,15 +28,15 @@ if node[:mysql][:master]
     :password => node['mysql']['server_root_password']
   }
 
-  mysql_database "#{node[:magento][:db][:database]}" do
+  mysql_database node['magento']['db']['database'] do
     connection (mysql_connection_info)
     action :create
   end
 
-  mysql_database_user node[:magento][:db][:username] do
+  mysql_database_user node['magento']['db']['username'] do
     connection mysql_connection_info
-    password node[:magento][:db][:password]
-    database_name node[:magento][:db][:database]
+    password node['magento']['db']['password']
+    database_name node['magento']['db']['database']
     host 'localhost'
     privileges [:select,:update,:insert,:create,:alter,:delete,:drop]
     action :grant

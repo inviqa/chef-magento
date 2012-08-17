@@ -17,55 +17,104 @@
 # limitations under the License.
 #
 
-include_recipe "chef-php-extra"
+require 'mysql'
 
-unless File.exists?("#{node[:magento][:dir]}/app/etc/local.xml")
+def database_exists?
+  begin
+    con = Mysql.new('localhost', 'root', node['mysql']['server_root_password'])
+    rs = con.query("SELECT 1 FROM Information_schema.tables WHERE table_name = 'admin_user' AND table_schema = '#{node['magento']['db']['database']}'")
+    is_installed = rs.num_rows
+    con.close
+  rescue Exception => e
+    is_installed = 0
+  end
+  is_installed == 1
+end
 
+def has_administrator?
+  begin
+    con = Mysql.new('localhost', 'root', node['mysql']['server_root_password'], node['magento']['db']['database'])
+    rs = con.query("SELECT COUNT(user_id) AS num_users FROM admin_user")
+    administrators = rs.num_rows
+    con.close
+  rescue Exception => e
+    administrators = 0
+  end
+  administrators >= 1
+end
+
+def is_installed?
+  database_exists? == true && has_administrator? == true
+end
+
+if File.exists?("#{node['magento']['dir']}/install.php")
   install =   <<-EOH
-php -f install.php -- \
---license_agreement_accepted "yes" \
---locale "#{node[:magento][:app][:locale]}" \
---timezone "#{node[:magento][:app][:timezone]}" \
---default_currency "#{node[:magento][:db][:currency]}" \
---db_host "#{node[:magento][:db][:host]}" \
---db_name "#{node[:magento][:db][:database]}" \
---db_user "#{node[:magento][:db][:username]}" \
---db_pass "#{node[:magento][:db][:password]}" \
---url "http://#{node[:magento][:apache][:servername]}/" \
---skip_url_validation \
---session_save "#{node[:magento][:app][:session_save]}" \
---admin_frontname "#{node[:magento][:app][:admin_frontname]}" \
---use_rewrites "#{node[:magento][:app][:use_rewrites]}" \
---use_secure "#{node[:magento][:app][:use_secure]}" \
---secure_base_url "https://#{node[:magento][:apache][:servername]}/" \
---use_secure_admin "#{node[:magento][:app][:user_secure_admin]}" \
---admin_firstname "#{node[:magento][:admin][:firstname]}" \
---admin_lastname "#{node[:magento][:admin][:lastname]}" \
---admin_email "#{node[:magento][:admin][:email]}" \
---admin_username "#{node[:magento][:admin][:user]}" \
---admin_password "#{node[:magento][:admin][:password]}"
-EOH
-
+  php -f install.php -- \
+  --license_agreement_accepted "yes" \
+  --locale "#{node['magento']['app']['locale']}" \
+  --timezone "#{node['magento']['app']['timezone']}" \
+  --default_currency "#{node['magento']['db']['currency']}" \
+  --db_host "#{node['magento']['db']['host']}" \
+  --db_name "#{node['magento']['db']['database']}" \
+  --db_user "#{node['magento']['db']['username']}" \
+  --db_pass "#{node['magento']['db']['password']}" \
+  --url "http://#{node['magento']['apache']['servername']}/" \
+  --skip_url_validation \
+  --session_save "#{node['magento']['app']['session_save']}" \
+  --admin_frontname "#{node['magento']['app']['admin_frontname']}" \
+  --use_rewrites "#{node['magento']['app']['use_rewrites']}" \
+  --use_secure "#{node['magento']['app']['use_secure']}" \
+  --secure_base_url "https://#{node['magento']['apache']['servername']}/" \
+  --use_secure_admin "#{node['magento']['app']['user_secure_admin']}" \
+  --admin_firstname "#{node['magento']['admin']['firstname']}" \
+  --admin_lastname "#{node['magento']['admin']['lastname']}" \
+  --admin_email "#{node['magento']['admin']['email']}" \
+  --admin_username "#{node['magento']['admin']['user']}" \
+  --admin_password "#{node['magento']['admin']['password']}"
+  EOH
 
   log(install) { level :info }
 
-  bash "magento-install-site" do
-    cwd "#{node[:magento][:dir]}/"
-    code <<-EOH
-cd #{node[:magento][:dir]}/ && \
-#{install}
-EOH
+  log(database_exists?.to_s) {level :info }
+  log(has_administrator?.to_s) {level :info }
+  log(is_installed?.to_s) {level :info }
+
+  if !is_installed?
+    file "#{node['magento']['dir']}/app/etc/local.xml" do
+      action :delete
+    end
+    bash "magento-install-site" do
+      cwd "#{node['magento']['dir']}/"
+      code <<-EOH
+      cd #{node['magento']['dir']}/ && \
+      #{install}
+      EOH
+    end
+  else
+    if File.exists?("#{node['magento']['dir']}/shell/indexer.php")
+      if !File.exists?("#{node['magento']['dir']}/app/etc/local.xml")
+        include_recipe "chef-magento::config_local"
+      end
+      indexsite = <<-EOH
+      php -f shell/indexer.php -- reindexall
+      EOH
+
+      bash "magento-index-site" do
+        cwd "#{node['magento']['dir']}/"
+        code <<-EOH
+        cd #{node['magento']['dir']}/ && \
+        #{indexsite}
+        EOH
+      end
+    else
+      log("Magento index skipped as index file does not exist") { level :warn }
+    end
   end
 
-  indexsite = <<-EOH
-php -f shell/indexer.php -- reindexall
-EOH
-
-  bash "magento-index-site" do
-    cwd "#{node[:magento][:dir]}/"
-    code <<-EOH
-cd #{node[:magento][:dir]}/ && \
-#{indexsite}
-EOH
+  if !is_installed? && File.exists?("#{node['magento']['dir']}/app/etc/local.xml")
+    log("There may be a problem with your setup as no admin users exist after install") { level :warn }
   end
+else
+  log("Magento install skipped as install file does not exist") { level :warn }
+  log("File does not exist: #{node['magento']['dir']}/install.php") { level :info }
 end

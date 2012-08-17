@@ -17,7 +17,7 @@
 # limitations under the License.
 #
 
-crontabfile = "/tmp/chef-crontab.txt"
+crontabfile = "#{Chef::Config[:file_cache_path]}/chef-crontab.txt"
 
 template "crontab" do
   path crontabfile
