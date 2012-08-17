@@ -1,6 +1,6 @@
 #
 # Cookbook Name:: chef-magento
-# Recipe:: hosts
+# Recipe:: varnish
 #
 # Copyright 2012, Alistair Stead
 #
@@ -17,13 +17,12 @@
 # limitations under the License.
 #
 
-template "/etc/hosts" do
-  source "hosts.erb"
+include_recipe "chef-varnish"
+
+template "#{node['varnish']['config_dir']}/default.vcl" do
+  source "varnish.vcl.erb"
   owner "root"
   group "root"
   mode 0644
-  variables(
-    :fqdn => node['fqdn'],
-    :hostname => node['magento']['apache']['servername']
-  )
+  notifies :restart, resources(:service => "varnish")
 end
