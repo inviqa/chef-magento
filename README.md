@@ -54,7 +54,7 @@ Runs the following recipes:
 
 # License and Author
 
-Author:: Alistair Stead (alistair@inviqa.com)
+Author:: Alistair Stead (alistair@inviqa.com) Author:: Rupert Jones (rjones@inviqa.com)
 
 Copyright 2012, Inviqa
 
