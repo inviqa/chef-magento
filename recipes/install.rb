@@ -79,6 +79,12 @@ if File.exists?("#{node['magento']['dir']}/install.php")
   log(has_administrator?.to_s) {level :info }
   log(is_installed?.to_s) {level :info }
 
+  if !is_installed? && File.exists?("#{node['magento']['dir']}/app/etc/local.xml")
+    file "#{node['magento']['dir']}/app/etc/local.xml" do
+      action :delete
+    end
+  end
+
   if !is_installed?
     bash "magento-install-site" do
       cwd node['magento']['dir']
