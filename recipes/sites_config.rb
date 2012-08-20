@@ -17,9 +17,9 @@
 # limitations under the License.
 #
 
-if File.exists?("#{node[:magento][:dir]}/app/etc/local.xml")
+if File.exists?("#{node['magento']['dir']}/app/etc/local.xml")
 
-  node[:magento][:sites].each do |site|
+  node['magento']['sites'].each do |site|
 
     template "/tmp/site_config.sql" do
       source "sites_config.sql.erb"
@@ -31,10 +31,8 @@ if File.exists?("#{node[:magento][:dir]}/app/etc/local.xml")
 
     bash "magento-sites-config" do
       code <<-EOH
-/usr/bin/mysql -u root -p#{node[:mysql][:server_root_password]} #{node[:magento][:db][:database]} -v < /tmp/site_config.sql
+/usr/bin/mysql -u root -p#{node['mysql']['server_root_password']} #{node['magento']['db']['database']} -v < /tmp/site_config.sql
 EOH
     end
-
   end
-
 end
