@@ -26,6 +26,7 @@ default['magento']['apache']['developer_mode'] = "false"
 default['magento']['apache']['additional_config_path'] = ""
 default['magento']['apache']['additional_rewites'] = ""
 
+default['magento']['sites'] = Array.new
 
 default['magento']['php']['memory_limit'] = "512M"
 default['magento']['php']['max_execution_time'] = "120"
