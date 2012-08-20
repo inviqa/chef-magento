@@ -1,5 +1,6 @@
 # Description
 
+[![Build Status](https://secure.travis-ci.org/inviqa/chef-magento.png?branch=master)](http://travis-ci.org/inviqa/chef-magento)
 
 # Requirements
 
