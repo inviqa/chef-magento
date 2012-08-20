@@ -24,18 +24,21 @@ directory node['magento']['apache']['docroot'] do
   owner "root"
   group "root"
   mode "0755"
+  action :create
 end
 
 directory "#{node['magento']['apache']['docroot']}/#{node['magento']['apache']['servername']}" do
   owner "root"
   group "root"
   mode "0755"
+  action :create
 end
 
 directory "#{node['magento']['apache']['docroot']}/#{node['magento']['apache']['servername']}#{node['magento']['apache']['path']}" do
   owner "root"
   group "root"
   mode "0755"
+  action :create
 end
 
 web_app node['magento']['apache']['servername'] do
