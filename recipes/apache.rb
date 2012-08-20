@@ -21,22 +21,16 @@ include_recipe "apache2"
 include_recipe "chef-magento::hosts"
 
 directory node['magento']['apache']['docroot'] do
-  owner "root"
-  group "root"
   mode "0755"
   action :create
 end
 
 directory "#{node['magento']['apache']['docroot']}/#{node['magento']['apache']['servername']}" do
-  owner "root"
-  group "root"
   mode "0755"
   action :create
 end
 
 directory "#{node['magento']['apache']['docroot']}/#{node['magento']['apache']['servername']}#{node['magento']['apache']['path']}" do
-  owner "root"
-  group "root"
   mode "0755"
   action :create
 end
