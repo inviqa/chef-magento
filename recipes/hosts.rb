@@ -24,6 +24,7 @@ template "/etc/hosts" do
   mode 0644
   variables(
     :fqdn => node['fqdn'],
-    :hostname => node['magento']['apache']['servername']
+    :hostname => node['hostname'],
+    :servername => node['magento']['apache']['servername']
   )
 end
