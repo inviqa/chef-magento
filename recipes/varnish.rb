@@ -24,5 +24,8 @@ template "#{node['varnish']['config_dir']}/default.vcl" do
   owner "root"
   group "root"
   mode 0644
-  notifies :restart, resources(:service => "varnish")
+  variables({
+    :magento => node['magento']
+  })
+  notifies :restart, resources(:service => "varnish"), :delayed
 end
