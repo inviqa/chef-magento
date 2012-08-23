@@ -14,7 +14,7 @@ end
 
 # test task
 desc 'Run the default tests'
-task :test =>  ['prepare_sandbox', 'knife', 'foodcritic', 'spec']
+task :test =>  ['prepare_sandbox', 'knife', 'foodcritic']
 
 # default task (test)
 task :default => :test
@@ -33,7 +33,7 @@ task :foodcritic do
   Rake::Task[:prepare_sandbox].invoke
 
   if Gem::Version.new("1.9.2") <= Gem::Version.new(RUBY_VERSION.dup)
-    if sh "foodcritic -f any #{sandbox_path}"
+    if sh "foodcritic -C -f any #{sandbox_path}"
       puts 'foodcritic tests passed!'
     end
   else
