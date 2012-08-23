@@ -1,6 +1,6 @@
 #
 # Cookbook Name:: chef-magento
-# Recipe:: default
+# Recipe:: modman
 #
 # Copyright 2012, Alistair Stead
 #
@@ -17,5 +17,16 @@
 # limitations under the License.
 #
 
-include_recipe "chef-magento::php"
-include_recipe "chef-magento::apache"
+remote_file "#{Chef::Config[:file_cache_path]}/modman-installer" do
+  source "https://raw.github.com/colinmollenhour/modman/master/modman-installer"
+  mode "0655"
+  action :create_if_missing
+end
+
+bash "Install Modman" do
+  cwd Chef::Config[:file_cache_path]
+  code <<-EOH
+  ./modman-installer \
+  source ~/.profile
+  EOH
+end

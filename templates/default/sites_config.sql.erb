@@ -1,0 +1,9 @@
+INSERT IGNORE INTO core_config_data
+  (scope, scope_id, path, value)
+  SELECT 'stores', store_id, 'web/unsecure/base_url', 'http://<%= @site[:servername] %>/'
+    FROM core_store WHERE code = '<%= @site[:run_code] %>';
+
+INSERT IGNORE INTO core_config_data
+  (scope, scope_id, path, value)
+  SELECT 'stores', store_id, 'web/secure/base_url', 'https://<%= @site[:servername] %>/'
+    FROM core_store WHERE code = '<%= @site[:run_code] %>';
