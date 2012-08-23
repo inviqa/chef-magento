@@ -1,8 +1,8 @@
 #
 # Cookbook Name:: chef-magento
-# Recipe:: config_local
+# Recipe:: sites_config
 #
-# Copyright 2012, Alistair Stead
+# Copyright 2012, Rupert Jones
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,10 +17,20 @@
 # limitations under the License.
 #
 
-template "#{node['magento']['dir']}/app/etc/local.xml" do
-  source "local.xml.erb"
-  mode 0644
-  variables({
-    :magento => node['magento']
-  })
+if File.exists?("#{node['magento']['dir']}/app/etc/local.xml")
+
+  node['magento']['sites'].each do |site|
+    template "#{Chef::Config[:file_cache_path]}/site_config.sql" do
+      source "sites_config.sql.erb"
+      mode 0644
+      variables({
+        :site => site
+      })
+    end
+    bash "magento-sites-config" do
+      code <<-EOH
+/usr/bin/mysql -u root -p#{node['mysql']['server_root_password']} #{node['magento']['db']['database']} -v < #{Chef::Config[:file_cache_path]}/site_config.sql
+EOH
+    end
+  end
 end

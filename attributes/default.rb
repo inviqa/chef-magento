@@ -26,6 +26,7 @@ default['magento']['apache']['developer_mode'] = "false"
 default['magento']['apache']['additional_config_path'] = ""
 default['magento']['apache']['additional_rewites'] = ""
 
+default['magento']['sites'] = Array.new
 
 default['magento']['php']['memory_limit'] = "512M"
 default['magento']['php']['max_execution_time'] = "120"
@@ -64,8 +65,8 @@ default['magento']['sample_data']['url'] = "http://www.magentocommerce.com/downl
 default['magento']['server']['aliases'] = Array.new
 default['magento']['server']['static_domains'] = Array.new
 
-::Chef::Node.send(:include, Opscode::OpenSSL::Password)
+# ::Chef::Node.send(:include, Opscode::OpenSSL::Password)
 
-default_unless['magento']['db']['password'] = secure_password
-default_unless['magento']['varnish']['perge_key'] = secure_password
-default_unless['magento']['admin']['password'] = secure_password
+default_unless['magento']['db']['password'] = 'secure_password'
+default_unless['magento']['varnish']['perge_key'] = 'secure_password'
+default_unless['magento']['admin']['password'] = 'secure_password'
