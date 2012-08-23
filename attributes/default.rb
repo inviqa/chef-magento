@@ -65,8 +65,8 @@ default['magento']['sample_data']['url'] = "http://www.magentocommerce.com/downl
 default['magento']['server']['aliases'] = Array.new
 default['magento']['server']['static_domains'] = Array.new
 
-# ::Chef::Node.send(:include, Opscode::OpenSSL::Password)
+::Chef::Node.send(:include, Opscode::OpenSSL::Password)
 
-default_unless['magento']['db']['password'] = 'secure_password'
-default_unless['magento']['varnish']['perge_key'] = 'secure_password'
-default_unless['magento']['admin']['password'] = 'secure_password'
+default_unless['magento']['db']['password'] = secure_password
+default_unless['magento']['varnish']['perge_key'] = secure_password
+default_unless['magento']['admin']['password'] = secure_password
