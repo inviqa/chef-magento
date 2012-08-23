@@ -8,10 +8,10 @@ probe healthcheck {
    #.expected_response = 200; # Still want the magento maintenance page to display so no response code check
 }
 # Setup a cluster of backend servers
-<% node[:magento][:varnish][:backend_servers].each do |server| %>
+<% @magento['varnish']['backend_servers'].each do |server| %>
 backend <%= server[:name] %> {
     .host = "<%= server[:ip] %>";
-    .port = "<%= node[:magento][:apache][:unsecure_port] %>";
+    .port = "<%= @magento['apache']['unsecure_port'] %>";
     .connect_timeout = 240s; # High values due to expected slow responses
     .first_byte_timeout = 240s; # High values due to expected slow responses
     .between_bytes_timeout = 240s; # High values due to expected slow responses
@@ -23,13 +23,13 @@ backend <%= server[:name] %> {
 # the cluster of servers round-robin | random
 director backend_director random {
     .retries = 5;
-    <% node[:magento][:varnish][:backend_servers].each do |server| %>
+    <% @magento['varnish']['backend_servers'].each do |server| %>
     { .backend = <%= server[:name] %>; .weight = 1; }
     <% end %>
 }
 # Limit the perge request to trusted servers
 acl purge {
-  <% node[:magento][:varnish][:trusted_servers].each do |server| %>
+  <% @magento['varnish']['trusted_servers'].each do |server| %>
   "<%= server %>";
   <% end %>
 }
@@ -62,14 +62,14 @@ sub vcl_recv {
         if (!client.ip ~ purge) {
             error 405 "Not allowed.";
         }
-        if (!req.url ~ "/key/<%= node[:magento][:varnish][:perge_key] %>") {
+        if (!req.url ~ "/key/<%= @magento['varnish']['perge_key'] %>") {
         }
         ban("obj.http.x-url ~ " + req.url);
         return (lookup);
     }
 
     # We should not cache any page for Magento backend
-    if (req.url ~ "^/(index.php/)?(<%= node[:magento][:app][:admin_frontname] %>|varnish)") {
+    if (req.url ~ "^/(index.php/)?(<%= @magento['app']['admin_frontname'] %>|varnish)") {
         return (pipe);
     }
 

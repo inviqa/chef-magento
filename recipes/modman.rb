@@ -1,6 +1,6 @@
 #
 # Cookbook Name:: chef-magento
-# Recipe:: config_local
+# Recipe:: modman
 #
 # Copyright 2012, Alistair Stead
 #
@@ -17,24 +17,16 @@
 # limitations under the License.
 #
 
-if Chef::Config[:solo]
-  missing_attrs = %w(
-    crypt_key
-  ).select { |attr| node['magento']['app'][attr].nil? }.map { |attr| "node['magento']['app']['#{attr}']" }
-
-  unless missing_attrs.empty?
-    fail "You must set #{missing_attrs.join(', ')} in chef-solo mode."
-  end
-else
-  # generate all passwords
-  node.set_unless['magento']['app']['crypt_key'] = secure_password
-  node.save
+remote_file "#{Chef::Config[:file_cache_path]}/modman-installer" do
+  source "https://raw.github.com/colinmollenhour/modman/master/modman-installer"
+  mode "0655"
+  action :create_if_missing
 end
 
-template "#{node['magento']['dir']}/app/etc/local.xml" do
-  source "local.xml.erb"
-  mode 0644
-  variables({
-    :magento => node['magento']
-  })
+bash "Install Modman" do
+  cwd Chef::Config[:file_cache_path]
+  code <<-EOH
+  ./modman-installer \
+  source ~/.profile
+  EOH
 end

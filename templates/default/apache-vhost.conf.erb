@@ -1,28 +1,31 @@
 <% if @params[:ssl] %>
-<VirtualHost *:<%= node[:magento][:apache][:secure_port] %>>
+<VirtualHost *:<%= @params[:site]['secure_port'] %>>
   SSLEngine on
-  SSLCertificateKeyFile ssl/<%= node[:magento][:apache][:servername] %>.key
-  SSLCertificateFile ssl/<%= node[:magento][:apache][:servername] %>.pem
+  SSLCertificateKeyFile ssl/<%= @params[:site]['servername'] %>.key
+  SSLCertificateFile ssl/<%= @params[:site]['servername'] %>.pem
   SSLProtocol all
   SSLCipherSuite ALL:!ADH:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv2:+EXP:+eNULL
 
 <% else %>
-<VirtualHost *:<%= node[:magento][:apache][:unsecure_port] %>>
+<VirtualHost *:<%= @params[:site]['unsecure_port'] %>>
 <% end %>
 
-  ServerName <%= node[:magento][:apache][:servername] %>
-  ServerAlias <% node[:magento][:apache][:server_alias].each do |a| %><%= "#{a}" %> <% end %>
+  ServerName <%= @params[:site][:servername] %>
+  ServerAlias <% @params[:site][:server_alias].each do |a| %><%= a %> <% end %>
 
-  DocumentRoot <%= node[:magento][:apache][:docroot] %>/<%= node[:magento][:apache][:servername] %><%= node[:magento][:apache][:path] %>
+  DocumentRoot <%= @params[:site]['docroot'] %>/<%= @params[:site]['servername'] %><%= @params[:site]['path'] %>
 
   LogLevel info
-  ErrorLog <%= node[:apache][:log_dir] %>/<%= node[:magento][:apache][:servername] %>-error.log
-  CustomLog <%= node[:apache][:log_dir] %>/<%= node[:magento][:apache][:servername] %>-access.log combined
+  ErrorLog <%= @params[:apache]['log_dir'] %>/<%= @params[:site][:servername] %>-error.log
+  CustomLog <%= @params[:apache]['log_dir'] %>/<%= @params[:site][:servername] %>-access.log combined
 
   ServerSignature Off
 
-<% if node[:magento][:apache][:developer_mode] %>
+<% if @params[:site]['developer_mode'] %>
   SetEnv MAGE_IS_DEVELOPER_MODE true
+<% end %>
+<% if @params[:site][:run_code] %>
+  SetEnv MAGE_RUN_CODE <%= @params[:site][:run_code] %>
 <% end %>
 
   <Directory />
@@ -30,11 +33,11 @@
     AllowOverride All
   </Directory>
 
-  <Directory <%= node[:magento][:apache][:docroot] %>/<%= node[:magento][:apache][:servername] %><%= node[:magento][:apache][:path] %>>
+  <Directory <%= @params[:site]['docroot'] %>/<%= @params[:site]['servername'] %><%= @params[:site]['path'] %>>
     Options FollowSymLinks
 
-    <% if node[:apache][:basic_username] %>
-        AuthUserFile <%= node[:magento][:apache][:docroot] %>/<%= node[:magento][:apache][:servername] %><%= node[:magento][:apache][:path] %>/.htpasswd
+    <% if @params[:apache]['basic_username'] %>
+    AuthUserFile <%= @params[:site]['docroot'] %>/<%= @params[:site]['servername'] %><%= @params[:apache]['path'] %>/.htpasswd
         AuthType Basic
         AuthName "Protected System"
         Require valid-user
@@ -80,16 +83,16 @@
         ## adjust memory limit
 
         #    php_value memory_limit 64M
-        php_value memory_limit <%= node[:magento][:php][:memory_limit] %>
-        
-        
+        php_value memory_limit <%= @params[:php]['memory_limit'] %>
+
+
         ############################################
         ## php tuning
-        
-        php_value max_execution_time <%= node[:magento][:php][:max_execution_time] %>
-        php_value display_errors <%= node[:magento][:php][:display_errors] %>
-        php_value html_errors <%= node[:magento][:php][:html_errors] %>
-        php_value upload_max_filesize <%= node[:magento][:php][:upload_max_filesize] %>
+
+        php_value max_execution_time <%= @params[:php]['max_execution_time'] %>
+        php_value display_errors <%= @params[:php]['display_errors'] %>
+        php_value html_errors <%= @params[:php]['html_errors'] %>
+        php_value upload_max_filesize <%= @params[:php]['upload_max_filesize'] %>
 
         ############################################
         ## disable magic quotes for php request vars
@@ -101,7 +104,7 @@
         ## before autoload was initialized
 
         php_flag session.auto_start off
-        
+
         php_flag session.gc_maxlifetime 3600
 
         ############################################
@@ -142,16 +145,16 @@
         #
         # Netscape 4.x has some problems...
         BrowserMatch ^Mozilla/4 gzip-only-text/html
-        
+
         # Netscape 4.06-4.08 have some more problems
         BrowserMatch ^Mozilla/4\.0[678] no-gzip
-        
+
         # MSIE masquerades as Netscape, but it is fine
         BrowserMatch \bMSIE !no-gzip !gzip-only-text/html
-        
+
         # Don't compress images
         SetEnvIfNoCase Request_URI \.(?:gif|jpe?g|png)$ no-gzip dont-vary
-        
+
         # Make sure proxies don't deliver the wrong content
         Header append Vary User-Agent env=!dont-vary
 
@@ -174,7 +177,7 @@
         Options +FollowSymLinks
         RewriteEngine on
 
-        # RewriteLog <%= node[:apache][:log_dir] %>/<%= @application_name %>-rewrite.log
+        # RewriteLog <%= @params[:apache]['log_dir'] %>/<%= @application_name %>-rewrite.log
         # RewriteLogLevel 0
 
         ############################################
@@ -182,12 +185,12 @@
         ## path relative to web root
 
         #RewriteBase /
-        
-        <% if node[:magento][:apache][:additional_rewites] != "" %>
+
+        <% if @params[:site]['additional_rewites'] != "" %>
         # Write any additional rewrite configuration
-        <%= node[:magento][:apache][:additional_rewites] %>
+        <%= @params[:site]['additional_rewites'] %>
         <% end %>
-        
+
         RewriteRule ^server-status - [L]
 
         ############################################
@@ -214,7 +217,7 @@
         RewriteRule .* index.php [L]
 
     </IfModule>
-    
+
     <IfModule mod_expires.c>
         ExpiresActive on
         ExpiresByType image/jpg "access plus 6 months"
@@ -233,10 +236,10 @@
         ExpiresByType text/xml "modification plus 2 hours"
         ExpiresByType image/vnd.microsoft.icon "access plus 6 months"
     </IfModule>
-    
+
     <IfModule mod_headers.c>
         Header append Vary User-Agent env=!dont-vary
-        
+
         <FilesMatch "\.(ico|jpe?g|png|gif|swf|css|gz|js)$">
             Header set Cache-Control  "public, max-age=2592000"
         </FilesMatch>
@@ -261,22 +264,23 @@
 
     FileETag none
     # FileETag MTime Size
-    
-  </Directory>
 
-  <DirectoryMatch ^<%= node[:magento][:apache][:docroot] %>/<%= node[:magento][:apache][:servername] %><%= node[:magento][:apache][:path] %>/(app|downloader|error|includes|lib|media|var)$>
+  </Directory>
+  <% ['app','downloader','error','includes','lib','media','var'].each do |dir| %>
+  <Directory <%= @params[:site]['docroot'] %>/<%= @params[:site]['servername'] %><%= @params[:site]['path'] %>/<%= dir %>>
       Order deny,allow
       Deny from all
-    </DirectoryMatch>
-    
-    <Directory <%= node[:magento][:apache][:docroot] %>/<%= node[:magento][:apache][:servername] %><%= node[:magento][:apache][:path] %>/staging>
+  </Directory>
+  <% end %>
+
+    <Directory <%= @params[:site]['docroot'] %>/<%= @params[:site]['servername'] %><%= @params[:site]['path'] %>/staging>
           AllowOverride All
           Order allow,deny
           Allow from all
     </Directory>
-    
-    <% if node[:magento][:apache][:additional_config_path] != "" %>
+
+    <% if @params[:site]['additional_config_path'] != "" %>
     # Include any additional configuration for the project
-    Include <%= node[:magento][:apache][:additional_config_path] %>/*.conf
+    Include <%= @params[:site]['additional_config_path'] %>/*.conf
     <% end %>
 </VirtualHost>
