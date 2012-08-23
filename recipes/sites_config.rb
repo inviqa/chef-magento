@@ -20,18 +20,16 @@
 if File.exists?("#{node['magento']['dir']}/app/etc/local.xml")
 
   node['magento']['sites'].each do |site|
-
-    template "/tmp/site_config.sql" do
+    template "#{Chef::Config[:file_cache_path]}/site_config.sql" do
       source "sites_config.sql.erb"
       mode 0644
       variables({
         :site => site
       })
     end
-
     bash "magento-sites-config" do
       code <<-EOH
-/usr/bin/mysql -u root -p#{node['mysql']['server_root_password']} #{node['magento']['db']['database']} -v < /tmp/site_config.sql
+/usr/bin/mysql -u root -p#{node['mysql']['server_root_password']} #{node['magento']['db']['database']} -v < #{Chef::Config[:file_cache_path]}/site_config.sql
 EOH
     end
   end

@@ -29,20 +29,20 @@
             </core_read>
             <default_setup>
                 <connection>
-                    <host><![CDATA[<%= node[:magento][:db][:host] %>]]></host>
-                    <username><![CDATA[<%= node[:magento][:db][:username] %>]]></username>
-                    <password><![CDATA[<%= node[:magento][:db][:password] %>]]></password>
-                    <dbname><![CDATA[<%= node[:magento][:db][:database] %>]]></dbname>
+                    <host><![CDATA[<%= @magento['db']['host'] %>]]></host>
+                    <username><![CDATA[<%= @magento['db']['username'] %>]]></username>
+                    <password><![CDATA[<%= @magento['db']['password'] %>]]></password>
+                    <dbname><![CDATA[<%= @magento['db']['database'] %>]]></dbname>
                     <persistent><![CDATA[false]]></persistent><!-- Persistent DB connection true / false / empty=false -->
                     <active>1</active>
                 </connection>
             </default_setup>
             <default_read>
                   <connection>
-                      <host><![CDATA[<%= node[:magento][:db][:read][:host] %>]]></host>
-                      <username><![CDATA[<%= node[:magento][:db][:username] %>]]></username>
-                      <password><![CDATA[<%= node[:magento][:db][:password] %>]]></password>
-                      <dbname><![CDATA[<%= node[:magento][:db][:database] %>]]></dbname>
+                      <host><![CDATA[<%= @magento['db']['read']['host'] %>]]></host>
+                      <username><![CDATA[<%= @magento['db']['username'] %>]]></username>
+                      <password><![CDATA[<%= @magento['db']['password'] %>]]></password>
+                      <dbname><![CDATA[<%= @magento['db']['database'] %>]]></dbname>
                       <type><![CDATA[pdo_mysql]]></type>
                       <persistent><![CDATA[false]]></persistent><!-- Persistent DB connection true / false / empty=false -->
                       <active>1</active>
@@ -50,32 +50,31 @@
               </default_read>
               <default_write>
                   <connection>
-                      <host><![CDATA[<%= node[:magento][:db][:write][:host] %>]]></host>
-                      <username><![CDATA[<%= node[:magento][:db][:username] %>]]></username>
-                      <password><![CDATA[<%= node[:magento][:db][:password] %>]]></password>
-                      <dbname><![CDATA[<%= node[:magento][:db][:database] %>]]></dbname>
+                      <host><![CDATA[<%= @magento['db']['write']['host'] %>]]></host>
+                      <username><![CDATA[<%= @magento['db']['username'] %>]]></username>
+                      <password><![CDATA[<%= @magento['db']['password'] %>]]></password>
+                      <dbname><![CDATA[<%= @magento['db']['database'] %>]]></dbname>
                       <type><![CDATA[pdo_mysql]]></type>
                       <persistent><![CDATA[false]]></persistent><!-- Persistent DB connection true / false / empty=false -->
                       <active>1</active>
                   </connection>
               </default_write>
         </resources>
-        <session_save><![CDATA[<%= node[:magento][:app][:multi_session_save] %>]]></session_save>
-        <% if node[:magento][:app][:multi_session_save] == "memcache" %>
-        <session_save_path><![CDATA[tcp://<%= node[:magento][:app][:session_memcache_ip] %>:<%= node[:magento][:app][:session_memcache_port] %>?persistent=1&weight=1&timeout=10&retry_interval=10]]></session_save_path><!-- e.g. for memcache session save handler tcp://10.0.0.1:11211?persistent=1&weight=2&timeout=10&retry_interval=10 -->
+        <session_save><![CDATA[<%= @magento['app']['multi_session_save'] %>]]></session_save>
+        <% if @magento['app']['multi_session_save'] == "memcache" %>
+        <session_save_path><![CDATA[tcp://<%= @magento['app']['session_memcache_ip'] %>:<%= @magento['app']['session_memcache_port'] %>?persistent=1&weight=1&timeout=10&retry_interval=10]]></session_save_path><!-- e.g. for memcache session save handler tcp://10.0.0.1:11211?persistent=1&weight=2&timeout=10&retry_interval=10 -->
         <% end %>
         <session_cache_limiter><![CDATA[nocache]]></session_cache_limiter><!-- see http://php.net/manual/en/function.session-cache-limiter.php#82174 for possible values -->
-        
-        <cache>                    
-             <backend><![CDATA[<%= node[:magento][:app][:backend_cache] %>]]></backend><!-- apc / memcached / xcache / empty=file -->
-             <slow_backend><![CDATA[<%= node[:magento][:app][:slow_backend] %>]]></slow_backend> <!-- database / file (default) - used for 2 levels cache setup, necessary for all shared memory storages -->
+        <cache>
+             <backend><![CDATA[<%= @magento['app']['backend_cache'] %>]]></backend><!-- apc / memcached / xcache / empty=file -->
+             <slow_backend><![CDATA[<%= @magento['app']['slow_backend'] %>]]></slow_backend> <!-- database / file (default) - used for 2 levels cache setup, necessary for all shared memory storages -->
              <slow_backend_store_data><![CDATA[0]]></slow_backend_store_data>
              <auto_refresh_fast_cache><![CDATA[0]]></auto_refresh_fast_cache>
              <lifetime><![CDATA[259200]]></lifetime>
-             <% if node[:magento][:app][:backend_cache] == "memcached" %>
+             <% if @magento['app']['backend_cache'] == "memcached" %>
              <memcached><!-- memcached cache backend related config -->
                <servers><!-- any number of server nodes can be included -->
-               <% node[:magento][:app][:backend_servers].each do |server| %>
+                   <% @magento['app']['backend_servers'].each do |server| %>
                      <server>
                          <host><![CDATA[<%= server[:host] %>]]></host>
                          <port><![CDATA[<%= server[:port] %>]]></port>
@@ -95,13 +94,13 @@
              </memcached>
              <% end %>
         </cache>
-        <%= node[:magento][:global][:custom] %>
+        <%= @magento['global']['custom'] %>
     </global>
     <admin>
         <routers>
             <adminhtml>
                 <args>
-                    <frontName><![CDATA[<%= node[:magento][:app][:admin_frontname] %>]]></frontName>
+                    <frontName><![CDATA[<%= @magento['app']['admin_frontname'] %>]]></frontName>
                 </args>
             </adminhtml>
         </routers>
