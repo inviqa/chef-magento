@@ -21,22 +21,16 @@ include_recipe "apache2"
 include_recipe "chef-magento::hosts"
 
 directory node['magento']['apache']['docroot'] do
-  owner "root"
-  group "root"
   mode "0755"
   action :create
 end
 
 directory "#{node['magento']['apache']['docroot']}/#{node['magento']['apache']['servername']}" do
-  owner "root"
-  group "root"
   mode "0755"
   action :create
 end
 
 directory "#{node['magento']['apache']['docroot']}/#{node['magento']['apache']['servername']}#{node['magento']['apache']['path']}" do
-  owner "root"
-  group "root"
   mode "0755"
   action :create
 end
@@ -44,13 +38,31 @@ end
 web_app node['magento']['apache']['servername'] do
   template "apache-vhost.conf.erb"
   ssl false
+  site node['magento']['apache']
   notifies :reload, resources("service[apache2]"), :delayed
 end
 
 web_app "#{node['magento']['apache']['servername']}.ssl" do
   template "apache-vhost.conf.erb"
   ssl true
+  site node['magento']['apache']
   notifies :reload, resources("service[apache2]"), :delayed
+end
+
+node['magento']['sites'].each do |site|
+    web_app site['servername'] do
+      template "apache-vhost.conf.erb"
+      ssl false
+      site site
+      notifies :reload, resources("service[apache2]"), :delayed
+    end
+
+    web_app "#{site['servername']}.ssl" do
+      template "apache-vhost.conf.erb"
+      ssl true
+      site site
+      notifies :reload, resources("service[apache2]"), :delayed
+    end
 end
 
 %w{default 000-default}.each do |site|

@@ -56,15 +56,13 @@ if !is_installed?
   log(is_installed?.to_s) {level :info }
 
   directory node['magento']['dir'] do
-    owner "root"
-    group "root"
     mode "0755"
+    action :create
   end
 
   directory "#{node['magento']['dir']}/media/" do
-    owner "root"
-    group "root"
     mode "0755"
+    action :create
   end
 
   remote_file "#{Chef::Config[:file_cache_path]}/magento-sample-data.tar.gz" do

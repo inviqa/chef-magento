@@ -1,5 +1,6 @@
 # Description
 
+[![Build Status](https://secure.travis-ci.org/inviqa/chef-magento.png?branch=master)](http://travis-ci.org/inviqa/chef-magento)
 
 # Requirements
 
@@ -53,7 +54,7 @@ Runs the following recipes:
 
 # License and Author
 
-Author:: Alistair Stead (alistair@inviqa.com)
+Author:: Alistair Stead (alistair@inviqa.com) Author:: Rupert Jones (rjones@inviqa.com)
 
 Copyright 2012, Inviqa
 
