@@ -23,6 +23,9 @@ template "crontab" do
   path crontabfile
   source "magento-crontab.erb"
   mode 0655
+  variables({
+    :magento => node['magento']
+  })
 end
 
 execute "crontab" do
