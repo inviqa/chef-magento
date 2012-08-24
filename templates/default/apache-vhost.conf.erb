@@ -279,8 +279,8 @@
           Allow from all
     </Directory>
 
-    <% if @params[:site]['additional_config_path'] != "" %>
+    <% if @params[:magento]['additional_config_path'] %>
     # Include any additional configuration for the project
-    Include <%= @params[:site]['additional_config_path'] %>/*.conf
+    Include <%= @params[:magento]['additional_config_path'] %>/*.conf
     <% end %>
 </VirtualHost>
