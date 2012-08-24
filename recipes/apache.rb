@@ -41,6 +41,7 @@ web_app node['magento']['apache']['servername'] do
   apache node['apache']
   php node['magento']['php']
   site node['magento']['apache']
+  magento node['magento']
   notifies :reload, resources("service[apache2]"), :delayed
 end
 
@@ -50,6 +51,7 @@ web_app "#{node['magento']['apache']['servername']}.ssl" do
   apache node['apache']
   php node['magento']['php']
   site node['magento']['apache']
+  magento node['magento']
   notifies :reload, resources("service[apache2]"), :delayed
 end
 
@@ -60,6 +62,7 @@ node['magento']['sites'].each do |site|
       apache node['apache']
       php node['magento']['php']
       site site
+      magento node['magento']
       notifies :reload, resources("service[apache2]"), :delayed
     end
 
@@ -69,6 +72,7 @@ node['magento']['sites'].each do |site|
       apache node['apache']
       php node['magento']['php']
       site site
+      magento node['magento']
       notifies :reload, resources("service[apache2]"), :delayed
     end
 end
