@@ -13,7 +13,7 @@
   ServerName <%= @params[:site][:servername] %>
   ServerAlias <% @params[:site][:server_alias].each do |a| %><%= a %> <% end %>
 
-  DocumentRoot <%= @params[:site]['docroot'] %>/<%= @params[:site]['servername'] %><%= @params[:site]['path'] %>
+  DocumentRoot <%= @params[:magento]['dir'] %>
 
   LogLevel info
   ErrorLog <%= @params[:apache]['log_dir'] %>/<%= @params[:site][:servername] %>-error.log
@@ -33,11 +33,11 @@
     AllowOverride All
   </Directory>
 
-  <Directory <%= @params[:site]['docroot'] %>/<%= @params[:site]['servername'] %><%= @params[:site]['path'] %>>
+  <Directory <%= @params[:magento]['dir'] %>>
     Options FollowSymLinks
 
     <% if @params[:apache]['basic_username'] %>
-    AuthUserFile <%= @params[:site]['docroot'] %>/<%= @params[:site]['servername'] %><%= @params[:apache]['path'] %>/.htpasswd
+    AuthUserFile <%= @params[:magento]['dir'] %>/.htpasswd
         AuthType Basic
         AuthName "Protected System"
         Require valid-user
@@ -267,13 +267,13 @@
 
   </Directory>
   <% ['app','downloader','error','includes','lib','media','var'].each do |dir| %>
-  <Directory <%= @params[:site]['docroot'] %>/<%= @params[:site]['servername'] %><%= @params[:site]['path'] %>/<%= dir %>>
+  <Directory <%= @params[:magento]['dir'] %>/<%= dir %>>
       Order deny,allow
       Deny from all
   </Directory>
   <% end %>
 
-    <Directory <%= @params[:site]['docroot'] %>/<%= @params[:site]['servername'] %><%= @params[:site]['path'] %>/staging>
+    <Directory <%= @params[:magento]['dir'] %>/staging>
           AllowOverride All
           Order allow,deny
           Allow from all
