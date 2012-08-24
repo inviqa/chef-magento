@@ -1,5 +1,5 @@
 <% if @params[:ssl] %>
-<VirtualHost *:<%= @params[:site]['secure_port'] %>>
+<VirtualHost *:<%= @params[:magento]['apache']['secure_port'] %>>
   SSLEngine on
   SSLCertificateKeyFile ssl/magento.key
   SSLCertificateFile ssl/magento.pem
@@ -7,7 +7,7 @@
   SSLCipherSuite ALL:!ADH:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv2:+EXP:+eNULL
 
 <% else %>
-<VirtualHost *:<%= @params[:site]['unsecure_port'] %>>
+<VirtualHost *:<%= @params[:magento]['apache']['unsecure_port'] %>>
 <% end %>
 
   ServerName <%= @params[:site][:servername] %>
