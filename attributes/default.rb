@@ -23,7 +23,6 @@ default['magento']['apache']['server_alias'] = Array.new
 default['magento']['apache']['docroot'] = "/var/www"
 default['magento']['apache']['path'] = "/public"
 default['magento']['apache']['developer_mode'] = "false"
-default['magento']['apache']['additional_config_path'] = ""
 default['magento']['apache']['additional_rewites'] = ""
 
 default['magento']['sites'] = Array.new
