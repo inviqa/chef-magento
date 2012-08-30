@@ -266,12 +266,40 @@
     # FileETag MTime Size
 
   </Directory>
-  <% ['app','downloader','error','includes','lib','media','var'].each do |dir| %>
+  <% ['app','downloader','error','includes','lib','var'].each do |dir| %>
   <Directory <%= @params[:magento]['dir'] %>/<%= dir %>>
       Order deny,allow
       Deny from all
   </Directory>
   <% end %>
+
+  <Directory <%= @params[:magento]['dir'] %>/media>
+      Options All -Indexes
+      <IfModule mod_php5.c>
+      php_flag engine 0
+      </IfModule>
+
+      AddHandler cgi-script .php .pl .py .jsp .asp .htm .shtml .sh .cgi
+      Options -ExecCGI
+
+      <IfModule mod_rewrite.c>
+
+          ############################################
+          ## enable rewrites
+
+          Options +FollowSymLinks
+          RewriteEngine on
+
+          ############################################
+          ## never rewrite for existing files
+          RewriteCond %{REQUEST_FILENAME} !-f
+
+          ############################################
+          ## rewrite everything else to index.php
+
+          RewriteRule .* ../get.php [L]
+      </IfModule>
+  </Directory>
 
     <Directory <%= @params[:magento]['dir'] %>/staging>
           AllowOverride All
