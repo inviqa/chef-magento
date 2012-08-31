@@ -36,6 +36,9 @@
   <Directory <%= @params[:magento]['dir'] %>>
     Options FollowSymLinks
 
+    EnableMMAP <%= @params[:magento]['apache']['enable_mmap'] %>
+    EnableSendfile <%= @params[:magento]['apache']['enable_sendfile'] %>
+
     <% if @params[:apache]['basic_username'] %>
     AuthUserFile <%= @params[:magento]['dir'] %>/.htpasswd
         AuthType Basic

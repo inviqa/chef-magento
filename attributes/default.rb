@@ -36,6 +36,8 @@ default['magento']['apache']['docroot'] = "/var/www"
 default['magento']['apache']['path'] = "/public"
 default['magento']['apache']['developer_mode'] = "false"
 default['magento']['apache']['additional_rewites'] = ""
+default['magento']['apache']['enable_mmap'] = "On"
+default['magento']['apache']['enable_sendfile'] = "On"
 
 default['magento']['sites'] = Array.new
 
