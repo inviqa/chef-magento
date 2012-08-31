@@ -60,13 +60,38 @@
                   </connection>
               </default_write>
         </resources>
+        <% if @magento['app']['multi_session_save'] === 'redis' %>
+        <session_save><![CDATA[db]]></session_save>
+        <redis_session>
+            <host><![CDATA[<%= @magento['redis']['host'] %>]]></host>
+             <port><![CDATA[<%= @magento['redis']['port'] %>]]></port>
+             <timeout><![CDATA[<%= @magento['redis']['timeout'] %>]]></timeout>
+             <db><![CDATA[<%= @magento['redis']['database'] %>]]></db>
+             <compression_threshold><![CDATA[<%= @magento['redis']['compress_threshold'] %>]]></compression_threshold><!-- Set to 0 to disable compression -->
+             <compression_lib><![CDATA[<%= @magento['redis']['compression_lib'] %>]]></compression_lib><!-- gzip, lzf or snappy -->
+        </redis_session>
+        <% else %>
         <session_save><![CDATA[<%= @magento['app']['multi_session_save'] %>]]></session_save>
         <% if @magento['app']['multi_session_save'] == "memcache" %>
         <session_save_path><![CDATA[tcp://<%= @magento['app']['session_memcache_ip'] %>:<%= @magento['app']['session_memcache_port'] %>?persistent=1&weight=1&timeout=10&retry_interval=10]]></session_save_path><!-- e.g. for memcache session save handler tcp://10.0.0.1:11211?persistent=1&weight=2&timeout=10&retry_interval=10 -->
         <% end %>
+        <% end %>
         <session_cache_limiter><![CDATA[nocache]]></session_cache_limiter><!-- see http://php.net/manual/en/function.session-cache-limiter.php#82174 for possible values -->
         <cache>
-             <backend><![CDATA[<%= @magento['app']['backend_cache'] %>]]></backend><!-- apc / memcached / xcache / empty=file -->
+             <backend><![CDATA[<%= @magento['app']['backend_cache'] %>]]></backend><!-- apc / memcached / xcache / Cm_Cache_Backend_Redis empty=file -->
+             <% if @magento['app']['backend_cache'] === 'Cm_Cache_Backend_Redis' %>
+                <backend_options>
+                    <server><![CDATA[<%= @magento['redis']['host'] %>]]></server> <!-- or absolute path to unix socket for better performance -->
+                     <port><![CDATA[<%= @magento['redis']['port'] %>]]></port>
+                     <database><![CDATA[<%= @magento['redis']['database'] %>]]></database>
+                     <force_standalone><![CDATA[<%= @magento['redis']['force_standalone'] %>]]></force_standalone><!-- 0 for phpredis, 1 for standalone PHP -->
+                     <automatic_cleaning_factor><![CDATA[<%= @magento['redis']['automatic_cleaning_factor'] %>]]></automatic_cleaning_factor> <!-- Disabled by default -->
+                     <compress_data><![CDATA[<%= @magento['redis']['compress_data'] %>]]></compress_data><!-- 0-9 for compression level, recommended: 0 or 1 -->
+                     <compress_tags><![CDATA[<%= @magento['redis']['compress_tags'] %>]]></compress_tags><!-- 0-9 for compression level, recommended: 0 or 1 -->
+                     <compress_threshold><![CDATA[<%= @magento['redis']['compress_threshold'] %>]]></compress_threshold><!-- Strings below this size will not be compressed -->
+                     <compression_lib><![CDATA[<%= @magento['redis']['compression_lib'] %>]]></compression_lib> <!-- Supports gzip, lzf and snappy -->
+                </backend_options>
+             <% else %>
              <slow_backend><![CDATA[<%= @magento['app']['slow_backend'] %>]]></slow_backend> <!-- database / file (default) - used for 2 levels cache setup, necessary for all shared memory storages -->
              <slow_backend_store_data><![CDATA[0]]></slow_backend_store_data>
              <auto_refresh_fast_cache><![CDATA[0]]></auto_refresh_fast_cache>
@@ -92,6 +117,7 @@
                  <hashed_directory_umask><![CDATA[]]></hashed_directory_umask>
                  <file_name_prefix><![CDATA[]]></file_name_prefix>
              </memcached>
+             <% end %>
              <% end %>
         </cache>
         <%= @magento['global']['custom'] %>
