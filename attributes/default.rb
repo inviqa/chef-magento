@@ -26,7 +26,7 @@ default['magento']['redis']['automatic_cleaning_factor'] = '0'
 default['magento']['redis']['compress_data'] = '1'
 default['magento']['redis']['compress_tags'] = '1'
 default['magento']['redis']['compress_threshold'] = '2048'
-default['magento']['redis']['compression_lib'] = 'gzips'
+default['magento']['redis']['compression_lib'] = 'gzip'
 
 default['magento']['apache']['unsecure_port'] = "80"
 default['magento']['apache']['secure_port'] = "443"
