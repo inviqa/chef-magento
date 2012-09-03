@@ -27,6 +27,7 @@ bash "Install Modman" do
   cwd Chef::Config[:file_cache_path]
   code <<-EOH
   ./modman-installer \
-  source ~/.profile
+  source ~/.profile \
+  . ~/.profile
   EOH
 end
