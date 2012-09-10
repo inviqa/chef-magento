@@ -20,7 +20,7 @@
 include_recipe "solr"
 
 directory node['solr']['config'] do
-    action  :delete
+    action      :delete
     recursive   true
 end
 
