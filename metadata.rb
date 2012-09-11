@@ -15,6 +15,7 @@ depends "memcached"
 # depends "redis" # This Opscode cookbook has an error
 depends "chef-varnish"
 depends "chef-magento"
+depends "solr"
 
 %w{ ubuntu }.each do |os|
   supports os
