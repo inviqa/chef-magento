@@ -72,7 +72,7 @@ sub vcl_recv {
         return (lookup);
     }
 
-    # We should not cache any page for Magento admin interface or for routes that absolutely 
+    # We should not cache any page for Magento admin interface or for routes that absolutely
     # need to send Set-Cookie HTTP headers.
     if (req.url ~ "^/(index.php/)?(<%= @magento['app']['admin_frontname'] %>|varnish|directory)") {
         return (pipe);
@@ -137,7 +137,7 @@ sub vcl_recv {
     }
 
     # Unique Cookie identifier which tells Varnish if it should use cache or not
-    if (req.http.Cookie ~ "(nocache_stable|nocache|NEWMESSAGE)") {
+    if (req.http.Cookie ~ "(nocache_stable|nocache|NEWMESSAGE|FORCEPASS|CART)") {
         return (pass);
     }
 
@@ -217,7 +217,7 @@ sub vcl_fetch {
     }
 
     # Current response should not be cached
-    if(beresp.http.Set-Cookie ~ "(nocache=1|NEWMESSAGE)") {
+    if(beresp.http.Set-Cookie ~ "(nocache=1|NEWMESSAGE|CART)") {
         return (deliver);
     }
 
