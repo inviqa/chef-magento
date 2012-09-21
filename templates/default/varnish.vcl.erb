@@ -52,17 +52,6 @@ sub vcl_recv {
         }
     }
 
-    # Do not cache none standard HTTP verbs
-    if (req.request != "GET" &&
-        req.request != "HEAD" &&
-        req.request != "PUT" &&
-        req.request != "POST" &&
-        req.request != "TRACE" &&
-        req.request != "OPTIONS" &&
-        req.request != "DELETE") {
-            return (pipe);
-    }
-
     if (req.request == "PURGE") {
         # Allow only purge requests from trusted servers
         if (!client.ip ~ purge) {
@@ -72,10 +61,19 @@ sub vcl_recv {
         return (lookup);
     }
 
+    # Do not cache none standard HTTP verbs
     # We should not cache any page for Magento admin interface or for routes that absolutely 
     # need to send Set-Cookie HTTP headers.
-    if (req.url ~ "^/(index.php/)?(<%= @magento['app']['admin_frontname'] %>|varnish|directory)") {
-        return (pipe);
+    if (req.request != "GET" &&
+        req.request != "HEAD" &&
+        req.request != "PUT" &&
+        req.request != "POST" &&
+        req.request != "TRACE" &&
+        req.request != "OPTIONS" &&
+        req.request != "DELETE" ||
+        (req.url ~ "^/(index.php/)?(<%= @magento['app']['admin_frontname'] %>|api|varnish|directory|\?___store)") ||
+        req.http.Cookie ~ "adminhtml") {) {
+            return (pipe);
     }
 
     if (req.backend.healthy) {
@@ -86,14 +84,13 @@ sub vcl_recv {
 
     # Set a HTTP header so the server knows we can process ESI
     set req.http.Surrogate-Capability = "magento=ESI/1.0";
-    # Any content that is being served behind HTTP Basic auth will not be cached.
-    if (req.http.Authorization) {
-        return (pass);
-    }
 
+    # Any content that is being served behind HTTP Basic auth will not be cached.
+    # All Ajax requests will not be cached
     # Cache only GET or HEAD requests
-    if (req.request != "GET" && req.request != "HEAD") {
-        # We only deal with GET and HEAD by default
+    if (req.http.Authorization ||
+        req.http.X-Requested-With == "XMLHttpRequest" ||
+        (req.request != "GET" && req.request != "HEAD")) {
         return (pass);
     }
 
@@ -131,11 +128,6 @@ sub vcl_recv {
         return (pass);
     }
 
-    # All Ajax requests will not be cached
-    if(req.http.X-Requested-With == "XMLHttpRequest") {
-        return (pass);
-    }
-
     # Unique Cookie identifier which tells Varnish if it should use cache or not
     if (req.http.Cookie ~ "(nocache_stable|nocache|NEWMESSAGE)") {
         return (pass);
@@ -163,7 +155,8 @@ sub vcl_recv {
             remove req.http.Cookie;
         }
     }
-    set req.http.magicmarker = "1"; #Instruct varnish force caching
+
+    set req.http.magicmarker = 1;
 
     return (lookup);
 }
@@ -183,6 +176,7 @@ sub vcl_miss {
     if (req.request == "PURGE"){
         error 200 "Not in cache";
     }
+
     return (fetch);
 }
 
@@ -198,44 +192,69 @@ sub vcl_hash {
     if (req.http.Cookie && req.http.magicmarker) {
         hash_data(req.http.Cookie);
     }
+
     return (hash);
 }
 
 # Called after document was retreived from backend
 sub vcl_fetch {
+    remove beresp.http.Set-Cookie;
+    remove beresp.http.Pragma;
+    if (beresp.http.Vary ~ "User-Agent") {
+        set beresp.http.Vary = regsub(beresp.http.Vary, ",?\s?User-Agent,?", "\1");
+        if (beresp.http.Vary == "") {
+            remove beresp.http.Vary;
+        }
+    }
+
+    if (beresp.status >= 500) {
+         set beresp.grace = 60s;
+         restart;
+    }
+
     # These status codes should always pass through and never cache.
     if (beresp.status == 503 || beresp.status == 500) {
          set beresp.saintmode = 20s;
+
          return (deliver);
     }
 
-    set beresp.grace = 60s;
-    set beresp.http.x-url = req.url;
     # Backend response includes ESI tags
     if (beresp.http.Surrogate-Control ~ "ESI/1.0") {
         set beresp.do_esi = true;
     }
 
-    # Current response should not be cached
-    if(beresp.http.Set-Cookie ~ "(nocache=1|NEWMESSAGE)") {
-        return (deliver);
-    }
-
     if (req.http.magicmarker) {
         unset beresp.http.magicmarker;
     }
+
     if (req.http.staticmarker) {
         unset beresp.http.staticmarker;
         # Force caching for static files, cache expires in 30 days.
         set beresp.ttl = 30d;
-        if (beresp.status != 200) {
-            # Missing files should only be cached for a short period of time.
+        if (beresp.status >= 400) {
+            # Broken or missing static files should only be cached
+            # for a short time but if they remain broken the exiting
+            # cached object should still be used
             set beresp.ttl = 30m;
+            set beresp.grace = 60s;
+            restart;
         }
-        remove beresp.http.Pragma;
     }
 
-    remove beresp.http.Set-Cookie;
+    if (req.http.Cookie ~ "(nocache_stable|nocache|NEWMESSAGE)") {
+        set beresp.http.X-Cacheable = "NO:Cart or Message present";
+
+        return(hit_for_pass);
+    # You are respecting the Cache-Control=private header from the backend
+    } elseif (beresp.http.Cache-Control ~ "private") {
+        set beresp.http.X-Cacheable = "NO:Cache-Control=private";
+
+        return(hit_for_pass);
+    # Varnish determined the object was cacheable
+    } else {
+        set beresp.http.X-Cacheable = "YES";
+    }
 
     return (deliver);
 }
@@ -247,6 +266,8 @@ sub vcl_deliver {
     if (resp.http.X-Cache-Debug ~ "debug") {
         # Set a cache header to allow us to inspect the response
         # headers during testing
+        set resp.http.X-Varnish-ID = req.xid;
+        set resp.http.X-Varnish-ESI-Level = req.esi_level;
         set resp.http.X-Cache-Debug-URL = req.url;
         if (obj.hits > 0) {
             set resp.http.X-Cache = "HIT";
@@ -260,6 +281,7 @@ sub vcl_deliver {
         unset resp.http.Server;
         unset resp.http.X-Powered-By;
         unset resp.http.X-Varnish;
+        unset resp.http.X-Cacheable;
         unset resp.http.Surrogate-Control;
     }
 
