@@ -62,7 +62,7 @@ sub vcl_recv {
     }
 
     # Do not cache none standard HTTP verbs
-    # We should not cache any page for Magento admin interface or for routes that absolutely 
+    # We should not cache any page for Magento admin interface or for routes that absolutely
     # need to send Set-Cookie HTTP headers.
     if (req.request != "GET" &&
         req.request != "HEAD" &&
@@ -72,7 +72,7 @@ sub vcl_recv {
         req.request != "OPTIONS" &&
         req.request != "DELETE" ||
         (req.url ~ "^/(index.php/)?(<%= @magento['app']['admin_frontname'] %>|api|varnish|directory|\?___store)") ||
-        req.http.Cookie ~ "adminhtml") {) {
+        req.http.Cookie ~ "adminhtml") {
             return (pipe);
     }
 
@@ -209,7 +209,7 @@ sub vcl_fetch {
 
     if (beresp.status >= 500) {
          set beresp.grace = 60s;
-         restart;
+         return (restart);
     }
 
     # These status codes should always pass through and never cache.
@@ -238,7 +238,7 @@ sub vcl_fetch {
             # cached object should still be used
             set beresp.ttl = 30m;
             set beresp.grace = 60s;
-            restart;
+            return (restart);
         }
     }
 
