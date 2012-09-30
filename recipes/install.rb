@@ -21,7 +21,7 @@ require 'mysql'
 
 def database_exists?
   begin
-    con = Mysql.new('localhost', 'root', node['mysql']['server_root_password'])
+    con = Mysql.new(node['magento']['db']['host'], node['magento']['db']['username'], node['magento']['db']['password'])
     rs = con.query("SELECT 1 FROM Information_schema.tables WHERE table_name = 'admin_user' AND table_schema = '#{node['magento']['db']['database']}'")
     is_installed = rs.num_rows
     con.close
@@ -33,7 +33,7 @@ end
 
 def has_administrator?
   begin
-    con = Mysql.new('localhost', 'root', node['mysql']['server_root_password'], node['magento']['db']['database'])
+    con = Mysql.new(node['magento']['db']['host'], node['magento']['db']['username'], node['magento']['db']['password'], node['magento']['db']['database'])
     rs = con.query("SELECT COUNT(user_id) AS num_users FROM admin_user")
     administrators = rs.num_rows
     con.close
