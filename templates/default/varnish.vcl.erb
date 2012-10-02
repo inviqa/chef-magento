@@ -209,6 +209,11 @@ sub vcl_fetch {
          return (deliver);
     }
 
+    if (req.request != "GET" && req.request != "HEAD") {
+        # We only deal with GET and HEAD by default
+        return (deliver);
+    }
+
     set beresp.grace = 60s;
     set beresp.http.x-url = req.url;
     # Backend response includes ESI tags
