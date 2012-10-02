@@ -199,8 +199,6 @@ sub vcl_hash {
 
 # Called after document was retreived from backend
 sub vcl_fetch {
-    remove beresp.http.Set-Cookie;
-    remove beresp.http.Pragma;
     if (beresp.http.Vary ~ "User-Agent") {
         set beresp.http.Vary = regsub(beresp.http.Vary, ",?\s?User-Agent,?", "\1");
         if (beresp.http.Vary == "") {
@@ -229,7 +227,8 @@ sub vcl_fetch {
         # We only deal with GET and HEAD by default
         return (deliver);
     }
-
+    remove beresp.http.Set-Cookie;
+    remove beresp.http.Pragma;
     if (req.http.magicmarker) {
         unset beresp.http.magicmarker;
     }
