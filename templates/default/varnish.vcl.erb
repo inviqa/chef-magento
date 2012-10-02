@@ -209,6 +209,11 @@ sub vcl_fetch {
          return (deliver);
     }
 
+    # Backend response includes ESI tags
+    if (beresp.http.Surrogate-Control ~ "ESI/1.0") {
+        set beresp.do_esi = true;
+    }
+
     if (req.request != "GET" && req.request != "HEAD") {
         # We only deal with GET and HEAD by default
         return (deliver);
@@ -216,10 +221,6 @@ sub vcl_fetch {
 
     set beresp.grace = 60s;
     set beresp.http.x-url = req.url;
-    # Backend response includes ESI tags
-    if (beresp.http.Surrogate-Control ~ "ESI/1.0") {
-        set beresp.do_esi = true;
-    }
 
     # Current response should not be cached
     if(beresp.http.Set-Cookie ~ "(nocache=1|NEWMESSAGE)") {
