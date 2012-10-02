@@ -70,9 +70,10 @@ sub vcl_recv {
         req.request != "POST" &&
         req.request != "TRACE" &&
         req.request != "OPTIONS" &&
-        req.request != "DELETE" ||
-        (req.url ~ "^/(index.php/)?(<%= @magento['app']['admin_frontname'] %>|api|varnish|directory|\?___store)") ||
-        req.http.Cookie ~ "adminhtml") {
+        req.request != "DELETE") {
+            return (pipe);
+    }
+    if (req.url ~ "^/(index.php/)?(<%= @magento['app']['admin_frontname'] %>|api|varnish|directory|\?___store)") {
             return (pipe);
     }
 
@@ -129,7 +130,7 @@ sub vcl_recv {
     }
 
     # Unique Cookie identifier which tells Varnish if it should use cache or not
-    if (req.http.Cookie ~ "(nocache_stable|nocache|NEWMESSAGE)") {
+    if (req.http.Cookie ~ "(nocache_stable|nocache)") {
         return (pass);
     }
 
@@ -224,6 +225,11 @@ sub vcl_fetch {
         set beresp.do_esi = true;
     }
 
+    if (req.request != "GET" && req.request != "HEAD") {
+        # We only deal with GET and HEAD by default
+        return (deliver);
+    }
+
     if (req.http.magicmarker) {
         unset beresp.http.magicmarker;
     }
@@ -242,7 +248,7 @@ sub vcl_fetch {
         }
     }
 
-    if (req.http.Cookie ~ "(nocache_stable|nocache|NEWMESSAGE)") {
+    if (req.http.Cookie ~ "(nocache_stable|nocache)") {
         set beresp.http.X-Cacheable = "NO:Cart or Message present";
 
         return(hit_for_pass);
