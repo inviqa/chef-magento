@@ -73,7 +73,7 @@ sub vcl_recv {
         req.request != "DELETE") {
             return (pipe);
     }
-    if (req.url ~ "^/(index.php/)?(<%= @magento['app']['admin_frontname'] %>|api|varnish|directory|\?___store)") {
+    if (req.url ~ "^/(index.php/)?(<%= @magento['app']['admin_frontname'] %>|api|varnish|directory|\?___store)" || req.http.Cookie ~ "adminhtml") {
             return (pipe);
     }
 
