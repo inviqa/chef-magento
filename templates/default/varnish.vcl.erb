@@ -157,6 +157,8 @@ sub vcl_recv {
         }
     }
 
+    set req.http.X-Cookie = req.http.Cookie;
+
     set req.http.magicmarker = 1;
 
     return (lookup);
@@ -181,7 +183,7 @@ sub vcl_miss {
     return (fetch);
 }
 
-# Add cookies to the hash to create unique caching combinations, this is limited to only the Magento cookies that
+# Add X-Cookie value to the hash to create unique caching combinations, this is limited to only the Magento cookies that
 # are used for content features such as Currency selection and Language.
 sub vcl_hash {
     hash_data(req.url);
@@ -190,8 +192,8 @@ sub vcl_hash {
     } else {
         hash_data(server.ip);
     }
-    if (req.http.Cookie && req.http.magicmarker) {
-        hash_data(req.http.Cookie);
+    if (req.http.X-Cookie && req.http.magicmarker) {
+        hash_data(req.http.X-Cookie);
     }
 
     return (hash);
@@ -199,11 +201,9 @@ sub vcl_hash {
 
 # Called after document was retreived from backend
 sub vcl_fetch {
+    # Homogenize the User-Agent vary 
     if (beresp.http.Vary ~ "User-Agent") {
-        set beresp.http.Vary = regsub(beresp.http.Vary, ",?\s?User-Agent,?", "\1");
-        if (beresp.http.Vary == "") {
-            remove beresp.http.Vary;
-        }
+        set beresp.http.X-Vary = regsub(beresp.http.Vary, ",?\s?User-Agent,?", "\1");
     }
 
     if (beresp.status >= 500) {
@@ -221,6 +221,7 @@ sub vcl_fetch {
     # Backend response includes ESI tags
     if (beresp.http.Surrogate-Control ~ "ESI/1.0") {
         set beresp.do_esi = true;
+        set beresp.http.X-ESI = "true";
     }
 
     if (req.request != "GET" && req.request != "HEAD") {
@@ -266,11 +267,16 @@ sub vcl_fetch {
 
 # Called after a cached document is delivered to the client.
 sub vcl_deliver {
+    unset resp.http.Vary;
+    if (resp.http.X-Vary) {
+        set resp.http.Vary = resp.http.X-Vary;
+    }
     # Set a cache header to allow us to inspect the response
     # headers during testing
     if (resp.http.X-Cache-Debug ~ "debug") {
         # Set a cache header to allow us to inspect the response
         # headers during testing
+        set resp.http.X-Cookie = req.http.X-Cookie;
         set resp.http.X-Varnish-ID = req.xid;
         set resp.http.X-Varnish-ESI-Level = req.esi_level;
         set resp.http.X-Cache-Debug-URL = req.url;
@@ -284,9 +290,12 @@ sub vcl_deliver {
         unset resp.http.Age;
         unset resp.http.Via;
         unset resp.http.Server;
+        unset resp.http.X-Cacheable;
+        unset resp.http.X-Cookie;
+        unset resp.http.X-ESI;
         unset resp.http.X-Powered-By;
         unset resp.http.X-Varnish;
-        unset resp.http.X-Cacheable;
+        unset resp.http.X-Vary;
         unset resp.http.Surrogate-Control;
     }
 
