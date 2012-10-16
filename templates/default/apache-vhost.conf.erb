@@ -52,15 +52,16 @@
 
     Order allow,deny
     <% if @params[:magento][:apache][:limit_to_ips] %>
+        <% _useProxyEnvCheck = !@params[:ssl] and !node[:varnish].nil? %>
         <% @params[:magento][:apache][:limited_ips].each do |ip| %>
-            <% if @params[:ssl] or node[:varnish].nil? %>
-            Allow from <%= ip %>
+            <% if _useProxyEnvCheck %>
+                SetEnvIf X-Forwarded-For ^<%= Regexp.escape(ip) %>$ proxy_env
             <% else %>
-            SetEnvIf X-Forwarded-For ^<%= Regexp.escape(ip) %>$ proxy_env
+                Allow from <%= ip %>
             <% end %>
         <% end %>
         Satisfy Any
-        <% if @params[:ssl] or node[:varnish].nil? %>
+        <% if _useProxyEnvCheck %>
             Allow from env=proxy_env
         <% end %>
     <% else %>
