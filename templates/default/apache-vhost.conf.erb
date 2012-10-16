@@ -51,19 +51,11 @@
     AllowOverride None
 
     Order allow,deny
-    <% if @params[:magento][:apache][:limit_to_ips] %>
-        <% _useProxyEnvCheck = !@params[:ssl] and !node[:varnish].nil? %>
-        <% @params[:magento][:apache][:limited_ips].each do |ip| %>
-            <% if _useProxyEnvCheck %>
-                SetEnvIf X-Forwarded-For ^<%= Regexp.escape(ip) %>$ proxy_env
-            <% else %>
-                Allow from <%= ip %>
-            <% end %>
+    <% if @params[:magento][:limit_to_ips] %>
+        <% @params[:magento][:limited_ips].each do |ip| %>
+            Allow from <%= ip %>
         <% end %>
         Satisfy Any
-        <% if _useProxyEnvCheck %>
-            Allow from env=proxy_env
-        <% end %>
     <% else %>
         Allow from all
     <% end %>

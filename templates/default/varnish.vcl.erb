@@ -1,3 +1,10 @@
+<% if @magento[:limit_to_ips] %>
+    acl ip_whitelist {
+    <% @magento[:limited_ips].each do |ip| %>
+        "<%= ip %>";
+    <% end %>
+    }
+<% end %>
 # Create a health check to verify that the backend server is responding
 # correctly and in a timely manner.
 probe healthcheck {
@@ -41,6 +48,11 @@ acl purge {
 }
 
 sub vcl_recv {
+    <% if @magento[:limit_to_ips] %>
+        if (client.ip !~ ip_whitelist) {
+            error 403 "Forbidden";
+        }
+    <% end %>
     set req.backend = backend_director;
 
     if (req.restarts == 0) {

@@ -38,8 +38,6 @@ default['magento']['apache']['developer_mode'] = "false"
 default['magento']['apache']['additional_rewites'] = ""
 default['magento']['apache']['enable_mmap'] = "On"
 default['magento']['apache']['enable_sendfile'] = "On"
-default['magento']['apache']['limit_to_ips'] = false
-default['magento']['apache']['limited_ips'] = Array.new
 
 default['magento']['sites'] = Array.new
 
@@ -71,6 +69,8 @@ default['magento']['varnish']['trusted_servers'] = [
     "127.0.0.1"
 ]
 
+default['magento']['limit_to_ips'] = false
+default['magento']['limited_ips'] = Array.new
 
 # Custom XML Snippet
 default['magento']['global']['custom'] = ''
