@@ -216,7 +216,7 @@ sub vcl_hash {
 # Called after document was retreived from backend
 sub vcl_fetch {
     # These status codes should always pass through and never cache.
-    if (beresp.status == 503 || beresp.status == 500 || beresp.status == 403) {
+    if (beresp.status == 503 || beresp.status == 500) {
          set beresp.saintmode = 20s;
          return (deliver);
     }
