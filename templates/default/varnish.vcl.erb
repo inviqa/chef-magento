@@ -216,8 +216,8 @@ sub vcl_hash {
         hash_data(req.http.Cookie);
     }
     <% if @magento[:limit_to_ips] %>
-        hash_data(req.http.Authorization)
-        hash_data(req.http.Authenticate)
+        hash_data(req.http.Authorization);
+        hash_data(req.http.Authenticate);
     <% end %>
     return (hash);
 }
