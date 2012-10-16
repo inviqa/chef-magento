@@ -11,6 +11,7 @@ probe healthcheck {
    .request =
          "GET /LICENSE.txt HTTP/1.1"
          "Host: <%= @magento[:apache][:servername] %>"
+         "X-Forwarded-For: 127.0.0.1"
          "Connection: close";
    .interval = 120s;
    .timeout = 90s; # High values due to expected slow responses
