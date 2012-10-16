@@ -40,7 +40,7 @@
     EnableSendfile <%= @params[:magento]['apache']['enable_sendfile'] %>
 
     <% if @params[:apache]['basic_username'] %>
-        AuthUserFile <%= @params[:magento]['dir'] %>/.htpasswd
+        AuthUserFile <% if @params[:apache]['htpasswd'] %><%= @params[:apache]['htpasswd'] %><% else %><%= @params[:magento]['dir'] %>/.htpasswd<% end %>
         AuthType Basic
         AuthName "Protected System"
         Require valid-user
@@ -52,10 +52,18 @@
 
     Order allow,deny
     <% if @params[:magento][:limit_to_ips] %>
+        <% _useProxyEnvCheck = !@params[:ssl] and !node[:varnish].nil? %>
         <% @params[:magento][:limited_ips].each do |ip| %>
-            Allow from <%= ip %>
+            <% if _useProxyEnvCheck %>
+                SetEnvIf X-Forwarded-For ^<%= Regexp.escape(ip) %>$ proxy_env
+            <% else %>
+                Allow from <%= ip %>
+            <% end %>
         <% end %>
         Satisfy Any
+        <% if _useProxyEnvCheck %>
+            Allow from env=proxy_env
+        <% end %>
     <% else %>
         Allow from all
     <% end %>

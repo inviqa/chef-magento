@@ -50,7 +50,12 @@ acl purge {
 sub vcl_recv {
     <% if @magento[:limit_to_ips] %>
         if (client.ip !~ ip_whitelist) {
-            error 403 "Forbidden";
+            if (!req.http.Authorization && !req.http.Authenticate) {
+                # instead of returning 403 immediately, 
+                # pipe it to apache for requesting authorisation
+                # error 403 "Forbidden";
+                return (pipe);
+            }
         }
     <% end %>
     set req.backend = backend_director;
@@ -210,6 +215,10 @@ sub vcl_hash {
     if (req.http.Cookie && req.http.magicmarker) {
         hash_data(req.http.Cookie);
     }
+    <% if @magento[:limit_to_ips] %>
+        hash_data(req.http.Authorization)
+        hash_data(req.http.Authenticate)
+    <% end %>
     return (hash);
 }
 
