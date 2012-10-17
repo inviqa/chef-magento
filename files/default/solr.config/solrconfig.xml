@@ -580,7 +580,7 @@
 
     <requestHandler name="magento" class="solr.SearchHandler">
         <lst name="defaults">
-            <str name="qf">fulltext1^1.0 fulltext2^2.0 fulltext3^3.0 fulltext4^4.0 fulltext5^5.0</str>
+            <str name="qf">fulltext_1^1.0 fulltext_2^2.0 fulltext_3^3.0 fulltext_4^4.0 fulltext_5^5.0</str>
             <str name="pf">fulltext^2.2 name</str>
             <int name="ps">1</int>
             <str name="mm">1</str>
@@ -597,8 +597,8 @@
 
     <requestHandler name="magento_en" class="solr.SearchHandler">
         <lst name="defaults">
-            <str name="qf">fulltext1_en^1.0 fulltext2_en^2.0 fulltext3_en^3.0 fulltext4_en^4.0 fulltext5_en^5.0</str>
-            <str name="pf">fulltext1_en^1.0 fulltext2_en^2.0 fulltext3_en^3.0 fulltext4_en^4.0 fulltext5_en^5.0</str>
+            <str name="qf">fulltext_1_en^1.0 fulltext_2_en^2.0 fulltext_3_en^3.0 fulltext_4_en^4.0 fulltext_5_en^5.0</str>
+            <str name="pf">fulltext_1_en^1.0 fulltext_2_en^2.0 fulltext_3_en^3.0 fulltext_4_en^4.0 fulltext_5_en^5.0</str>
             <int name="ps">1</int>
             <str name="mm">1</str>
             <str name="defType">dismax</str>
@@ -613,8 +613,8 @@
     </requestHandler>
     <requestHandler name="magento_fr" class="solr.SearchHandler">
         <lst name="defaults">
-            <str name="qf">fulltext1_fr^1.0 fulltext2_fr^2.0 fulltext3_fr^3.0 fulltext4_fr^4.0 fulltext5_fr^5.0</str>
-            <str name="pf">fulltext1_fr^1.0 fulltext2_fr^2.0 fulltext3_fr^3.0 fulltext4_fr^4.0 fulltext5_fr^5.0</str>
+            <str name="qf">fulltext_1_fr^1.0 fulltext_2_fr^2.0 fulltext_3_fr^3.0 fulltext_4_fr^4.0 fulltext_5_fr^5.0</str>
+            <str name="pf">fulltext_1_fr^1.0 fulltext_2_fr^2.0 fulltext_3_fr^3.0 fulltext_4_fr^4.0 fulltext_5_fr^5.0</str>
             <int name="ps">1</int>
             <str name="mm">1</str>
             <str name="defType">dismax</str>
@@ -629,8 +629,8 @@
     </requestHandler>
     <requestHandler name="magento_de" class="solr.SearchHandler">
         <lst name="defaults">
-            <str name="qf">fulltext1_de^1.0 fulltext2_de^2.0 fulltext3_de^3.0 fulltext4_de^4.0 fulltext5_de^5.0</str>
-            <str name="pf">fulltext1_de^1.0 fulltext2_de^2.0 fulltext3_de^3.0 fulltext4_de^4.0 fulltext5_de^5.0</str>
+            <str name="qf">fulltext_1_de^1.0 fulltext_2_de^2.0 fulltext_3_de^3.0 fulltext_4_de^4.0 fulltext_5_de^5.0</str>
+            <str name="pf">fulltext_1_de^1.0 fulltext_2_de^2.0 fulltext_3_de^3.0 fulltext_4_de^4.0 fulltext_5_de^5.0</str>
             <int name="ps">1</int>
             <str name="mm">1</str>
             <str name="defType">dismax</str>
@@ -645,8 +645,8 @@
     </requestHandler>
     <requestHandler name="magento_da" class="solr.SearchHandler">
         <lst name="defaults">
-            <str name="qf">fulltext1_da^1.0 fulltext2_da^2.0 fulltext3_da^3.0 fulltext4_da^4.0 fulltext5_da^5.0</str>
-            <str name="pf">fulltext1_da^1.0 fulltext2_da^2.0 fulltext3_da^3.0 fulltext4_da^4.0 fulltext5_da^5.0</str>
+            <str name="qf">fulltext_1_da^1.0 fulltext_2_da^2.0 fulltext_3_da^3.0 fulltext_4_da^4.0 fulltext_5_da^5.0</str>
+            <str name="pf">fulltext_1_da^1.0 fulltext_2_da^2.0 fulltext_3_da^3.0 fulltext_4_da^4.0 fulltext_5_da^5.0</str>
             <int name="ps">1</int>
             <str name="mm">1</str>
             <str name="defType">dismax</str>
@@ -661,8 +661,8 @@
     </requestHandler>
     <requestHandler name="magento_nl" class="solr.SearchHandler">
         <lst name="defaults">
-            <str name="qf">fulltext1_nl^1.0 fulltext2_nl^2.0 fulltext3_nl^3.0 fulltext4_nl^4.0 fulltext5_nl^5.0</str>
-            <str name="pf">fulltext1_nl^1.0 fulltext2_nl^2.0 fulltext3_nl^3.0 fulltext4_nl^4.0 fulltext5_nl^5.0</str>
+            <str name="qf">fulltext_1_nl^1.0 fulltext_2_nl^2.0 fulltext_3_nl^3.0 fulltext_4_nl^4.0 fulltext_5_nl^5.0</str>
+            <str name="pf">fulltext_1_nl^1.0 fulltext_2_nl^2.0 fulltext_3_nl^3.0 fulltext_4_nl^4.0 fulltext_5_nl^5.0</str>
             <int name="ps">1</int>
             <str name="mm">1</str>
             <str name="defType">dismax</str>
@@ -677,8 +677,8 @@
     </requestHandler>
     <requestHandler name="magento_fi" class="solr.SearchHandler">
         <lst name="defaults">
-            <str name="qf">fulltext1_fi^1.0 fulltext2_fi^2.0 fulltext3_fi^3.0 fulltext4_fi^4.0 fulltext5_fi^5.0</str>
-            <str name="pf">fulltext1_fi^1.0 fulltext2_fi^2.0 fulltext3_fi^3.0 fulltext4_fi^4.0 fulltext5_fi^5.0</str>
+            <str name="qf">fulltext_1_fi^1.0 fulltext_2_fi^2.0 fulltext_3_fi^3.0 fulltext_4_fi^4.0 fulltext_5_fi^5.0</str>
+            <str name="pf">fulltext_1_fi^1.0 fulltext_2_fi^2.0 fulltext_3_fi^3.0 fulltext_4_fi^4.0 fulltext_5_fi^5.0</str>
             <int name="ps">1</int>
             <str name="mm">1</str>
             <str name="defType">dismax</str>
@@ -693,8 +693,8 @@
     </requestHandler>
     <requestHandler name="magento_it" class="solr.SearchHandler">
         <lst name="defaults">
-            <str name="qf">fulltext1_it^1.0 fulltext2_it^2.0 fulltext3_it^3.0 fulltext4_it^4.0 fulltext5_it^5.0</str>
-            <str name="pf">fulltext1_it^1.0 fulltext2_it^2.0 fulltext3_it^3.0 fulltext4_it^4.0 fulltext5_it^5.0</str>
+            <str name="qf">fulltext_1_it^1.0 fulltext_2_it^2.0 fulltext_3_it^3.0 fulltext_4_it^4.0 fulltext_5_it^5.0</str>
+            <str name="pf">fulltext_1_it^1.0 fulltext_2_it^2.0 fulltext_3_it^3.0 fulltext_4_it^4.0 fulltext_5_it^5.0</str>
             <int name="ps">1</int>
             <str name="mm">1</str>
             <str name="defType">dismax</str>
@@ -709,8 +709,8 @@
     </requestHandler>
     <requestHandler name="magento_nb" class="solr.SearchHandler">
         <lst name="defaults">
-            <str name="qf">fulltext1_nb^1.0 fulltext2_nb^2.0 fulltext3_nb^3.0 fulltext4_nb^4.0 fulltext5_nb^5.0</str>
-            <str name="pf">fulltext1_nb^1.0 fulltext2_nb^2.0 fulltext3_nb^3.0 fulltext4_nb^4.0 fulltext5_nb^5.0</str>
+            <str name="qf">fulltext_1_nb^1.0 fulltext_2_nb^2.0 fulltext_3_nb^3.0 fulltext_4_nb^4.0 fulltext_5_nb^5.0</str>
+            <str name="pf">fulltext_1_nb^1.0 fulltext_2_nb^2.0 fulltext_3_nb^3.0 fulltext_4_nb^4.0 fulltext_5_nb^5.0</str>
             <int name="ps">1</int>
             <str name="mm">1</str>
             <str name="defType">dismax</str>
@@ -725,8 +725,8 @@
     </requestHandler>
     <requestHandler name="magento_pt" class="solr.SearchHandler">
         <lst name="defaults">
-            <str name="qf">fulltext1_pt^1.0 fulltext2_pt^2.0 fulltext3_pt^3.0 fulltext4_pt^4.0 fulltext5_pt^5.0</str>
-            <str name="pf">fulltext1_pt^1.0 fulltext2_pt^2.0 fulltext3_pt^3.0 fulltext4_pt^4.0 fulltext5_pt^5.0</str>
+            <str name="qf">fulltext_1_pt^1.0 fulltext_2_pt^2.0 fulltext_3_pt^3.0 fulltext_4_pt^4.0 fulltext_5_pt^5.0</str>
+            <str name="pf">fulltext_1_pt^1.0 fulltext_2_pt^2.0 fulltext_3_pt^3.0 fulltext_4_pt^4.0 fulltext_5_pt^5.0</str>
             <int name="ps">1</int>
             <str name="mm">1</str>
             <str name="defType">dismax</str>
@@ -741,8 +741,8 @@
     </requestHandler>
     <requestHandler name="magento_ro" class="solr.SearchHandler">
         <lst name="defaults">
-            <str name="qf">fulltext1_ro^1.0 fulltext2_ro^2.0 fulltext3_ro^3.0 fulltext4_ro^4.0 fulltext5_ro^5.0</str>
-            <str name="pf">fulltext1_ro^1.0 fulltext2_ro^2.0 fulltext3_ro^3.0 fulltext4_ro^4.0 fulltext5_ro^5.0</str>
+            <str name="qf">fulltext_1_ro^1.0 fulltext_2_ro^2.0 fulltext_3_ro^3.0 fulltext_4_ro^4.0 fulltext_5_ro^5.0</str>
+            <str name="pf">fulltext_1_ro^1.0 fulltext_2_ro^2.0 fulltext_3_ro^3.0 fulltext_4_ro^4.0 fulltext_5_ro^5.0</str>
             <int name="ps">1</int>
             <str name="mm">1</str>
             <str name="defType">dismax</str>
@@ -757,8 +757,8 @@
     </requestHandler>
     <requestHandler name="magento_ru" class="solr.SearchHandler">
         <lst name="defaults">
-            <str name="qf">fulltext1_ru^1.0 fulltext2_ru^2.0 fulltext3_ru^3.0 fulltext4_ru^4.0 fulltext5_ru^5.0</str>
-            <str name="pf">fulltext1_ru^1.0 fulltext2_ru^2.0 fulltext3_ru^3.0 fulltext4_ru^4.0 fulltext5_ru^5.0</str>
+            <str name="qf">fulltext_1_ru^1.0 fulltext_2_ru^2.0 fulltext_3_ru^3.0 fulltext_4_ru^4.0 fulltext_5_ru^5.0</str>
+            <str name="pf">fulltext_1_ru^1.0 fulltext_2_ru^2.0 fulltext_3_ru^3.0 fulltext_4_ru^4.0 fulltext_5_ru^5.0</str>
             <int name="ps">1</int>
             <str name="mm">1</str>
             <str name="defType">dismax</str>
@@ -773,8 +773,8 @@
     </requestHandler>
     <requestHandler name="magento_es" class="solr.SearchHandler">
         <lst name="defaults">
-            <str name="qf">fulltext1_es^1.0 fulltext2_es^2.0 fulltext3_es^3.0 fulltext4_es^4.0 fulltext5_es^5.0</str>
-            <str name="pf">fulltext1_es^1.0 fulltext2_es^2.0 fulltext3_es^3.0 fulltext4_es^4.0 fulltext5_es^5.0</str>
+            <str name="qf">fulltext_1_es^1.0 fulltext_2_es^2.0 fulltext_3_es^3.0 fulltext_4_es^4.0 fulltext_5_es^5.0</str>
+            <str name="pf">fulltext_1_es^1.0 fulltext_2_es^2.0 fulltext_3_es^3.0 fulltext_4_es^4.0 fulltext_5_es^5.0</str>
             <int name="ps">1</int>
             <str name="mm">1</str>
             <str name="defType">dismax</str>
@@ -789,8 +789,8 @@
     </requestHandler>
     <requestHandler name="magento_sv" class="solr.SearchHandler">
         <lst name="defaults">
-            <str name="qf">fulltext1_sv^1.0 fulltext2_sv^2.0 fulltext3_sv^3.0 fulltext4_sv^4.0 fulltext5_sv^5.0</str>
-            <str name="pf">fulltext1_sv^1.0 fulltext2_sv^2.0 fulltext3_sv^3.0 fulltext4_sv^4.0 fulltext5_sv^5.0</str>
+            <str name="qf">fulltext_1_sv^1.0 fulltext_2_sv^2.0 fulltext_3_sv^3.0 fulltext_4_sv^4.0 fulltext_5_sv^5.0</str>
+            <str name="pf">fulltext_1_sv^1.0 fulltext_2_sv^2.0 fulltext_3_sv^3.0 fulltext_4_sv^4.0 fulltext_5_sv^5.0</str>
             <int name="ps">1</int>
             <str name="mm">1</str>
             <str name="defType">dismax</str>
@@ -805,8 +805,8 @@
     </requestHandler>
     <requestHandler name="magento_tr" class="solr.SearchHandler">
         <lst name="defaults">
-            <str name="qf">fulltext1_tr^1.0 fulltext2_tr^2.0 fulltext3_tr^3.0 fulltext4_tr^4.0 fulltext5_tr^5.0</str>
-            <str name="pf">fulltext1_tr^1.0 fulltext2_tr^2.0 fulltext3_tr^3.0 fulltext4_tr^4.0 fulltext5_tr^5.0</str>
+            <str name="qf">fulltext_1_tr^1.0 fulltext_2_tr^2.0 fulltext_3_tr^3.0 fulltext_4_tr^4.0 fulltext_5_tr^5.0</str>
+            <str name="pf">fulltext_1_tr^1.0 fulltext_2_tr^2.0 fulltext_3_tr^3.0 fulltext_4_tr^4.0 fulltext_5_tr^5.0</str>
             <int name="ps">1</int>
             <str name="mm">1</str>
             <str name="defType">dismax</str>
@@ -821,8 +821,8 @@
     </requestHandler>
     <requestHandler name="magento_cs" class="solr.SearchHandler">
         <lst name="defaults">
-            <str name="qf">fulltext1_cs^1.0 fulltext2_cs^2.0 fulltext3_cs^3.0 fulltext4_cs^4.0 fulltext5_cs^5.0</str>
-            <str name="pf">fulltext1_cs^1.0 fulltext2_cs^2.0 fulltext3_cs^3.0 fulltext4_cs^4.0 fulltext5_cs^5.0</str>
+            <str name="qf">fulltext_1_cs^1.0 fulltext_2_cs^2.0 fulltext_3_cs^3.0 fulltext_4_cs^4.0 fulltext_5_cs^5.0</str>
+            <str name="pf">fulltext_1_cs^1.0 fulltext_2_cs^2.0 fulltext_3_cs^3.0 fulltext_4_cs^4.0 fulltext_5_cs^5.0</str>
             <int name="ps">1</int>
             <str name="mm">1</str>
             <str name="defType">dismax</str>
@@ -837,8 +837,8 @@
     </requestHandler>
     <requestHandler name="magento_el" class="solr.SearchHandler">
         <lst name="defaults">
-            <str name="qf">fulltext1_el^1.0 fulltext2_el^2.0 fulltext3_el^3.0 fulltext4_el^4.0 fulltext5_el^5.0</str>
-            <str name="pf">fulltext1_el^1.0 fulltext2_el^2.0 fulltext3_el^3.0 fulltext4_el^4.0 fulltext5_el^5.0</str>
+            <str name="qf">fulltext_1_el^1.0 fulltext_2_el^2.0 fulltext_3_el^3.0 fulltext_4_el^4.0 fulltext_5_el^5.0</str>
+            <str name="pf">fulltext_1_el^1.0 fulltext_2_el^2.0 fulltext_3_el^3.0 fulltext_4_el^4.0 fulltext_5_el^5.0</str>
             <int name="ps">1</int>
             <str name="mm">1</str>
             <str name="defType">dismax</str>
@@ -853,8 +853,8 @@
     </requestHandler>
     <requestHandler name="magento_th" class="solr.SearchHandler">
         <lst name="defaults">
-            <str name="qf">fulltext1_th^1.0 fulltext2_th^2.0 fulltext3_th^3.0 fulltext4_th^4.0 fulltext5_th^5.0</str>
-            <str name="pf">fulltext1_th^1.0 fulltext2_th^2.0 fulltext3_th^3.0 fulltext4_th^4.0 fulltext5_th^5.0</str>
+            <str name="qf">fulltext_1_th^1.0 fulltext_2_th^2.0 fulltext_3_th^3.0 fulltext_4_th^4.0 fulltext_5_th^5.0</str>
+            <str name="pf">fulltext_1_th^1.0 fulltext_2_th^2.0 fulltext_3_th^3.0 fulltext_4_th^4.0 fulltext_5_th^5.0</str>
             <int name="ps">1</int>
             <str name="mm">1</str>
             <str name="defType">dismax</str>
@@ -869,8 +869,8 @@
     </requestHandler>
     <requestHandler name="magento_zh" class="solr.SearchHandler">
         <lst name="defaults">
-            <str name="qf">fulltext1_zh^1.0 fulltext2_zh^2.0 fulltext3_zh^3.0 fulltext4_zh^4.0 fulltext5_zh^5.0</str>
-            <str name="pf">fulltext1_zh^1.0 fulltext2_zh^2.0 fulltext3_zh^3.0 fulltext4_zh^4.0 fulltext5_zh^5.0</str>
+            <str name="qf">fulltext_1_zh^1.0 fulltext_2_zh^2.0 fulltext_3_zh^3.0 fulltext_4_zh^4.0 fulltext_5_zh^5.0</str>
+            <str name="pf">fulltext_1_zh^1.0 fulltext_2_zh^2.0 fulltext_3_zh^3.0 fulltext_4_zh^4.0 fulltext_5_zh^5.0</str>
             <int name="ps">1</int>
             <str name="mm">1</str>
             <str name="defType">dismax</str>
@@ -885,8 +885,8 @@
     </requestHandler>
     <requestHandler name="magento_ja" class="solr.SearchHandler">
         <lst name="defaults">
-            <str name="qf">fulltext1_ja^1.0 fulltext2_ja^2.0 fulltext3_ja^3.0 fulltext4_ja^4.0 fulltext5_ja^5.0</str>
-            <str name="pf">fulltext1_ja^1.0 fulltext2_ja^2.0 fulltext3_ja^3.0 fulltext4_ja^4.0 fulltext5_ja^5.0</str>
+            <str name="qf">fulltext_1_ja^1.0 fulltext_2_ja^2.0 fulltext_3_ja^3.0 fulltext_4_ja^4.0 fulltext_5_ja^5.0</str>
+            <str name="pf">fulltext_1_ja^1.0 fulltext_2_ja^2.0 fulltext_3_ja^3.0 fulltext_4_ja^4.0 fulltext_5_ja^5.0</str>
             <int name="ps">1</int>
             <str name="mm">1</str>
             <str name="defType">dismax</str>
@@ -901,8 +901,8 @@
     </requestHandler>
     <requestHandler name="magento_ko" class="solr.SearchHandler">
         <lst name="defaults">
-            <str name="qf">fulltext1_ko^1.0 fulltext2_ko^2.0 fulltext3_ko^3.0 fulltext4_ko^4.0 fulltext5_ko^5.0</str>
-            <str name="pf">fulltext1_ko^1.0 fulltext2_ko^2.0 fulltext3_ko^3.0 fulltext4_ko^4.0 fulltext5_ko^5.0</str>
+            <str name="qf">fulltext_1_ko^1.0 fulltext_2_ko^2.0 fulltext_3_ko^3.0 fulltext_4_ko^4.0 fulltext_5_ko^5.0</str>
+            <str name="pf">fulltext_1_ko^1.0 fulltext_2_ko^2.0 fulltext_3_ko^3.0 fulltext_4_ko^4.0 fulltext_5_ko^5.0</str>
             <int name="ps">1</int>
             <str name="mm">1</str>
             <str name="defType">dismax</str>
@@ -1012,11 +1012,11 @@
     <str name="queryAnalyzerFieldType">textSpell</str>
     <lst name="spellchecker">
       <str name="name">default</str>
-      <str name="field">fulltext1_en</str>
-      <str name="field">fulltext2_en</str>
-      <str name="field">fulltext3_en</str>
-      <str name="field">fulltext4_en</str>
-      <str name="field">fulltext5_en</str>
+      <str name="field">fulltext_1_en</str>
+      <str name="field">fulltext_2_en</str>
+      <str name="field">fulltext_3_en</str>
+      <str name="field">fulltext_4_en</str>
+      <str name="field">fulltext_5_en</str>
       <str name="spellcheckIndexDir">./spellchecker</str>
     </lst>
 -->
@@ -1067,27 +1067,27 @@
   
     <searchComponent name="spellcheck" class="solr.SpellCheckComponent">
         <str name="queryAnalyzerFieldType">textSpell</str>
-        <lst name="spellchecker"><str name="name">magento_spell</str><str name="field">fulltext1</str><str name="field">fulltext2</str><str name="field">fulltext3</str><str name="field">fulltext4</str><str name="field">fulltext5</str><str name="buildOnCommit">true</str><str name="spellcheckIndexDir">./spellchecker</str></lst>
-        <lst name="spellchecker"><str name="name">magento_spell_en</str><str name="field">fulltext1_en_spellchecker</str><str name="field">fulltext2_en_spellchecker</str><str name="field">fulltext3_en_spellchecker</str><str name="field">fulltext4_en_spellchecker</str><str name="field">fulltext5_en_spellchecker</str><str name="buildOnCommit">true</str><str name="spellcheckIndexDir">./spellchecker</str></lst>
-        <lst name="spellchecker"><str name="name">magento_spell_fr</str><str name="field">fulltext1_fr_spellchecker</str><str name="field">fulltext2_fr_spellchecker</str><str name="field">fulltext3_fr_spellchecker</str><str name="field">fulltext4_fr_spellchecker</str><str name="field">fulltext5_fr_spellchecker</str><str name="buildOnCommit">true</str><str name="spellcheckIndexDir">./spellchecker</str></lst>
-        <lst name="spellchecker"><str name="name">magento_spell_de</str><str name="field">fulltext1_de_spellchecker</str><str name="field">fulltext2_de_spellchecker</str><str name="field">fulltext3_de_spellchecker</str><str name="field">fulltext4_de_spellchecker</str><str name="field">fulltext5_de_spellchecker</str><str name="buildOnCommit">true</str><str name="spellcheckIndexDir">./spellchecker</str></lst>
-        <lst name="spellchecker"><str name="name">magento_spell_da</str><str name="field">fulltext1_da_spellchecker</str><str name="field">fulltext2_da_spellchecker</str><str name="field">fulltext3_da_spellchecker</str><str name="field">fulltext4_da_spellchecker</str><str name="field">fulltext5_da_spellchecker</str><str name="buildOnCommit">true</str><str name="spellcheckIndexDir">./spellchecker</str></lst>
-        <lst name="spellchecker"><str name="name">magento_spell_nl</str><str name="field">fulltext1_nl_spellchecker</str><str name="field">fulltext2_nl_spellchecker</str><str name="field">fulltext3_nl_spellchecker</str><str name="field">fulltext4_nl_spellchecker</str><str name="field">fulltext5_nl_spellchecker</str><str name="buildOnCommit">true</str><str name="spellcheckIndexDir">./spellchecker</str></lst>
-        <lst name="spellchecker"><str name="name">magento_spell_fi</str><str name="field">fulltext1_fi_spellchecker</str><str name="field">fulltext2_fi_spellchecker</str><str name="field">fulltext3_fi_spellchecker</str><str name="field">fulltext4_fi_spellchecker</str><str name="field">fulltext5_fi_spellchecker</str><str name="buildOnCommit">true</str><str name="spellcheckIndexDir">./spellchecker</str></lst>
-        <lst name="spellchecker"><str name="name">magento_spell_it</str><str name="field">fulltext1_it_spellchecker</str><str name="field">fulltext2_it_spellchecker</str><str name="field">fulltext3_it_spellchecker</str><str name="field">fulltext4_it_spellchecker</str><str name="field">fulltext5_it_spellchecker</str><str name="buildOnCommit">true</str><str name="spellcheckIndexDir">./spellchecker</str></lst>
-        <lst name="spellchecker"><str name="name">magento_spell_nb</str><str name="field">fulltext1_nb_spellchecker</str><str name="field">fulltext2_nb_spellchecker</str><str name="field">fulltext3_nb_spellchecker</str><str name="field">fulltext4_nb_spellchecker</str><str name="field">fulltext5_nb_spellchecker</str><str name="buildOnCommit">true</str><str name="spellcheckIndexDir">./spellchecker</str></lst>
-        <lst name="spellchecker"><str name="name">magento_spell_pt</str><str name="field">fulltext1_pt_spellchecker</str><str name="field">fulltext2_pt_spellchecker</str><str name="field">fulltext3_pt_spellchecker</str><str name="field">fulltext4_pt_spellchecker</str><str name="field">fulltext5_pt_spellchecker</str><str name="buildOnCommit">true</str><str name="spellcheckIndexDir">./spellchecker</str></lst>
-        <lst name="spellchecker"><str name="name">magento_spell_ro</str><str name="field">fulltext1_ro_spellchecker</str><str name="field">fulltext2_ro_spellchecker</str><str name="field">fulltext3_ro_spellchecker</str><str name="field">fulltext4_ro_spellchecker</str><str name="field">fulltext5_ro_spellchecker</str><str name="buildOnCommit">true</str><str name="spellcheckIndexDir">./spellchecker</str></lst>
-        <lst name="spellchecker"><str name="name">magento_spell_ru</str><str name="field">fulltext1_ru_spellchecker</str><str name="field">fulltext2_ru_spellchecker</str><str name="field">fulltext3_ru_spellchecker</str><str name="field">fulltext4_ru_spellchecker</str><str name="field">fulltext5_ru_spellchecker</str><str name="buildOnCommit">true</str><str name="spellcheckIndexDir">./spellchecker</str></lst>
-        <lst name="spellchecker"><str name="name">magento_spell_es</str><str name="field">fulltext1_es_spellchecker</str><str name="field">fulltext2_es_spellchecker</str><str name="field">fulltext3_es_spellchecker</str><str name="field">fulltext4_es_spellchecker</str><str name="field">fulltext5_es_spellchecker</str><str name="buildOnCommit">true</str><str name="spellcheckIndexDir">./spellchecker</str></lst>
-        <lst name="spellchecker"><str name="name">magento_spell_sv</str><str name="field">fulltext1_sv_spellchecker</str><str name="field">fulltext2_sv_spellchecker</str><str name="field">fulltext3_sv_spellchecker</str><str name="field">fulltext4_sv_spellchecker</str><str name="field">fulltext5_sv_spellchecker</str><str name="buildOnCommit">true</str><str name="spellcheckIndexDir">./spellchecker</str></lst>
-        <lst name="spellchecker"><str name="name">magento_spell_tr</str><str name="field">fulltext1_tr_spellchecker</str><str name="field">fulltext2_tr_spellchecker</str><str name="field">fulltext3_tr_spellchecker</str><str name="field">fulltext4_tr_spellchecker</str><str name="field">fulltext5_tr_spellchecker</str><str name="buildOnCommit">true</str><str name="spellcheckIndexDir">./spellchecker</str></lst>
-        <lst name="spellchecker"><str name="name">magento_spell_cs</str><str name="field">fulltext1_cs_spellchecker</str><str name="field">fulltext2_cs_spellchecker</str><str name="field">fulltext3_cs_spellchecker</str><str name="field">fulltext4_cs_spellchecker</str><str name="field">fulltext5_cs_spellchecker</str><str name="buildOnCommit">true</str><str name="spellcheckIndexDir">./spellchecker</str></lst>
-        <lst name="spellchecker"><str name="name">magento_spell_el</str><str name="field">fulltext1_el_spellchecker</str><str name="field">fulltext2_el_spellchecker</str><str name="field">fulltext3_el_spellchecker</str><str name="field">fulltext4_el_spellchecker</str><str name="field">fulltext5_el_spellchecker</str><str name="buildOnCommit">true</str><str name="spellcheckIndexDir">./spellchecker</str></lst>
-        <lst name="spellchecker"><str name="name">magento_spell_th</str><str name="field">fulltext1_th_spellchecker</str><str name="field">fulltext2_th_spellchecker</str><str name="field">fulltext3_th_spellchecker</str><str name="field">fulltext4_th_spellchecker</str><str name="field">fulltext5_th_spellchecker</str><str name="buildOnCommit">true</str><str name="spellcheckIndexDir">./spellchecker</str></lst>
-        <lst name="spellchecker"><str name="name">magento_spell_zh</str><str name="field">fulltext1_zh_spellchecker</str><str name="field">fulltext2_zh_spellchecker</str><str name="field">fulltext3_zh_spellchecker</str><str name="field">fulltext4_zh_spellchecker</str><str name="field">fulltext5_zh_spellchecker</str><str name="buildOnCommit">true</str><str name="spellcheckIndexDir">./spellchecker</str></lst>
-        <lst name="spellchecker"><str name="name">magento_spell_ja</str><str name="field">fulltext1_ja_spellchecker</str><str name="field">fulltext2_ja_spellchecker</str><str name="field">fulltext3_ja_spellchecker</str><str name="field">fulltext4_ja_spellchecker</str><str name="field">fulltext5_ja_spellchecker</str><str name="buildOnCommit">true</str><str name="spellcheckIndexDir">./spellchecker</str></lst>
-        <lst name="spellchecker"><str name="name">magento_spell_ko</str><str name="field">fulltext1_ko_spellchecker</str><str name="field">fulltext2_ko_spellchecker</str><str name="field">fulltext3_ko_spellchecker</str><str name="field">fulltext4_ko_spellchecker</str><str name="field">fulltext5_ko_spellchecker</str><str name="buildOnCommit">true</str><str name="spellcheckIndexDir">./spellchecker</str></lst>
+        <lst name="spellchecker"><str name="name">magento_spell</str><str name="field">fulltext_1</str><str name="field">fulltext_2</str><str name="field">fulltext_3</str><str name="field">fulltext_4</str><str name="field">fulltext_5</str><str name="buildOnCommit">true</str><str name="spellcheckIndexDir">./spellchecker</str></lst>
+        <lst name="spellchecker"><str name="name">magento_spell_en</str><str name="field">fulltext_1_en_spellchecker</str><str name="field">fulltext_2_en_spellchecker</str><str name="field">fulltext_3_en_spellchecker</str><str name="field">fulltext_4_en_spellchecker</str><str name="field">fulltext_5_en_spellchecker</str><str name="buildOnCommit">true</str><str name="spellcheckIndexDir">./spellchecker</str></lst>
+        <lst name="spellchecker"><str name="name">magento_spell_fr</str><str name="field">fulltext_1_fr_spellchecker</str><str name="field">fulltext_2_fr_spellchecker</str><str name="field">fulltext_3_fr_spellchecker</str><str name="field">fulltext_4_fr_spellchecker</str><str name="field">fulltext_5_fr_spellchecker</str><str name="buildOnCommit">true</str><str name="spellcheckIndexDir">./spellchecker</str></lst>
+        <lst name="spellchecker"><str name="name">magento_spell_de</str><str name="field">fulltext_1_de_spellchecker</str><str name="field">fulltext_2_de_spellchecker</str><str name="field">fulltext_3_de_spellchecker</str><str name="field">fulltext_4_de_spellchecker</str><str name="field">fulltext_5_de_spellchecker</str><str name="buildOnCommit">true</str><str name="spellcheckIndexDir">./spellchecker</str></lst>
+        <lst name="spellchecker"><str name="name">magento_spell_da</str><str name="field">fulltext_1_da_spellchecker</str><str name="field">fulltext_2_da_spellchecker</str><str name="field">fulltext_3_da_spellchecker</str><str name="field">fulltext_4_da_spellchecker</str><str name="field">fulltext_5_da_spellchecker</str><str name="buildOnCommit">true</str><str name="spellcheckIndexDir">./spellchecker</str></lst>
+        <lst name="spellchecker"><str name="name">magento_spell_nl</str><str name="field">fulltext_1_nl_spellchecker</str><str name="field">fulltext_2_nl_spellchecker</str><str name="field">fulltext_3_nl_spellchecker</str><str name="field">fulltext_4_nl_spellchecker</str><str name="field">fulltext_5_nl_spellchecker</str><str name="buildOnCommit">true</str><str name="spellcheckIndexDir">./spellchecker</str></lst>
+        <lst name="spellchecker"><str name="name">magento_spell_fi</str><str name="field">fulltext_1_fi_spellchecker</str><str name="field">fulltext_2_fi_spellchecker</str><str name="field">fulltext_3_fi_spellchecker</str><str name="field">fulltext_4_fi_spellchecker</str><str name="field">fulltext_5_fi_spellchecker</str><str name="buildOnCommit">true</str><str name="spellcheckIndexDir">./spellchecker</str></lst>
+        <lst name="spellchecker"><str name="name">magento_spell_it</str><str name="field">fulltext_1_it_spellchecker</str><str name="field">fulltext_2_it_spellchecker</str><str name="field">fulltext_3_it_spellchecker</str><str name="field">fulltext_4_it_spellchecker</str><str name="field">fulltext_5_it_spellchecker</str><str name="buildOnCommit">true</str><str name="spellcheckIndexDir">./spellchecker</str></lst>
+        <lst name="spellchecker"><str name="name">magento_spell_nb</str><str name="field">fulltext_1_nb_spellchecker</str><str name="field">fulltext_2_nb_spellchecker</str><str name="field">fulltext_3_nb_spellchecker</str><str name="field">fulltext_4_nb_spellchecker</str><str name="field">fulltext_5_nb_spellchecker</str><str name="buildOnCommit">true</str><str name="spellcheckIndexDir">./spellchecker</str></lst>
+        <lst name="spellchecker"><str name="name">magento_spell_pt</str><str name="field">fulltext_1_pt_spellchecker</str><str name="field">fulltext_2_pt_spellchecker</str><str name="field">fulltext_3_pt_spellchecker</str><str name="field">fulltext_4_pt_spellchecker</str><str name="field">fulltext_5_pt_spellchecker</str><str name="buildOnCommit">true</str><str name="spellcheckIndexDir">./spellchecker</str></lst>
+        <lst name="spellchecker"><str name="name">magento_spell_ro</str><str name="field">fulltext_1_ro_spellchecker</str><str name="field">fulltext_2_ro_spellchecker</str><str name="field">fulltext_3_ro_spellchecker</str><str name="field">fulltext_4_ro_spellchecker</str><str name="field">fulltext_5_ro_spellchecker</str><str name="buildOnCommit">true</str><str name="spellcheckIndexDir">./spellchecker</str></lst>
+        <lst name="spellchecker"><str name="name">magento_spell_ru</str><str name="field">fulltext_1_ru_spellchecker</str><str name="field">fulltext_2_ru_spellchecker</str><str name="field">fulltext_3_ru_spellchecker</str><str name="field">fulltext_4_ru_spellchecker</str><str name="field">fulltext_5_ru_spellchecker</str><str name="buildOnCommit">true</str><str name="spellcheckIndexDir">./spellchecker</str></lst>
+        <lst name="spellchecker"><str name="name">magento_spell_es</str><str name="field">fulltext_1_es_spellchecker</str><str name="field">fulltext_2_es_spellchecker</str><str name="field">fulltext_3_es_spellchecker</str><str name="field">fulltext_4_es_spellchecker</str><str name="field">fulltext_5_es_spellchecker</str><str name="buildOnCommit">true</str><str name="spellcheckIndexDir">./spellchecker</str></lst>
+        <lst name="spellchecker"><str name="name">magento_spell_sv</str><str name="field">fulltext_1_sv_spellchecker</str><str name="field">fulltext_2_sv_spellchecker</str><str name="field">fulltext_3_sv_spellchecker</str><str name="field">fulltext_4_sv_spellchecker</str><str name="field">fulltext_5_sv_spellchecker</str><str name="buildOnCommit">true</str><str name="spellcheckIndexDir">./spellchecker</str></lst>
+        <lst name="spellchecker"><str name="name">magento_spell_tr</str><str name="field">fulltext_1_tr_spellchecker</str><str name="field">fulltext_2_tr_spellchecker</str><str name="field">fulltext_3_tr_spellchecker</str><str name="field">fulltext_4_tr_spellchecker</str><str name="field">fulltext_5_tr_spellchecker</str><str name="buildOnCommit">true</str><str name="spellcheckIndexDir">./spellchecker</str></lst>
+        <lst name="spellchecker"><str name="name">magento_spell_cs</str><str name="field">fulltext_1_cs_spellchecker</str><str name="field">fulltext_2_cs_spellchecker</str><str name="field">fulltext_3_cs_spellchecker</str><str name="field">fulltext_4_cs_spellchecker</str><str name="field">fulltext_5_cs_spellchecker</str><str name="buildOnCommit">true</str><str name="spellcheckIndexDir">./spellchecker</str></lst>
+        <lst name="spellchecker"><str name="name">magento_spell_el</str><str name="field">fulltext_1_el_spellchecker</str><str name="field">fulltext_2_el_spellchecker</str><str name="field">fulltext_3_el_spellchecker</str><str name="field">fulltext_4_el_spellchecker</str><str name="field">fulltext_5_el_spellchecker</str><str name="buildOnCommit">true</str><str name="spellcheckIndexDir">./spellchecker</str></lst>
+        <lst name="spellchecker"><str name="name">magento_spell_th</str><str name="field">fulltext_1_th_spellchecker</str><str name="field">fulltext_2_th_spellchecker</str><str name="field">fulltext_3_th_spellchecker</str><str name="field">fulltext_4_th_spellchecker</str><str name="field">fulltext_5_th_spellchecker</str><str name="buildOnCommit">true</str><str name="spellcheckIndexDir">./spellchecker</str></lst>
+        <lst name="spellchecker"><str name="name">magento_spell_zh</str><str name="field">fulltext_1_zh_spellchecker</str><str name="field">fulltext_2_zh_spellchecker</str><str name="field">fulltext_3_zh_spellchecker</str><str name="field">fulltext_4_zh_spellchecker</str><str name="field">fulltext_5_zh_spellchecker</str><str name="buildOnCommit">true</str><str name="spellcheckIndexDir">./spellchecker</str></lst>
+        <lst name="spellchecker"><str name="name">magento_spell_ja</str><str name="field">fulltext_1_ja_spellchecker</str><str name="field">fulltext_2_ja_spellchecker</str><str name="field">fulltext_3_ja_spellchecker</str><str name="field">fulltext_4_ja_spellchecker</str><str name="field">fulltext_5_ja_spellchecker</str><str name="buildOnCommit">true</str><str name="spellcheckIndexDir">./spellchecker</str></lst>
+        <lst name="spellchecker"><str name="name">magento_spell_ko</str><str name="field">fulltext_1_ko_spellchecker</str><str name="field">fulltext_2_ko_spellchecker</str><str name="field">fulltext_3_ko_spellchecker</str><str name="field">fulltext_4_ko_spellchecker</str><str name="field">fulltext_5_ko_spellchecker</str><str name="buildOnCommit">true</str><str name="spellcheckIndexDir">./spellchecker</str></lst>
     </searchComponent>
     
     <requestHandler name="/spell" class="solr.SearchHandler" lazy="true">
