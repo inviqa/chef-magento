@@ -21,7 +21,7 @@ require 'mysql'
 
 def database_exists?
   begin
-    con = Mysql.new('localhost', 'root', node['mysql']['server_root_password'])
+    con = Mysql.new(node['magento']['db']['host'], node['magento']['db']['username'], node['magento']['db']['password'])
     rs = con.query("SELECT 1 FROM Information_schema.tables WHERE table_name = 'admin_user' AND table_schema = '#{node['magento']['db']['database']}'")
     is_installed = rs.num_rows
     con.close
@@ -33,7 +33,7 @@ end
 
 def has_administrator?
   begin
-    con = Mysql.new('localhost', 'root', node['mysql']['server_root_password'], node['magento']['db']['database'])
+    con = Mysql.new(node['magento']['db']['host'], node['magento']['db']['username'], node['magento']['db']['password'], node['magento']['db']['database'])
     rs = con.query("SELECT COUNT(user_id) AS num_users FROM admin_user")
     administrators = rs.num_rows
     con.close
@@ -73,22 +73,23 @@ if File.exists?("#{node['magento']['dir']}/install.php")
     --admin_username "#{node['magento']['admin']['user']}" \
     --admin_password "#{node['magento']['admin']['password']}"
     EOH
+
+    log(install) { level :info }
+
+    file "#{node['magento']['dir']}/app/etc/local.xml" do
+      action :delete
+    end
+
+    bash "magento-install-site" do
+      cwd node['magento']['dir']
+      code <<-EOH
+      cd #{node['magento']['dir']}/ && \
+      #{install}
+      EOH
+    end
+
   else
-    install = "echo 'Magento is installed'"
-  end
-
-  log(install) { level :info }
-
-  file "#{node['magento']['dir']}/app/etc/local.xml" do
-    action :delete
-  end
-
-  bash "magento-install-site" do
-    cwd node['magento']['dir']
-    code <<-EOH
-    cd #{node['magento']['dir']}/ && \
-    #{install}
-    EOH
+    log("Magento is installed") { level :info }
   end
 
   include_recipe "chef-magento::config_local"
