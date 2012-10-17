@@ -1,3 +1,8 @@
+
+<% if node['varnish']['GeoIP_enabled'] %>
+include "/etc/varnish/geoip.vcl";
+<% end %>
+
 <% if @magento[:limit_to_ips] %>
     acl ip_whitelist {
     <% @magento[:limited_ips].each do |ip| %>
@@ -72,6 +77,13 @@ sub vcl_recv {
         } else {
             set req.http.X-Forwarded-For = client.ip;
         }
+        <% if node['varnish']['GeoIP_enabled'] %>
+        if (req.url !~ "\.(jpeg|jpg|png|gif|ico|swf|js|css|gz|rar|txt|bzip|pdf)(\?.*|)$") {
+            C{
+                vcl_geoip_country_set_header(sp);
+            }C
+        }
+        <% end %>
     }
 
     if (req.request == "PURGE") {
@@ -217,12 +229,14 @@ sub vcl_hash {
     if (req.http.X-Cookie && req.http.magicmarker) {
         hash_data(req.http.X-Cookie);
     }
+    <% if node['varnish']['GeoIP_enabled'] %>
+    hash_data(req.http.X-Geo-IP-Country);
+    <% end %>
 
     <% if @magento[:limit_to_ips] %>
         hash_data(req.http.Authorization);
         hash_data(req.http.Authenticate);
     <% end %>
-
     return (hash);
 }
 
