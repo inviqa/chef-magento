@@ -1633,7 +1633,7 @@
 
         <!-- Dynamic fields for layered navigation. -->
         <dynamicField name="attr_nav_select_*"      type="int"  multiValued="true"/>
-        <dynamicField name="attr_nav_multi_*"       type="int"  multiValued="true"/>
+        <dynamicField name="attr_nav_multi_*"       type="string"  multiValued="true"/>
 
         <!-- Fulltext with search weight fields definition for all supported languages. -->
         <dynamicField name="*_def" type="textgen" indexed="true"/>
