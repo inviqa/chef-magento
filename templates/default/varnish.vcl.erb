@@ -1,9 +1,18 @@
+<% if @magento[:limit_to_ips] %>
+    acl ip_whitelist {
+    <% @magento[:limited_ips].each do |ip| %>
+        "<%= ip %>";
+    <% end %>
+    }
+<% end %>
+
 # Create a health check to verify that the backend server is responding
 # correctly and in a timely manner.
 probe healthcheck {
    .request =
          "GET /LICENSE.txt HTTP/1.1"
          "Host: <%= @magento[:apache][:servername] %>"
+         "X-Forwarded-For: 127.0.0.1"
          "Connection: close";
    .interval = 120s;
    .timeout = 90s; # High values due to expected slow responses
@@ -44,6 +53,16 @@ acl purge {
 }
 
 sub vcl_recv {
+    <% if @magento[:limit_to_ips] %>
+        if (client.ip !~ ip_whitelist) {
+            if (!req.http.Authorization && !req.http.Authenticate) {
+                # instead of returning 403 immediately, 
+                # pipe it to apache for requesting authorisation
+                # error 403 "Forbidden";
+                return (pipe);
+            }
+        }
+    <% end %>
     set req.backend = backend_director;
 
     if (req.restarts == 0) {
@@ -198,6 +217,11 @@ sub vcl_hash {
     if (req.http.X-Cookie && req.http.magicmarker) {
         hash_data(req.http.X-Cookie);
     }
+
+    <% if @magento[:limit_to_ips] %>
+        hash_data(req.http.Authorization);
+        hash_data(req.http.Authenticate);
+    <% end %>
 
     return (hash);
 }
