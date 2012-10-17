@@ -1,7 +1,10 @@
 # Create a health check to verify that the backend server is responding
 # correctly and in a timely manner.
 probe healthcheck {
-   .url = "/LICENSE.txt";
+   .request =
+         "GET /LICENSE.txt HTTP/1.1"
+         "Host: <%= @magento[:apache][:servername] %>"
+         "Connection: close";
    .interval = 120s;
    .timeout = 90s; # High values due to expected slow responses
    .window = 8;
