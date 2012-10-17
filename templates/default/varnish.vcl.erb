@@ -164,7 +164,7 @@ sub vcl_recv {
     }
 
     # Unique Cookie identifier which tells Varnish if it should use cache or not
-    if (req.http.Cookie ~ "(nocache_stable|nocache)") {
+    if (req.http.Cookie ~ "(nocache_stable|nocache|NEWMESSAGE|FORCEPASS|CART)") {
         return (pass);
     }
 
@@ -269,6 +269,12 @@ sub vcl_fetch {
         # We only deal with GET and HEAD by default
         return (deliver);
     }
+    
+    if(beresp.http.Set-Cookie ~ "(nocache=1|NEWMESSAGE|CART)") {
+        # Current response should not be cached
+        return (deliver);
+    }
+
     remove beresp.http.Set-Cookie;
     remove beresp.http.Pragma;
     if (req.http.magicmarker) {
