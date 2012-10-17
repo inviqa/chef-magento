@@ -96,7 +96,11 @@ sub vcl_recv {
             return (pipe);
     }
     if (req.url ~ "^/(index.php/)?(<%= @magento['app']['admin_frontname'] %>|api|varnish|directory|\?___store)" || req.http.Cookie ~ "adminhtml") {
+        <% if @magento[:limit_to_ips] %>
+            return (pass);
+        <% else %>
             return (pipe);
+        <% end %>
     }
 
     if (req.backend.healthy) {
