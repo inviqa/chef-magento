@@ -1,3 +1,8 @@
+
+<% if node['varnish']['GeoIP_enabled'] %>
+include "/etc/varnish/geoip.vcl";
+<% end %>
+
 # Create a health check to verify that the backend server is responding
 # correctly and in a timely manner.
 probe healthcheck {
@@ -53,6 +58,13 @@ sub vcl_recv {
         } else {
             set req.http.X-Forwarded-For = client.ip;
         }
+        <% if node['varnish']['GeoIP_enabled'] %>
+        if (req.url !~ "\.(jpeg|jpg|png|gif|ico|swf|js|css|gz|rar|txt|bzip|pdf)(\?.*|)$") {
+            C{
+                vcl_geoip_country_set_header(sp);
+            }C
+        }
+        <% end %>
     }
 
     if (req.request == "PURGE") {
@@ -198,7 +210,9 @@ sub vcl_hash {
     if (req.http.X-Cookie && req.http.magicmarker) {
         hash_data(req.http.X-Cookie);
     }
-
+    <% if node['varnish']['GeoIP_enabled'] %>
+    hash_data(req.http.X-Geo-IP-Country);
+    <% end %>
     return (hash);
 }
 
