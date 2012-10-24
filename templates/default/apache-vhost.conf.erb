@@ -221,6 +221,8 @@
 
     </IfModule>
 
+    AddType application/x-font-woff woff
+
     <IfModule mod_expires.c>
         ExpiresActive on
         ExpiresByType image/jpg "access plus 6 months"
@@ -233,6 +235,7 @@
         ExpiresByType image/ico "access plus 6 months"
         ExpiresByType image/icon "access plus 6 months"
         ExpiresByType image/x-icon "access plus 6 months"
+        ExpiresByType application/x-font-woff "access plus 6 months"
         ExpiresByType application/x-shockwave-flash "modification plus 6 months"
         ExpiresByType text/css "access plus 1 week"
         ExpiresByType text/javascript "access plus 1 week"
@@ -243,7 +246,7 @@
     <IfModule mod_headers.c>
         Header append Vary User-Agent env=!dont-vary
 
-        <FilesMatch "\.(ico|jpe?g|png|gif|swf|css|gz|js)$">
+        <FilesMatch "\.(ico|jpe?g|png|gif|swf|css|gz|js|woff)$">
             Header set Cache-Control  "public, max-age=2592000"
         </FilesMatch>
     </IfModule>
