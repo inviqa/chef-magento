@@ -1,7 +1,15 @@
+
+<% if node['varnish']['GeoIP_enabled'] %>
+include "/etc/varnish/geoip.vcl";
+<% end %>
+
 # Create a health check to verify that the backend server is responding
 # correctly and in a timely manner.
 probe healthcheck {
-   .url = "/LICENSE.txt";
+   .request =
+         "GET /LICENSE.txt HTTP/1.1"
+         "Host: <%= @magento[:apache][:servername] %>"
+         "Connection: close";
    .interval = 120s;
    .timeout = 90s; # High values due to expected slow responses
    .window = 8;
@@ -50,6 +58,13 @@ sub vcl_recv {
         } else {
             set req.http.X-Forwarded-For = client.ip;
         }
+        <% if node['varnish']['GeoIP_enabled'] %>
+        if (req.url !~ "\.(jpeg|jpg|png|gif|ico|swf|js|css|gz|rar|txt|bzip|pdf)(\?.*|)$") {
+            C{
+                vcl_geoip_country_set_header(sp);
+            }C
+        }
+        <% end %>
     }
 
     if (req.request == "PURGE") {
@@ -73,7 +88,7 @@ sub vcl_recv {
         req.request != "DELETE") {
             return (pipe);
     }
-    if (req.url ~ "^/(index.php/)?(<%= @magento['app']['admin_frontname'] %>|api|varnish|directory|\?___store)" || req.http.Cookie ~ "adminhtml") {
+    if (req.url ~ "^/(index.php/)?(<%= @magento['app']['admin_frontname'] %>|api|directory|\?___store)" || req.http.Cookie ~ "adminhtml") {
             return (pipe);
     }
 
@@ -195,7 +210,9 @@ sub vcl_hash {
     if (req.http.X-Cookie && req.http.magicmarker) {
         hash_data(req.http.X-Cookie);
     }
-
+    <% if node['varnish']['GeoIP_enabled'] %>
+    hash_data(req.http.X-Geo-IP-Country);
+    <% end %>
     return (hash);
 }
 
