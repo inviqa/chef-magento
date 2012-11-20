@@ -102,11 +102,14 @@ sub vcl_recv {
     set req.http.Surrogate-Capability = "magento=ESI/1.0";
 
     # Any content that is being served behind HTTP Basic auth will not be cached.
-    # All Ajax requests will not be cached
     # Cache only GET or HEAD requests
     if (req.http.Authorization ||
-        req.http.X-Requested-With == "XMLHttpRequest" ||
         (req.request != "GET" && req.request != "HEAD")) {
+            return (pass);
+    }
+
+    # Ajax request for varnish csi will not be cached
+    if (req.http.X-Requested-With == "XMLHttpRequest" && req.url ~ "^/(index.php/)?(varnish)) {
         return (pass);
     }
 
