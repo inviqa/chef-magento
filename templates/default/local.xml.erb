@@ -66,7 +66,7 @@
             <host><![CDATA[<%= @magento['redis']['host'] %>]]></host>
              <port><![CDATA[<%= @magento['redis']['port'] %>]]></port>
              <timeout><![CDATA[<%= @magento['redis']['timeout'] %>]]></timeout>
-             <db><![CDATA[<%= @magento['redis']['database'] %>]]></db>
+             <db><![CDATA[<%= @magento['redis']['session_database'] ? @magento['redis']['session_database'] : @magento['redis']['database'] %>]]></db>
              <compression_threshold><![CDATA[<%= @magento['redis']['compress_threshold'] %>]]></compression_threshold><!-- Set to 0 to disable compression -->
              <compression_lib><![CDATA[<%= @magento['redis']['compression_lib'] %>]]></compression_lib><!-- gzip, lzf or snappy -->
         </redis_session>
@@ -127,7 +127,7 @@
                  <backend_options>
                      <server><![CDATA[<%= @magento['redis']['host'] %>]]></server> <!-- or absolute path to unix socket for better performance -->
                      <port><![CDATA[<%= @magento['redis']['port'] %>]]></port>
-                     <database><![CDATA[<%= @magento['redis']['database'] %>]]></database>
+                     <database><![CDATA[<%= @magento['redis']['full_page_cache_database'] ? @magento['redis']['full_page_cache_database'] : @magento['redis']['database'] %>]]></database>
                      <force_standalone><![CDATA[<%= @magento['redis']['force_standalone'] %>]]></force_standalone><!-- 0 for phpredis, 1 for standalone PHP -->
                      <automatic_cleaning_factor><![CDATA[<%= @magento['redis']['automatic_cleaning_factor'] %>]]></automatic_cleaning_factor> <!-- Disabled by default -->
                      <compress_data><![CDATA[<%= @magento['redis']['compress_data'] %>]]></compress_data><!-- 0-9 for compression level, recommended: 0 or 1 -->
