@@ -109,7 +109,7 @@ sub vcl_recv {
     }
 
     # Ajax request for varnish csi will not be cached
-    if (req.http.X-Requested-With == "XMLHttpRequest" && req.url ~ "^/(index.php/)?(varnish)) {
+    if (req.http.X-Requested-With == "XMLHttpRequest" && req.url ~ "^/(index.php/)?(varnish)") {
         return (pass);
     }
 
@@ -221,7 +221,7 @@ sub vcl_hash {
 
 # Called after document was retreived from backend
 sub vcl_fetch {
-    # Homogenize the User-Agent vary 
+    # Homogenize the User-Agent vary
     if (beresp.http.Vary ~ "User-Agent") {
         set beresp.http.X-Vary = regsub(beresp.http.Vary, ",?\s?User-Agent,?", "\1");
     }
