@@ -107,7 +107,7 @@ sub vcl_recv {
         req.request != "DELETE") {
             return (pipe);
     }
-    if (req.url ~ "^/(index.php/)?(<%= @magento['app']['admin_frontname'] %>/|api/|varnish/|directory/|\?___store)" || req.http.Cookie ~ "adminhtml") {
+    if (req.url ~ "^/(index.php/)?(<%= @magento['app']['admin_frontname'] %>/|api/|directory/|\?___store)" || req.http.Cookie ~ "adminhtml") {
         <% if @magento[:limit_to_ips] %>
             return (pass);
         <% else %>
@@ -125,11 +125,14 @@ sub vcl_recv {
     set req.http.Surrogate-Capability = "magento=ESI/1.0";
 
     # Any content that is being served behind HTTP Basic auth will not be cached.
-    # All Ajax requests will not be cached
     # Cache only GET or HEAD requests
     if (req.http.Authorization ||
-        req.http.X-Requested-With == "XMLHttpRequest" ||
         (req.request != "GET" && req.request != "HEAD")) {
+            return (pass);
+    }
+
+    # Ajax request for varnish csi will not be cached
+    if (req.http.X-Requested-With == "XMLHttpRequest" && req.url ~ "^/(index.php/)?(varnish)") {
         return (pass);
     }
 
@@ -246,7 +249,7 @@ sub vcl_hash {
 
 # Called after document was retreived from backend
 sub vcl_fetch {
-    # Homogenize the User-Agent vary 
+    # Homogenize the User-Agent vary
     if (beresp.http.Vary ~ "User-Agent") {
         set beresp.http.X-Vary = regsub(beresp.http.Vary, ",?\s?User-Agent,?", "\1");
     }
