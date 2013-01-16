@@ -264,7 +264,9 @@ sub vcl_fetch {
             # cached object should still be used
             set beresp.ttl = 30m;
             set beresp.grace = 60s;
-            return (restart);
+            if (req.restarts < 4) {
+                return (restart);
+            }
         }
     }
 
