@@ -112,6 +112,10 @@ sub vcl_recv {
     if (req.http.X-Requested-With == "XMLHttpRequest" && req.url ~ "^/(index.php/)?(varnish)") {
         return (pass);
     }
+    # StoreSwitcher requests, used to transfer session id to another domain
+    if (req.url ~ "^/(index.php/)?varnish/storeswitcher") {
+        return (pass);
+    }
 
     # Even though there are few possible values for Accept-Encoding, Varnish treats
     # them literally rather than semantically, so even a small difference which makes
