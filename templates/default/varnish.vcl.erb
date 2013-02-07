@@ -102,11 +102,14 @@ sub vcl_recv {
     set req.http.Surrogate-Capability = "magento=ESI/1.0";
 
     # Any content that is being served behind HTTP Basic auth will not be cached.
-    # All Ajax requests will not be cached
     # Cache only GET or HEAD requests
     if (req.http.Authorization ||
-        req.http.X-Requested-With == "XMLHttpRequest" ||
         (req.request != "GET" && req.request != "HEAD")) {
+            return (pass);
+    }
+
+    # Ajax request for varnish csi will not be cached
+    if (req.http.X-Requested-With == "XMLHttpRequest" && req.url ~ "^/(index.php/)?(varnish)") {
         return (pass);
     }
 
@@ -218,14 +221,9 @@ sub vcl_hash {
 
 # Called after document was retreived from backend
 sub vcl_fetch {
-    # Homogenize the User-Agent vary 
+    # Homogenize the User-Agent vary
     if (beresp.http.Vary ~ "User-Agent") {
         set beresp.http.X-Vary = regsub(beresp.http.Vary, ",?\s?User-Agent,?", "\1");
-    }
-
-    if (beresp.status >= 500) {
-         set beresp.grace = 60s;
-         return (restart);
     }
 
     # These status codes should always pass through and never cache.
@@ -233,6 +231,11 @@ sub vcl_fetch {
          set beresp.saintmode = 20s;
 
          return (deliver);
+    }
+
+    if (beresp.status >= 500) {
+         set beresp.grace = 60s;
+         return (restart);
     }
 
     # Backend response includes ESI tags
