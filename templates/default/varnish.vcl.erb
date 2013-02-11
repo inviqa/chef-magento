@@ -231,16 +231,19 @@ sub vcl_fetch {
         set beresp.http.X-Vary = regsub(beresp.http.Vary, ",?\s?User-Agent,?", "\1");
     }
 
-    # These status codes should always pass through and never cache.
-    if (beresp.status == 503 || beresp.status == 500) {
-         set beresp.saintmode = 20s;
-
-         return (deliver);
+    # the site is in the maintenance mode
+    if (beresp.status == 503) {
+        set beresp.ttl = 1s;
+        return (deliver);
     }
 
+    # These status codes should always pass through and never cache.
     if (beresp.status >= 500) {
-         set beresp.grace = 60s;
-         return (restart);
+        set beresp.grace = 60s;
+        if (req.restarts < 3) {
+            return (restart);
+        }
+        return (deliver);
     }
 
     # Backend response includes ESI tags
