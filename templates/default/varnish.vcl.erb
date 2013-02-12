@@ -228,7 +228,13 @@ sub vcl_hash {
 sub vcl_fetch {
     # Homogenize the User-Agent vary
     if (beresp.http.Vary ~ "User-Agent") {
-        set beresp.http.X-Vary = regsub(beresp.http.Vary, ",?\s?User-Agent,?", "\1");
+        set beresp.http.Vary = regsub(beresp.http.Vary, "User-Agent,?\s*", "\1");
+        set beresp.http.Vary = regsub(beresp.http.Vary, ",\s*$", "");
+        if (beresp.http.Vary == "") {
+            remove beresp.http.Vary;
+        } else {
+            set beresp.http.X-Vary = beresp.http.Vary;
+        }
     }
 
     # the site is in the maintenance mode
@@ -300,10 +306,6 @@ sub vcl_fetch {
 
 # Called after a cached document is delivered to the client.
 sub vcl_deliver {
-    unset resp.http.Vary;
-    if (resp.http.X-Vary) {
-        set resp.http.Vary = resp.http.X-Vary;
-    }
     # Set a cache header to allow us to inspect the response
     # headers during testing
     if (resp.http.X-Cache-Debug ~ "debug") {
