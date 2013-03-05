@@ -59,7 +59,7 @@ sub vcl_recv {
             set req.http.X-Forwarded-For = client.ip;
         }
         <% if node['varnish']['GeoIP_enabled'] %>
-        if (req.url !~ "\.(jpeg|jpg|png|gif|ico|swf|js|css|gz|rar|txt|bzip|pdf)(\?.*|)$") {
+        if ((req.url !~ "\?(.*&)*(geoip=off)") && (req.url !~ "\.(jpeg|jpg|png|gif|ico|swf|js|css|gz|rar|txt|bzip|pdf)(\?.*|)$")) {
             C{
                 vcl_geoip_country_set_header(sp);
             }C
@@ -166,7 +166,11 @@ sub vcl_recv {
     if (req.http.Cookie) {
         set req.http.Cookie = ";" + req.http.Cookie;
         set req.http.Cookie = regsuball(req.http.Cookie, "; +", ";");
+        <% if node['varnish']['GeoIP_enabled'] %>
+        set req.http.Cookie = regsuball(req.http.Cookie, ";(currency|store|geoip)=", "; \1=");
+        <% else %>
         set req.http.Cookie = regsuball(req.http.Cookie, ";(currency|store)=", "; \1=");
+        <% end %>
         set req.http.Cookie = regsuball(req.http.Cookie, ";[^ ][^;]*", "");
         set req.http.Cookie = regsuball(req.http.Cookie, "^[; ]+|[; ]+$", "");
 
@@ -280,6 +284,11 @@ sub vcl_fetch {
     # Varnish determined the object was cacheable
     } else {
         set beresp.http.X-Cacheable = "YES";
+        <% if node['varnish']['GeoIP_enabled'] %>
+        if (req.http.Cookie !~ "(^|;)geoip=") {
+            set beresp.http.Set-Cookie = "geoip=1; path=/";
+        }
+        <% end %>
     }
 
     return (deliver);
