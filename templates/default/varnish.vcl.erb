@@ -260,15 +260,17 @@ sub vcl_fetch {
 
     if (req.http.staticmarker) {
         unset beresp.http.staticmarker;
-        # Force caching for static files, cache expires in 30 days.
-        set beresp.ttl = 30d;
+        # Force caching for static files
+        set beresp.ttl = <%= @magento['varnish']['ttl_for_static_files'] %>;
         if (beresp.status >= 400) {
             # Broken or missing static files should only be cached
             # for a short time but if they remain broken the exiting
             # cached object should still be used
             set beresp.ttl = 30m;
             set beresp.grace = 60s;
-            return (restart);
+            if (req.restarts < 3) {
+                return (restart);
+            }
         }
     }
 
