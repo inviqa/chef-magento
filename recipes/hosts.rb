@@ -25,6 +25,7 @@ template "/etc/hosts" do
   variables(
     :fqdn => node['fqdn'],
     :hostname => node['hostname'],
-    :servername => node['magento']['apache']['servername']
+    :servername => node['magento']['apache']['servername'],
+    :server_alias => node['magento']['apache']['server_alias']
   )
 end
