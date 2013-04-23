@@ -1,4 +1,4 @@
-127.0.0.1   <%= @fqdn %> <%= @hostname %> localhost localhost.localdomain
+127.0.0.1   <%= @fqdn %> <%= @hostname %> <% @extra_hostnames  do |extra_hostname| %><%= extra_hostname %> <% end %> localhost localhost.localdomain
 
 127.78.28.87 status-loopback
 
