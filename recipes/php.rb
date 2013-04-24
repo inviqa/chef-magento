@@ -22,4 +22,4 @@ if platform?("ubuntu", "debian")
   include_recipe "php::module_curl"
 end
 include_recipe "chef-php-extra::module_mysql"
-include_recipe "php::module_memcache"
+include_recipe "chef-php-extra::module_memcache"
