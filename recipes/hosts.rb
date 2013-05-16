@@ -26,6 +26,7 @@ template "/etc/hosts" do
     :fqdn => node['fqdn'],
     :hostname => node['hostname'],
     :extra_hostnames => node['extra_hostnames'],
-    :hosts => node['hosts']
+    :hosts => node['hosts'],
+    :sites => node['magento']['sites']
   )
 end

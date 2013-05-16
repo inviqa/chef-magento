@@ -3,6 +3,9 @@
 <% @hosts[:entries].each do |host_entry| %>
 <%= host_entry %>
 <% end %>
+<% @sites.each do |site| %>
+127.0.0.1   <%= site['servername'] %>
+<% end %>
 
 127.78.28.87 status-loopback
 
