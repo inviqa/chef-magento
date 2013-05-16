@@ -1,9 +1,39 @@
-INSERT IGNORE INTO core_config_data
-  (scope, scope_id, path, value)
-  SELECT 'stores', store_id, 'web/unsecure/base_url', 'http://<%= @site[:servername] %>/'
-    FROM core_store WHERE code = '<%= @site[:run_code] %>';
+-- INSERT IGNORE INTO core_config_data
+--   (scope, scope_id, path, value)
+--   SELECT 'stores', store_id, 'web/unsecure/base_url', 'http://<%= @site[:servername] %>/'
+--     FROM core_store WHERE code = '<%= @site[:run_code] %>';
+
+-- INSERT IGNORE INTO core_config_data
+--   (scope, scope_id, path, value)
+--   SELECT 'stores', store_id, 'web/secure/base_url', 'https://<%= @site[:servername] %>/'
+--     FROM core_store WHERE code = '<%= @site[:run_code] %>';
 
 INSERT IGNORE INTO core_config_data
   (scope, scope_id, path, value)
-  SELECT 'stores', store_id, 'web/secure/base_url', 'https://<%= @site[:servername] %>/'
-    FROM core_store WHERE code = '<%= @site[:run_code] %>';
+  SELECT 'websites', website_id, 'web/unsecure/base_skin_url', 'http://css.<%= @site['servername'] %>/skin/'
+    FROM core_website WHERE code = '<%= @site['run_code'] %>';
+
+INSERT IGNORE INTO core_config_data
+  (scope, scope_id, path, value)
+  SELECT 'websites', website_id, 'web/unsecure/base_media_url', 'http://imgs.<%= @site['servername'] %>/media/'
+    FROM core_website WHERE code = '<%= @site['run_code'] %>';
+
+INSERT IGNORE INTO core_config_data
+  (scope, scope_id, path, value)
+  SELECT 'websites', website_id, 'web/unsecure/base_js_url', 'http://js.<%= @site['servername'] %>/js/'
+    FROM core_website WHERE code = '<%= @site['run_code'] %>';
+
+INSERT IGNORE INTO core_config_data
+  (scope, scope_id, path, value)
+  SELECT 'websites', website_id, 'web/secure/base_skin_url', 'https://<%= @site['servername'] %>/skin/'
+    FROM core_website WHERE code = '<%= @site['run_code'] %>';
+
+INSERT IGNORE INTO core_config_data
+  (scope, scope_id, path, value)
+  SELECT 'websites', website_id, 'web/secure/base_media_url', 'https://<%= @site['servername'] %>/media/'
+    FROM core_website WHERE code = '<%= @site['run_code'] %>';
+
+INSERT IGNORE INTO core_config_data
+  (scope, scope_id, path, value)
+  SELECT 'websites', website_id, 'web/secure/base_js_url', 'https://<%= @site['servername'] %>/js/'
+    FROM core_website WHERE code = '<%= @site['run_code'] %>';

@@ -32,6 +32,7 @@ end
 
 directory "#{node['magento']['apache']['docroot']}/#{node['magento']['apache']['servername']}#{node['magento']['apache']['path']}" do
   mode "0755"
+  recursive true
   action :create
 end
 

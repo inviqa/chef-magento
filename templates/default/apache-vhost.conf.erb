@@ -35,6 +35,9 @@
 <% if @params[:site][:run_code] %>
   SetEnv MAGE_RUN_CODE <%= @params[:site][:run_code] %>
 <% end %>
+<% if @params[:site][:run_type] %>
+  SetEnv MAGE_RUN_TYPE <%= @params[:site][:run_type] %>
+<% end %>
 
   <Directory />
     Options FollowSymLinks
@@ -219,21 +222,52 @@
         RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
 
         ############################################
-        ## always send 404 on missing files in these folders
+        ## Non-Staging websites
 
-        RewriteCond %{REQUEST_URI} !^/(media|skin|js)/
+          RewriteCond %{REQUEST_URI} !^/staging
+
+          ############################################
+          ## always send 404 on missing files in these folders
+
+          RewriteCond %{REQUEST_URI} !^/(media|skin|js)/
+
+          ############################################
+          ## never rewrite for existing files, directories and links
+
+          RewriteCond %{REQUEST_FILENAME} !-f
+          RewriteCond %{REQUEST_FILENAME} !-d
+          RewriteCond %{REQUEST_FILENAME} !-l
+
+          ############################################
+          ## rewrite everything else to index.php
+
+          RewriteRule .* index.php [L]
+
 
         ############################################
-        ## never rewrite for existing files, directories and links
+        ## Staging websites
 
-        RewriteCond %{REQUEST_FILENAME} !-f
-        RewriteCond %{REQUEST_FILENAME} !-d
-        RewriteCond %{REQUEST_FILENAME} !-l
+          RewriteCond %{REQUEST_URI} ^/staging
 
-        ############################################
-        ## rewrite everything else to index.php
+          RewriteCond %{QUERY_STRING} !(^|[?&])no_cache([&=]|$)
+          RewriteRule (.*) $1?no_cache [QSA]
 
-        RewriteRule .* index.php [L]
+          ############################################
+          ## always send 404 on missing files in these folders
+
+          RewriteCond %{REQUEST_URI} !^/(media|skin|js)/
+
+          ############################################
+          ## never rewrite for existing files, directories and links
+
+          RewriteCond %{REQUEST_FILENAME} !-f
+          RewriteCond %{REQUEST_FILENAME} !-d
+          RewriteCond %{REQUEST_FILENAME} !-l
+
+          ############################################
+          ## rewrite everything else to index.php
+
+          RewriteRule ^(staging/[a-zA-Z0-9_\-]*/).* $1index.php [L]
 
     </IfModule>
 
