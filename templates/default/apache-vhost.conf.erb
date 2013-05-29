@@ -33,10 +33,12 @@
   SetEnv MAGE_IS_DEVELOPER_MODE true
 <% end %>
 <% if @params[:site][:run_code] %>
-  SetEnv MAGE_RUN_CODE <%= @params[:site][:run_code] %>
+  # Set MAGE_RUN_CODE if it has not been set previously
+  SetEnvIf MAGE_RUN_CODE !.* MAGE_RUN_CODE=<%= @params[:site][:run_code] %>
 <% end %>
 <% if @params[:site][:run_type] %>
-  SetEnv MAGE_RUN_TYPE <%= @params[:site][:run_type] %>
+  # Set MAGE_RUN_TYPE if it has not been set previously
+  SetEnvIf MAGE_RUN_TYPE !.* MAGE_RUN_TYPE=<%= @params[:site][:run_type] %>
 <% end %>
 
   <Directory />
