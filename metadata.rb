@@ -9,7 +9,7 @@ depends "php"
 depends "chef-php-extra"
 depends "git"
 depends "mysql"
-depends "database"
+depends "database", "> 1.3.0"
 depends "apache2"
 depends "memcached"
 # depends "redis" # This Opscode cookbook has an error
