@@ -80,6 +80,8 @@ default['magento']['sample_data']['url'] = "http://www.magentocommerce.com/downl
 default['magento']['server']['aliases'] = Array.new
 default['magento']['server']['static_domains'] = Array.new
 
+default['extra_hostnames'] = Array.new
+
 ::Chef::Node.send(:include, Opscode::OpenSSL::Password)
 
 default_unless['magento']['db']['password'] = secure_password
