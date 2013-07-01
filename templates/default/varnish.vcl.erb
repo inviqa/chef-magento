@@ -88,7 +88,8 @@ sub vcl_recv {
         req.request != "DELETE") {
             return (pipe);
     }
-    if (req.url ~ "^/(index.php/)?(<%= @magento['app']['admin_frontname'] %>|api|directory|\?___store)" || req.http.Cookie ~ "adminhtml") {
+
+    if (req.url ~ "^/(index.php/)?(<%= @magento['app']['admin_frontname'] %>|api|directory)" || req.url ~ "\?(.*&)*(___store=|SID=[a-zA-Z0-9]{16,})" || req.http.Cookie ~ "adminhtml") {
             return (pipe);
     }
 
