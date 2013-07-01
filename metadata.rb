@@ -15,7 +15,7 @@ depends "memcached"
 # depends "redis" # This Opscode cookbook has an error
 depends "chef-varnish" # https://github.com/inviqa/chef-varnish
 depends "chef-magento" # https://github.com/inviqa/chef-magento
-depends "chef-solr" # https://github.com/inviqa/chef-solr
+depends "solr" # https://github.com/inviqa/chef-solr
 
 %w{ ubuntu }.each do |os|
   supports os
