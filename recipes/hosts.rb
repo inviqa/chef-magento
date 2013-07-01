@@ -24,6 +24,7 @@ template "/etc/hosts" do
   mode 0644
   variables(
     :fqdn => node['fqdn'],
-    :hostname => node['hostname']
+    :hostname => node['hostname'],
+    :extra_hostnames => node['extra_hostnames']
   )
 end
