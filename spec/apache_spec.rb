@@ -25,6 +25,7 @@ describe 'chef-magento::apache' do
     end
     chef_run.converge 'chef-magento::apache'
     expect(chef_run).to create_file_with_content '/etc/apache2/sites-available/magento.development.local.conf', 'AuthType Basic'
+    expect(chef_run).to create_file_with_content '/etc/apache2/sites-available/magento.development.local.conf', 'Allow from all'
   end
 
   it 'should create an apache vhost with basic auth and exceptions if defined' do
