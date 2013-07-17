@@ -40,18 +40,26 @@
     EnableSendfile <%= @params[:magento]['apache']['enable_sendfile'] %>
 
     <% if @params[:apache]['basic_username'] %>
+        <% if @params[:apache]['allow_from'] %>
+            Satisfy Any
+        <% end %>
     AuthUserFile <%= @params[:magento]['dir'] %>/.htpasswd
-        AuthType Basic
-        AuthName "Protected System"
-        Require valid-user
+    AuthType Basic
+    AuthName "Protected System"
+    Require valid-user
     <% end  %>
 
     ## Apache optimisation by disabling the .htaccess parsing
     ## Directives for securing directorys have been added to this file
     AllowOverride None
     Order allow,deny
-    Allow from all
-
+    <% if @params[:apache]['allow_from'] %>
+        <% @params[:apache]['allow_from'].each do |ip| %>
+            Allow from <%= ip %>
+        <% end %>
+    <% else %>
+        Allow from all
+    <% end %>
     ############################################
     ## uncomment these lines for CGI mode
     ## make sure to specify the correct cgi php binary file name
