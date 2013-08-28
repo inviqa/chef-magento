@@ -21,6 +21,8 @@ default['magento']['redis']['host'] = '127.0.0.1'
 default['magento']['redis']['port'] = '6379'
 default['magento']['redis']['timeout'] = '2.5'
 default['magento']['redis']['database'] = '0'
+default['magento']['redis']['full_page_cache_database'] = '1'
+default['magento']['redis']['session_database'] = '2'
 default['magento']['redis']['force_standalone'] = '0'
 default['magento']['redis']['automatic_cleaning_factor'] = '0'
 default['magento']['redis']['compress_data'] = '1'
@@ -34,7 +36,7 @@ default['magento']['apache']['servername'] = "magento.development.local"
 default['magento']['apache']['server_alias'] = Array.new
 default['magento']['apache']['docroot'] = "/var/www"
 default['magento']['apache']['path'] = "/public"
-default['magento']['apache']['developer_mode'] = "false"
+default['magento']['apache']['developer_mode'] = false
 default['magento']['apache']['additional_rewites'] = ""
 default['magento']['apache']['enable_mmap'] = "On"
 default['magento']['apache']['enable_sendfile'] = "On"
@@ -58,6 +60,7 @@ default['magento']['admin']['lastname'] = "Admin"
 default['magento']['admin']['email'] = "chef@magento.com"
 default['magento']['admin']['user'] = "chef"
 default['magento']['admin']['password'] = '123123pass'
+default['varnish']['cookies'] = ['currency', 'store', 'geoip']
 
 default['magento']['varnish']['backend_servers'] = [
     {
@@ -68,7 +71,7 @@ default['magento']['varnish']['backend_servers'] = [
 default['magento']['varnish']['trusted_servers'] = [
     "127.0.0.1"
 ]
-
+default['magento']['varnish']['ttl_for_static_files'] = '30d'
 
 # Custom XML Snippet
 default['magento']['global']['custom'] = ''
@@ -77,6 +80,8 @@ default['magento']['sample_data']['url'] = "http://www.magentocommerce.com/downl
 
 default['magento']['server']['aliases'] = Array.new
 default['magento']['server']['static_domains'] = Array.new
+
+default['extra_hostnames'] = Array.new
 
 ::Chef::Node.send(:include, Opscode::OpenSSL::Password)
 
