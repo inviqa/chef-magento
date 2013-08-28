@@ -66,7 +66,7 @@
             <host><![CDATA[<%= @magento['redis']['host'] %>]]></host>
              <port><![CDATA[<%= @magento['redis']['port'] %>]]></port>
              <timeout><![CDATA[<%= @magento['redis']['timeout'] %>]]></timeout>
-             <db><![CDATA[<%= @magento['redis']['database'] %>]]></db>
+             <db><![CDATA[<%= @magento['redis']['session_database'] %>]]></db>
              <compression_threshold><![CDATA[<%= @magento['redis']['compress_threshold'] %>]]></compression_threshold><!-- Set to 0 to disable compression -->
              <compression_lib><![CDATA[<%= @magento['redis']['compression_lib'] %>]]></compression_lib><!-- gzip, lzf or snappy -->
         </redis_session>
@@ -120,6 +120,51 @@
              <% end %>
              <% end %>
         </cache>
+
+        <full_page_cache>
+             <backend><![CDATA[<%= @magento['app']['backend_cache'] %>]]></backend><!-- apc / memcached / xcache / Cm_Cache_Backend_Redis empty=file -->
+             <% if @magento['app']['backend_cache'] === 'Cm_Cache_Backend_Redis' %>
+                 <backend_options>
+                     <server><![CDATA[<%= @magento['redis']['host'] %>]]></server> <!-- or absolute path to unix socket for better performance -->
+                     <port><![CDATA[<%= @magento['redis']['port'] %>]]></port>
+                     <database><![CDATA[<%= @magento['redis']['full_page_cache_database'] %>]]></database>
+                     <force_standalone><![CDATA[<%= @magento['redis']['force_standalone'] %>]]></force_standalone><!-- 0 for phpredis, 1 for standalone PHP -->
+                     <automatic_cleaning_factor><![CDATA[<%= @magento['redis']['automatic_cleaning_factor'] %>]]></automatic_cleaning_factor> <!-- Disabled by default -->
+                     <compress_data><![CDATA[<%= @magento['redis']['compress_data'] %>]]></compress_data><!-- 0-9 for compression level, recommended: 0 or 1 -->
+                     <compress_tags><![CDATA[<%= @magento['redis']['compress_tags'] %>]]></compress_tags><!-- 0-9 for compression level, recommended: 0 or 1 -->
+                     <compress_threshold><![CDATA[<%= @magento['redis']['compress_threshold'] %>]]></compress_threshold><!-- Strings below this size will not be compressed -->
+                     <compression_lib><![CDATA[<%= @magento['redis']['compression_lib'] %>]]></compression_lib> <!-- Supports gzip, lzf and snappy -->
+                 </backend_options>
+             <% else %>
+                 <slow_backend><![CDATA[<%= @magento['app']['slow_backend'] %>]]></slow_backend> <!-- database / file (default) - used for 2 levels cache setup, necessary for all shared memory storages -->
+                 <slow_backend_store_data><![CDATA[0]]></slow_backend_store_data>
+                 <auto_refresh_fast_cache><![CDATA[0]]></auto_refresh_fast_cache>
+                 <lifetime><![CDATA[259200]]></lifetime>
+                 <% if @magento['app']['backend_cache'] == "memcached" %>
+                     <memcached><!-- memcached cache backend related config -->
+                         <servers><!-- any number of server nodes can be included -->
+                         <% @magento['app']['backend_servers'].each do |server| %>
+                             <server>
+                                 <host><![CDATA[<%= server[:host] %>]]></host>
+                                 <port><![CDATA[<%= server[:port] %>]]></port>
+                                 <persistent><![CDATA[<%= server[:persistent] %>]]></persistent>
+                                 <weight><![CDATA[<%= server[:weight] %>]]></weight>
+                                 <timeout><![CDATA[<%= server[:timeout] %>]]></timeout>
+                                 <retry_interval><![CDATA[<%= server[:retry_interval] %>]]></retry_interval>
+                                 <status><![CDATA[<%= server[:status] %>]]></status>
+                             </server>
+                         <% end %>
+                         </servers>
+                         <compression><![CDATA[0]]></compression>
+                         <cache_dir><![CDATA[]]></cache_dir>
+                         <hashed_directory_level><![CDATA[]]></hashed_directory_level>
+                         <hashed_directory_umask><![CDATA[]]></hashed_directory_umask>
+                         <file_name_prefix><![CDATA[]]></file_name_prefix>
+                     </memcached>
+                 <% end %>
+             <% end %>
+        </full_page_cache>
+
         <%= @magento['global']['custom'] %>
     </global>
     <admin>
@@ -132,3 +177,4 @@
         </routers>
     </admin>
 </config>
+
