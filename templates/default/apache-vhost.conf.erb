@@ -222,6 +222,10 @@
     </IfModule>
 
     AddType application/x-font-woff woff
+    AddType application/vnd.ms-fontobject eot
+    AddType font/ttf ttf
+    AddType font/otf otf
+
 
     <IfModule mod_expires.c>
         ExpiresActive on
@@ -248,6 +252,12 @@
 
         <FilesMatch "\.(ico|jpe?g|png|gif|swf|css|gz|js|woff)$">
             Header set Cache-Control  "public, max-age=2592000"
+        </FilesMatch>
+        <FilesMatch "\.(ttf|otf|eot)$">
+          Header set Access-Control-Allow-Origin "<%= @params[:site][:servername] %>"
+          <% @params[:site][:server_alias].each do |a| %>
+            Header set Access-Control-Allow-Origin "<%= a %>"
+          <% end %>
         </FilesMatch>
     </IfModule>
 
