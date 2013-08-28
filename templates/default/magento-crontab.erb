@@ -3,5 +3,4 @@
 # for debugging purposes only:
 MAILTO=<%= @magento['admin']['email'] %>
 
-*/5 * * * *  /bin/sh <%= @magento['dir'] %>/cron.sh
-
+<%= @magento['cronjob']['minute'] %> * * * *  /bin/sh <%= @magento['dir'] %>/cron.sh
