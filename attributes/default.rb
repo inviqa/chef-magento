@@ -41,6 +41,11 @@ default['magento']['apache']['additional_rewites'] = ""
 default['magento']['apache']['enable_mmap'] = "On"
 default['magento']['apache']['enable_sendfile'] = "On"
 
+default['magento']['cronjob']['minute'] = "*/5"
+default['magento']['cronjob']['hour'] = "*"
+default['magento']['cronjob']['name'] = "magento-crontab"
+default['magento']['cronjob']['user'] = "root"
+
 default['magento']['sites'] = Array.new
 
 default['magento']['php']['memory_limit'] = "512M"
