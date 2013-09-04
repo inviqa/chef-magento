@@ -16,6 +16,7 @@ depends "memcached"
 depends "chef-varnish"
 depends "chef-magento"
 depends "solr"
+depends "cron", "= 1.2.6"
 
 %w{ ubuntu }.each do |os|
   supports os

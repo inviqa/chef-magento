@@ -42,6 +42,9 @@ default['magento']['apache']['enable_mmap'] = "On"
 default['magento']['apache']['enable_sendfile'] = "On"
 
 default['magento']['cronjob']['minute'] = "*/5"
+default['magento']['cronjob']['hour'] = "*"
+default['magento']['cronjob']['name'] = "magento-crontab"
+default['magento']['cronjob']['user'] = "root"
 
 default['magento']['sites'] = Array.new
 
