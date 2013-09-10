@@ -119,6 +119,7 @@
              </memcached>
              <% end %>
              <% end %>
+             <% if @magento['app']['cache_prefix'] %><prefix><![CDATA[<%= @magento['app']['cache_prefix'] %>]]></prefix><% end %>
         </cache>
 
         <full_page_cache>
@@ -163,6 +164,7 @@
                      </memcached>
                  <% end %>
              <% end %>
+             <% if @magento['app']['fpc_prefix'] != nil %><prefix><![CDATA[<%= @magento['app']['fpc_prefix'] %>]]></prefix><% end %>
         </full_page_cache>
 
         <%= @magento['global']['custom'] %>
