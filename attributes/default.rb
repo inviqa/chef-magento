@@ -78,6 +78,9 @@ default['magento']['varnish']['trusted_servers'] = [
 ]
 default['magento']['varnish']['ttl_for_static_files'] = '30d'
 
+default['magento']['limit_to_ips'] = false
+default['magento']['limited_ips'] = Array.new
+
 # Custom XML Snippet
 default['magento']['global']['custom'] = ''
 
