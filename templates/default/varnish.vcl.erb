@@ -63,7 +63,7 @@ sub vcl_recv {
                 # instead of returning 403 immediately,
                 # pipe it to apache for requesting authorisation
                 # error 403 "Forbidden";
-                return (pipe);
+                return (pass);
             }
         }
     <% end %>
