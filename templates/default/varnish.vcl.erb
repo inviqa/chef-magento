@@ -3,9 +3,9 @@
 include "/etc/varnish/geoip.vcl";
 <% end %>
 
-<% if @magento[:limit_to_ips] %>
+<% if @magento[:ip_whitelist][:enabled] %>
     acl ip_whitelist {
-    <% @magento[:limited_ips].each do |ip| %>
+    <% @magento[:ip_whitelist][:ips].each do |ip| %>
         "<%= ip %>";
     <% end %>
     }
@@ -57,7 +57,7 @@ acl purge {
 }
 
 sub vcl_recv {
-    <% if @magento[:limit_to_ips] %>
+    <% if @magento[:ip_whitelist][:enabled] %>
         if (client.ip !~ ip_whitelist) {
             if (!req.http.Authorization && !req.http.Authenticate) {
                 # instead of returning 403 immediately,
@@ -107,7 +107,7 @@ sub vcl_recv {
             return (pipe);
     }
     if (req.url ~ "^/(index.php/)?(<%= @magento['app']['admin_frontname'] %>|api/|directory/)" || req.url ~ "\?(.*&)*(___store=|SID=[a-zA-Z0-9]{16,})" || req.http.Cookie ~ "adminhtml") {
-        <% if @magento[:limit_to_ips] %>
+        <% if @magento[:ip_whitelist][:enabled] %>
             return (pass);
         <% else %>
             return (pipe);
@@ -243,7 +243,7 @@ sub vcl_hash {
     hash_data(req.http.X-Geo-IP-Country);
     <% end %>
 
-    <% if @magento[:limit_to_ips] %>
+    <% if @magento[:ip_whitelist][:enabled] %>
         hash_data(req.http.Authorization);
         hash_data(req.http.Authenticate);
     <% end %>

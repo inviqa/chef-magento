@@ -51,15 +51,26 @@
     AllowOverride None
 
     Order allow,deny
-    <% if @params[:magento][:limit_to_ips] %>
+    <% if @params[:magento][:ip_whitelist][:enabled] %>
         <% _useProxyEnvCheck = !@params[:ssl] and !node[:varnish].nil? %>
-        <% @params[:magento][:limited_ips].each do |ip| %>
+
+        # Allow access from IPs
+        <% @params[:magento][:ip_whitelist][:ips].each do |ip| %>
             <% if _useProxyEnvCheck %>
                 SetEnvIf X-Forwarded-For ^<%= Regexp.escape(ip) %>$ proxy_env
             <% else %>
                 Allow from <%= ip %>
             <% end %>
         <% end %>
+
+        <% if @params[:magento][:ip_whitelist][:allow_domains] %>
+          # Allow access for certain domains
+          <% @params[:magento][:ip_whitelist][:allow_domains].each do |domain| %>
+            SetEnvIf Host ^<%= Regexp.escape(domain) %>$ pass_through_domain
+          <% end %>
+          Allow from env=pass_through_domain
+        <% end %>
+
         Satisfy Any
         <% if _useProxyEnvCheck %>
             Allow from env=proxy_env
