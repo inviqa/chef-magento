@@ -78,6 +78,19 @@ default['magento']['varnish']['trusted_servers'] = [
 ]
 default['magento']['varnish']['ttl_for_static_files'] = '30d'
 
+# IP whitelisting for Magento stores for test-environments
+#
+# Enable and configure IPs to restrict access to only those IPs. Works in
+# conjunction with default[:apache][:htpasswd], so that either can be used to
+# grant access.
+#
+# Allow_domains lists (sub)domains that can be accessed regardless of IP
+# restrictions. This can be used to serve static content via CDNs when IP
+# restrictions are in place.
+default['magento']['ip_whitelist']['enabled'] = false
+default['magento']['ip_whitelist']['ips'] = Array.new
+default['magento']['ip_whitelist']['allow_domains'] = Array.new
+
 # Custom XML Snippet
 default['magento']['global']['custom'] = ''
 

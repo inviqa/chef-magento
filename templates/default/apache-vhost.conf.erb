@@ -40,7 +40,7 @@
     EnableSendfile <%= @params[:magento]['apache']['enable_sendfile'] %>
 
     <% if @params[:apache]['basic_username'] %>
-    AuthUserFile <%= @params[:magento]['dir'] %>/.htpasswd
+        AuthUserFile <% if @params[:apache]['htpasswd'] %><%= @params[:apache]['htpasswd'] %><% else %><%= @params[:magento]['dir'] %>/.htpasswd<% end %>
         AuthType Basic
         AuthName "Protected System"
         Require valid-user
@@ -49,8 +49,35 @@
     ## Apache optimisation by disabling the .htaccess parsing
     ## Directives for securing directorys have been added to this file
     AllowOverride None
+
     Order allow,deny
-    Allow from all
+    <% if @params[:magento][:ip_whitelist][:enabled] %>
+        <% _useProxyEnvCheck = !@params[:ssl] and !node[:varnish].nil? %>
+
+        # Allow access from IPs
+        <% @params[:magento][:ip_whitelist][:ips].each do |ip| %>
+            <% if _useProxyEnvCheck %>
+                SetEnvIf X-Forwarded-For ^<%= Regexp.escape(ip) %>$ proxy_env
+            <% else %>
+                Allow from <%= ip %>
+            <% end %>
+        <% end %>
+
+        <% if @params[:magento][:ip_whitelist][:allow_domains] %>
+          # Allow access for certain domains
+          <% @params[:magento][:ip_whitelist][:allow_domains].each do |domain| %>
+            SetEnvIf Host ^<%= Regexp.escape(domain) %>$ pass_through_domain
+          <% end %>
+          Allow from env=pass_through_domain
+        <% end %>
+
+        Satisfy Any
+        <% if _useProxyEnvCheck %>
+            Allow from env=proxy_env
+        <% end %>
+    <% else %>
+        Allow from all
+    <% end %>
 
     ############################################
     ## uncomment these lines for CGI mode
@@ -268,11 +295,6 @@
     AddDefaultCharset Off
     #AddDefaultCharset UTF-8
 
-    ############################################
-    ## By default allow all access
-
-    Order allow,deny
-    Allow from all
 
     ############################################
     ## If running in cluster environment, uncomment this

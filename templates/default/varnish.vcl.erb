@@ -3,6 +3,14 @@
 include "/etc/varnish/geoip.vcl";
 <% end %>
 
+<% if @magento[:ip_whitelist][:enabled] %>
+    acl ip_whitelist {
+    <% @magento[:ip_whitelist][:ips].each do |ip| %>
+        "<%= ip %>";
+    <% end %>
+    }
+<% end %>
+
 # Create a health check to verify that the backend server is responding
 # correctly and in a timely manner.
 probe healthcheck {
@@ -49,6 +57,16 @@ acl purge {
 }
 
 sub vcl_recv {
+    <% if @magento[:ip_whitelist][:enabled] %>
+        if (client.ip !~ ip_whitelist) {
+            if (!req.http.Authorization && !req.http.Authenticate) {
+                # instead of returning 403 immediately,
+                # pipe it to apache for requesting authorisation
+                # error 403 "Forbidden";
+                return (pass);
+            }
+        }
+    <% end %>
     set req.backend = backend_director;
 
     if (req.restarts == 0) {
@@ -88,9 +106,12 @@ sub vcl_recv {
         req.request != "DELETE") {
             return (pipe);
     }
-
-    if (req.url ~ "^/(index.php/)?(<%= @magento['app']['admin_frontname'] %>|api|directory)" || req.url ~ "\?(.*&)*(___store=|SID=[a-zA-Z0-9]{16,})" || req.http.Cookie ~ "adminhtml") {
+    if (req.url ~ "^/(index.php/)?(<%= @magento['app']['admin_frontname'] %>|api/|directory/)" || req.url ~ "\?(.*&)*(___store=|SID=[a-zA-Z0-9]{16,})" || req.http.Cookie ~ "adminhtml") {
+        <% if @magento[:ip_whitelist][:enabled] %>
+            return (pass);
+        <% else %>
             return (pipe);
+        <% end %>
     }
 
     if (req.backend.healthy) {
@@ -220,6 +241,11 @@ sub vcl_hash {
     }
     <% if node['varnish']['GeoIP_enabled'] %>
     hash_data(req.http.X-Geo-IP-Country);
+    <% end %>
+
+    <% if @magento[:ip_whitelist][:enabled] %>
+        hash_data(req.http.Authorization);
+        hash_data(req.http.Authenticate);
     <% end %>
     return (hash);
 }
