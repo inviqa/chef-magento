@@ -54,6 +54,11 @@
     <% if @params[:magento][:ip_whitelist][:enabled] %>
         <% _useProxyEnvCheck = !@params[:ssl] and !node[:varnish].nil? %>
 
+        <% if _useProxyEnvCheck %>
+            # Allow Varnish health probe
+            SetEnvIf Request_URI "^/LICENSE.txt$" proxy_env
+        <% end %>
+
         # Allow access from IPs
         <% @params[:magento][:ip_whitelist][:ips].each do |ip| %>
             <% if _useProxyEnvCheck %>
