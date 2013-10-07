@@ -285,11 +285,10 @@
         <FilesMatch "\.(ico|jpe?g|png|gif|swf|css|gz|js|woff)$">
             Header set Cache-Control  "public, max-age=2592000"
         </FilesMatch>
-        <FilesMatch "\.(ttf|otf|eot)$">
-          Header set Access-Control-Allow-Origin "<%= @params[:site][:servername] %>"
-          <% @params[:site][:server_alias].each do |a| %>
-            Header set Access-Control-Allow-Origin "<%= a %>"
-          <% end %>
+        <FilesMatch "\.(ttf|otf|eot|woff)$">
+            # Setting this to asterisk since due to redirection issues we don't
+            # have a reliable way to determine the origin domain.
+            Header set Access-Control-Allow-Origin "*"
         </FilesMatch>
     </IfModule>
 
