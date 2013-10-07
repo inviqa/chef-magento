@@ -285,7 +285,7 @@
         <FilesMatch "\.(ico|jpe?g|png|gif|swf|css|gz|js|woff)$">
             Header set Cache-Control  "public, max-age=2592000"
         </FilesMatch>
-        <FilesMatch "\.(ttf|otf|eot)$">
+        <FilesMatch "\.(ttf|otf|eot|woff)$">
           Header set Access-Control-Allow-Origin "<%= @params[:site][:servername] %>"
           <% @params[:site][:server_alias].each do |a| %>
             Header set Access-Control-Allow-Origin "<%= a %>"
