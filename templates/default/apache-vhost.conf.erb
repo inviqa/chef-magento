@@ -1,8 +1,8 @@
 <% if @params[:ssl] %>
 <VirtualHost *:<%= @params[:magento]['apache']['secure_port'] %>>
   SSLEngine on
-  SSLCertificateKeyFile ssl/magento.key
-  SSLCertificateFile ssl/magento.pem
+  SSLCertificateKeyFile <%= @params[:site]['ssl']['keyfile'] %>
+  SSLCertificateFile <%= @params[:site]['ssl']['certfile'] %>
   SSLProtocol all
   SSLCipherSuite ALL:!ADH:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv2:+EXP:+eNULL
 
@@ -11,7 +11,9 @@
 <% end %>
 
   ServerName <%= @params[:site][:servername] %>
+  <% if defined?(@params[:site][:server_alias]) and !@params[:site][:server_alias].nil? %>
   ServerAlias <% @params[:site][:server_alias].each do |a| %><%= a %> <% end %>
+  <% end %>
 
   DocumentRoot <%= @params[:magento]['dir'] %>
 
