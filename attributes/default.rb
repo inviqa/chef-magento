@@ -40,6 +40,8 @@ default['magento']['apache']['developer_mode'] = false
 default['magento']['apache']['additional_rewites'] = ""
 default['magento']['apache']['enable_mmap'] = "On"
 default['magento']['apache']['enable_sendfile'] = "On"
+default['magento']['apache']['ssl']['keyfile'] = "ssl/magento.key"
+default['magento']['apache']['ssl']['certfile'] = "ssl/magento.pem"
 
 default['magento']['sites'] = Array.new
 
