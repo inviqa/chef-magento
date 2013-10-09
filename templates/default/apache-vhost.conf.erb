@@ -3,10 +3,10 @@
   SSLEngine on
   SSLCertificateKeyFile <%= @params[:site]['ssl']['keyfile'] %>
   SSLCertificateFile <%= @params[:site]['ssl']['certfile'] %>
-  <% if defined?(@params[:site]['ssl']['cacertfile']) %>
+  <% if defined?(@params[:site]['ssl']['cacertfile']) and @params[:site]['ssl']['cacertfile'].to_s != "" %>
   SSLCACertificateFile <%= @params[:site]['ssl']['cacertfile'] %>
   <% end %>
-  <% if defined?(@params[:site]['ssl']['cacertchainfile']) %>
+  <% if defined?(@params[:site]['ssl']['cacertchainfile']) and @params[:site]['ssl']['cacertchainfile'].to_s != "" %>
   SSLCACertificateChainFile <%= @params[:site]['ssl']['cacertchainfile'] %>
   <% end %>
   SSLProtocol all
