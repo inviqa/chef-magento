@@ -6,8 +6,8 @@
   <% if defined?(@params[:site]['ssl']['cacertfile']) %>
   SSLCACertificateFile <%= @params[:site]['ssl']['cacertfile'] %>
   <% end %>
-  <% if defined?(@params[:site]['ssl']['cacertchainfile']) %>
-  SSLCACertificateChainFile <%= @params[:site]['ssl']['cacertchainfile'] %>
+  <% if defined?(@params[:site]['ssl']['certchainfile']) %>
+  SSLCertificateChainFile <%= @params[:site]['ssl']['certchainfile'] %>
   <% end %>
   SSLProtocol all
   SSLCipherSuite ALL:!ADH:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv2:+EXP:+eNULL
