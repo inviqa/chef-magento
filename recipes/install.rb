@@ -50,8 +50,8 @@ end
 
 if File.exists?("#{node['magento']['dir']}/install.php")
   if not_installed?
-    url = URI::HTTP.build({:host=>node['magento']['apache']['servername'],:port=>node['magento']['apache']['unsecure_port'],:path=>'/'})
-    secure_url = URI::HTTPS.build({:host=>node['magento']['apache']['servername'],:port=>node['magento']['apache']['secure_port'],:path=>'/'})
+    url = URI::HTTP.build({:host=>node['magento']['apache']['servername'],:port=>Integer(node['magento']['apache']['unsecure_port']),:path=>'/'})
+    secure_url = URI::HTTPS.build({:host=>node['magento']['apache']['servername'],:port=>Integer(node['magento']['apache']['secure_port']),:path=>'/'})
     install =   <<-EOH
     php -f install.php -- \
     --license_agreement_accepted "yes" \
