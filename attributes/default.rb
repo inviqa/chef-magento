@@ -62,6 +62,7 @@ default['magento']['admin']['lastname'] = "Admin"
 default['magento']['admin']['email'] = "chef@magento.com"
 default['magento']['admin']['user'] = "chef"
 default['magento']['admin']['password'] = '123123pass'
+default['varnish']['cookies'] = ['currency', 'store', 'geoip']
 
 default['magento']['varnish']['backend_servers'] = [
     {
@@ -81,6 +82,8 @@ default['magento']['sample_data']['url'] = "http://www.magentocommerce.com/downl
 
 default['magento']['server']['aliases'] = Array.new
 default['magento']['server']['static_domains'] = Array.new
+
+default['extra_hostnames'] = Array.new
 
 ::Chef::Node.send(:include, Opscode::OpenSSL::Password)
 
