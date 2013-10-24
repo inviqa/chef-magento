@@ -32,6 +32,7 @@ default['magento']['redis']['compression_lib'] = 'gzip'
 
 default['magento']['apache']['unsecure_port'] = "80"
 default['magento']['apache']['secure_port'] = "443"
+default['magento']['apache']['secure_ip'] = "*"
 default['magento']['apache']['servername'] = "magento.development.local"
 default['magento']['apache']['server_alias'] = Array.new
 default['magento']['apache']['docroot'] = "/var/www"
