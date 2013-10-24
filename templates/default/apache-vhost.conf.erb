@@ -1,5 +1,5 @@
 <% if @params[:ssl] %>
-<VirtualHost <%= @params[:magento]['apache']['secure_ip'] %>:<%= @params[:magento]['apache']['secure_port'] %>>
+<VirtualHost <%= @params[:site]['secure_ip'] %>:<%= @params[:magento]['apache']['secure_port'] %>>
   SSLEngine on
   SSLCertificateKeyFile <%= @params[:site]['ssl']['keyfile'] %>
   SSLCertificateFile <%= @params[:site]['ssl']['certfile'] %>
