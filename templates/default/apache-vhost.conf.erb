@@ -1,8 +1,16 @@
 <% if @params[:ssl] %>
 <VirtualHost <%= @params[:site]['secure_ip'] || '*' %>:<%= @params[:magento]['apache']['secure_port'] %>>
   SSLEngine on
+  <% if defined?(@params[:site]['ssl']['keyfile']) -%>
   SSLCertificateKeyFile <%= @params[:site]['ssl']['keyfile'] %>
+  <% else -%>
+  SSLCertificateKeyFile <%= @params[:magento]['apache']['ssl']['keyfile'] %>
+  <% end -%>
+  <% if defined?(@params[:site]['ssl']['certfile']) -%>
   SSLCertificateFile <%= @params[:site]['ssl']['certfile'] %>
+  <% else -%>
+  SSLCertificateKeyFile <%= @params[:magento]['apache']['ssl']['certfile'] %>
+  <% end -%>
   <% if defined?(@params[:site]['ssl']['cacertfile']) and !@params[:site]['ssl']['cacertfile'].nil? %>
   SSLCACertificateFile <%= @params[:site]['ssl']['cacertfile'] %>
   <% end %>
