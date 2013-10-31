@@ -33,21 +33,29 @@ if File.exists?("#{node['magento']['dir']}/app/etc/local.xml")
 EOH
     end
 
+    stores = [];
     if !site['stores'].nil?
-      site['stores'].each do |store|
-        template "#{Chef::Config[:file_cache_path]}/stores_config.sql" do
-          source "stores_config.sql.erb"
-          mode 0644
-          variables({
-            :run_code => store['run_code'],
-            :servername => site['servername']
-          })
-        end
-        bash "magento-stores-config" do
-          code <<-EOH
-/usr/bin/mysql -u root -p#{node['mysql']['server_root_password']} #{node['magento']['db']['name']} -v < #{Chef::Config[:file_cache_path]}/stores_config.sql
+        stores = site['stores']
+    end
+
+    # if the magento apache configuration has a run_code, then treat it
+    # as a store
+    if node['magento']['apache'].has_key?('run_code')
+        stores << node['magento']['apache']
+    end
+
+    stores.each do |store|
+      template "#{Chef::Config[:file_cache_path]}/stores_config.sql" do
+        source "stores_config.sql.erb"
+        mode 0644
+        variables({
+          :store => store
+        })
+      end
+      bash "magento-stores-config" do
+        code <<-EOH
+/usr/bin/mysql -u root -p#{node['mysql']['server_root_password']} #{node['magento']['db']['database']} -v < #{Chef::Config[:file_cache_path]}/stores_config.sql
 EOH
-        end
       end
     end
 
