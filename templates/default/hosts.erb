@@ -1,7 +1,7 @@
-127.0.0.1   <%= @fqdn %> <%= @hostname %> localhost localhost.localdomain
-<%- @sites.each do |site| %>
- <%= site['servername'] %>
-<% end %>
+127.0.0.1   <%= @fqdn %> <%= @hostname %> localhost localhost.localdomain<%-
+ @sites.each do |site| -%>
+ <%= site['servername'] -%>
+<%- end -%>
 
 127.78.28.87 status-loopback
 
