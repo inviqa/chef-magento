@@ -9,7 +9,7 @@
   <% if defined?(@params[:site]['ssl']['certfile']) -%>
   SSLCertificateFile <%= @params[:site]['ssl']['certfile'] %>
   <% else -%>
-  SSLCertificateKeyFile <%= @params[:magento]['apache']['ssl']['certfile'] %>
+  SSLCertificateFile <%= @params[:magento]['apache']['ssl']['certfile'] %>
   <% end -%>
   <% if defined?(@params[:site]['ssl']['cacertfile']) and !@params[:site]['ssl']['cacertfile'].nil? %>
   SSLCACertificateFile <%= @params[:site]['ssl']['cacertfile'] %>
