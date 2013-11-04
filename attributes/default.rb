@@ -43,6 +43,8 @@ default['magento']['apache']['enable_sendfile'] = "On"
 default['magento']['apache']['ssl']['keyfile'] = "ssl/magento.key"
 default['magento']['apache']['ssl']['certfile'] = "ssl/magento.pem"
 
+default['magento']['cronjob']['minute'] = "*/5"
+
 default['magento']['sites'] = Array.new
 
 default['magento']['php']['memory_limit'] = "512M"
