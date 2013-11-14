@@ -1,5 +1,5 @@
 define :magento_site do
-  instance_resource @params[:instance_resource]
+  instance_resource = @params[:instance_resource]
 
   site_data = {
     "servername" => @params[:servername],
