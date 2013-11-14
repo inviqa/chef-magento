@@ -9,6 +9,10 @@ define :magento_site do
   }
 
   def configure_apache(servername, ssl)
+
+    y instance_resource
+    exit
+
     web_app servername do
       template "apache-vhost.conf.erb"
       ssl ssl
@@ -22,5 +26,4 @@ define :magento_site do
 
   configure_apache(@params[:servername], false)
   configure_apache("#{@params[:servername]}.ssl", true)
-
 end
