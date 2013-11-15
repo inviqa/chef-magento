@@ -21,20 +21,16 @@ end
 
 # Configure magento instance
 action :configure do
-
-  site_data = { "servername" =>  new_resource.servername }
-
   custom_data = {
     "magento" => {
       "instance" => new_resource.instance,
       "environment" => new_resource.environment,
       "dir" => new_resource.dir,
-      "apache_document_root" => new_resource.apache_document_root,
-      "instance" => {
-        "servername" => new_resource.servername
-      }
-    }
+      "apache_document_root" => new_resource.apache_document_root
+    },
+    "site" => { "servername" => new_resource.servername }
   }
+
   # merge custom information about an instance
   merge_deep node.set, custom_data
 
@@ -63,7 +59,7 @@ action :configure do
 
   # Create directories under sites with correct user and group
   current = "#{node[:capistrano][:sites_dir]}"
-  "#{new_resource.magento[:environment]}/#{node[:capistrano][:shared_dir]}/Magento/app/etc".split('/').each do |dir|
+  "#{node[:magento][:environment]}/#{node[:capistrano][:shared_dir]}/Magento/app/etc".split('/').each do |dir|
     current = "#{current}/#{dir}"
     directory current do
       owner node[:capistrano][:deploy_user]
@@ -76,32 +72,32 @@ action :configure do
   # create local xml on a shared dir or magento dir
   if defined?(node[:capistrano][:shared_dir])
     capistrano = node[:capistrano]
-    template "#{capistrano[:sites_dir]}/#{new_resource.magento[:environment]}/#{capistrano[:shared_dir]}/Magento/app/etc/local.xml" do
+    template "#{capistrano[:sites_dir]}/#{node[:magento][:environment]}/#{capistrano[:shared_dir]}/Magento/app/etc/local.xml" do
       source "local.xml.erb"
       mode 0644
       owner node[:capistrano][:deploy_user]
       group node[:capistrano][:deploy_group]
       variables({
-        :magento => new_resource.magento
+        :magento => node[:magento]
       })
     end
   else
-    template "#{new_resource.magento[:dir]}/app/etc/local.xml" do
+    template "#{node[:magento][:dir]}/app/etc/local.xml" do
       cookbook new_resource.template_cookbook
       source "local.xml.erb"
       mode 0644
       variables({
-        :magento => new_resource.magento
+        :magento => node[:magento]
       })
     end
   end
 
-  template "/etc/cron.d/#{new_resource.magento[:environment]}" do
+  template "/etc/cron.d/#{node[:magento][:environment]}" do
     source "magento-crontab.erb"
     mode 0644
     variables({
       :user => "root",
-      :magento => new_resource.magento
+      :magento => node[:magento]
     })
   end
 
@@ -110,9 +106,9 @@ action :configure do
     template "apache-vhost.conf.erb"
     ssl false
     apache node[:apache]
-    php new_resource.magento[:php]
-    site site_data
-    magento new_resource.magento
+    php node[:magento][:php]
+    site node[:site]
+    magento node[:magento]
     notifies :reload, resources("service[apache2]"), :delayed
   end
 
@@ -121,9 +117,9 @@ action :configure do
     template "apache-vhost.conf.erb"
     ssl true
     apache node[:apache]
-    php new_resource.magento[:php]
-    site site_data
-    magento new_resource.magento
+    php node[:magento][:php]
+    site node[:site]
+    magento node[:magento]
     notifies :reload, resources("service[apache2]"), :delayed
   end
 
