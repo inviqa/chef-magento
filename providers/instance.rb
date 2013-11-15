@@ -28,7 +28,10 @@ action :configure do
       "dir" => new_resource.dir,
       "apache_document_root" => new_resource.apache_document_root
     },
-    "site" => { "servername" => new_resource.servername }
+    "site" => {
+      "servername" => new_resource.servername,
+      "newrelic_name" => new_resource.newrelic_name
+    }
   }
 
   # merge custom information about an instance

@@ -14,7 +14,8 @@ define :magento_site do
       "servername" => @params[:servername],
       "run_code" => @params[:run_code],
       "additional_rewites" => @params[:additional_rewites],
-      "server_alias" => @params[:server_alias]
+      "server_alias" => @params[:server_alias],
+      "newrelic_name" => @params[:newrelic_name]
     }
   }
   merge_deep node.set, site_data
