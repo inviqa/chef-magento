@@ -14,3 +14,4 @@ attribute :servername, :kind_of => String
 attribute :data_bag_folder, :kind_of => String
 attribute :data_bag_item, :kind_of => String
 attribute :magento, :kind_of => Hash, :default => {}
+attribute :newrelic_name, :kind_of => String
