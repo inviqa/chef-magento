@@ -1,29 +1,37 @@
 define :magento_site do
-  instance_resource = @params[:instance_resource]
+  def merge_deep(node, data)
+    data.each do |key, value|
+        if value.class == Hash
+            merge_deep node[key], value
+        else
+            node[key] = value
+        end
+    end
+  end
 
   site_data = {
-    "servername" => @params[:servername],
-    "run_code" => @params[:run_code],
-    "additional_rewrite" => @params[:additional_rewrite],
-    "server_alias" => @params[:server_alias]
+    "site" => {
+      "servername" => @params[:servername],
+      "run_code" => @params[:run_code],
+      "additional_rewites" => @params[:additional_rewites],
+      "server_alias" => @params[:server_alias]
+    }
   }
+  merge_deep node.set, site_data
 
-  def configure_apache(servername, ssl)
-
-    y instance_resource
-    exit
-
+  def configure_apache(servername, is_ssl, resource)
     web_app servername do
+      cookbook "chef-magento"
       template "apache-vhost.conf.erb"
-      ssl ssl
-      apache instance_resource.magento[:apache]
-      php instance_resource.magento[:php]
-      site site_data
-      magento instance_resource.magento
+      ssl is_ssl
+      apache node[:apache]
+      php resource.magento[:php]
+      site node[:site]
+      magento resource.magento
       notifies :reload, resources("service[apache2]"), :delayed
     end
   end
 
-  configure_apache(@params[:servername], false)
-  configure_apache("#{@params[:servername]}.ssl", true)
+  configure_apache(@params[:servername], false, @params[:instance_resource])
+  configure_apache("#{@params[:servername]}.ssl", true, @params[:instance_resource])
 end
