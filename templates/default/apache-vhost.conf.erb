@@ -377,4 +377,11 @@
     # Include any additional configuration for the project
     Include <%= @params[:magento]['apache']['additional_config_path'] %>/*.conf
     <% end %>
+
+    <% unless @params[:site][:newrelic_name].nil? %>
+      <IfModule php5_module>
+        php_value newrelic.appname "<%=@params[:site][:newrelic_name]%>"
+      </IfModule>
+    <% end %>
+
 </VirtualHost>
