@@ -19,8 +19,8 @@ def merge_data_bag(data_bag_folder, data_bag_item)
   merge_deep node.set, data_bag_data
 end
 
-# Configure magento instance
-action :configure do
+#
+def merge_custom_data()
   custom_data = {
     "magento" => {
       "instance" => new_resource.instance,
@@ -30,15 +30,29 @@ action :configure do
     },
     "site" => {
       "servername" => new_resource.servername,
-      "newrelic_name" => new_resource.newrelic_name
+      "newrelic_name" => new_resource.newrelic_name,
+      "run_code" => "",
+      "additional_rewites" => "",
+      "server_alias" => []
     }
   }
 
   # merge custom information about an instance
   merge_deep node.set, custom_data
+end
+
+# Configure magento instance
+action :configure do
+
+  # merge custom information about an instance
+  merge_custom_data
 
   # merge data bag item
   merge_data_bag(new_resource.data_bag_folder, new_resource.data_bag_item)
+
+  # Update instance attribute value
+  new_resource.magento = node[:magento]
+  new_resource.updated_by_last_action(true)
 
   # Create user group.
   group node[:capistrano][:deploy_group] do
