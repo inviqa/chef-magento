@@ -48,6 +48,11 @@
   SetEnvIf MAGE_RUN_TYPE !.* MAGE_RUN_TYPE=<%= @params[:site][:run_type] %>
 <% end %>
 
+<% if defined?(@params[:site]['additional_config']) %>
+  # Write any additional configuration
+  <%= @params[:site]['additional_config'] %>
+<% end %>
+
   <Directory />
     Options FollowSymLinks
     AllowOverride All
