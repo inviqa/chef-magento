@@ -12,7 +12,7 @@ default['magento']['app']['use_secure_admin'] = "yes"
 default['magento']['app']['multi_session_save'] = "db" # files|db|memcache|redis
 default['magento']['app']['session_memcache_ip'] = "127.0.0.1"
 default['magento']['app']['session_memcache_port'] = "11211"
-default['magento']['app']['backend_cache'] = "file" # apc|memcached|xcache|file|Cm_Cache_Backend_Redis
+default['magento']['app']['backend_cache'] = "File" # apc|memcached|xcache|File|Cm_Cache_Backend_Redis
 default['magento']['app']['slow_backend'] = "database" # database|file
 default['magento']['app']['backend_servers'] = Array.new
 
