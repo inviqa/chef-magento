@@ -18,6 +18,7 @@ action :configure do
     "site" => {
       "servername" => new_resource.servername,
       "run_code" => new_resource.run_code,
+      "additional_config" => new_resource.additional_config,
       "additional_rewites" => new_resource.additional_rewites,
       "server_alias" => new_resource.server_alias,
       "newrelic_name" => new_resource.newrelic_name
