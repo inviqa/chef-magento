@@ -25,6 +25,7 @@ template "/etc/hosts" do
   variables(
     :fqdn => node['fqdn'],
     :hostname => node['hostname'],
-    :extra_hostnames => node['extra_hostnames']
+    :extra_hostnames => node['extra_hostnames'],
+    :hosts => node['hosts']
   )
 end
