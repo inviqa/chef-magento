@@ -87,6 +87,8 @@ default['magento']['server']['static_domains'] = Array.new
 
 default['extra_hostnames'] = Array.new
 
+default['hosts']['entries'] = Array.new
+
 ::Chef::Node.send(:include, Opscode::OpenSSL::Password)
 
 default_unless['magento']['db']['password'] = secure_password
