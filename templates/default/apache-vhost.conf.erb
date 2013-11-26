@@ -57,9 +57,13 @@
     Require valid-user
     <% end  %>
 
+    <% if @params[:magento]['apache']['parse_htaccess'] %>
+    AllowOverride All
+    <% else %>
     ## Apache optimisation by disabling the .htaccess parsing
     ## Directives for securing directorys have been added to this file
     AllowOverride None
+    <% end %>
     Order allow,deny
     <% if @params[:apache]['allow_from'] %>
         <% @params[:apache]['allow_from'].each do |ip| %>
