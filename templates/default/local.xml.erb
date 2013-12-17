@@ -35,6 +35,10 @@
                     <dbname><![CDATA[<%= @magento['db']['database'] %>]]></dbname>
                     <persistent><![CDATA[false]]></persistent><!-- Persistent DB connection true / false / empty=false -->
                     <active>1</active>
+                    <use />
+                    <model>mysql4</model>
+                    <initStatements>SET NAMES utf8</initStatements>
+                    <type>pdo_mysql</type>
                 </connection>
             </default_setup>
             <default_read>
@@ -47,6 +51,9 @@
                       <persistent><![CDATA[false]]></persistent><!-- Persistent DB connection true / false / empty=false -->
                       <active>1</active>
                       <use />
+                      <model>mysql4</model>
+                      <initStatements>SET NAMES utf8</initStatements>
+                      <type>pdo_mysql</type>
                   </connection>
               </default_read>
               <default_write>
@@ -59,6 +66,9 @@
                       <persistent><![CDATA[false]]></persistent><!-- Persistent DB connection true / false / empty=false -->
                       <active>1</active>
                       <use />
+                      <model>mysql4</model>
+                      <initStatements>SET NAMES utf8</initStatements>
+                      <type>pdo_mysql</type>
                   </connection>
               </default_write>
         </resources>
