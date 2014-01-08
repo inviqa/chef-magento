@@ -1,6 +1,7 @@
 # General settings
 default['magento']['dir'] = "/var/www/magento.development.local/public"
 
+default['magento']['app']['base_path'] = "public/"
 default['magento']['app']['locale'] = "en_GB"
 default['magento']['app']['timezone'] = "Europe/London"
 default['magento']['app']['currency'] = "GBP"
@@ -86,6 +87,13 @@ default['magento']['server']['aliases'] = Array.new
 default['magento']['server']['static_domains'] = Array.new
 
 default['extra_hostnames'] = Array.new
+
+# Capistrano setup
+default['magento']['capistrano']['enabled'] = false
+default['magento']['capistrano']["app_shared_dirs"] = ["/app/etc", "/sitemaps", "/media", "/var", "/staging"]
+default['magento']['capistrano']["app_shared_files"] = ["/app/etc/local.xml"]
+default['magento']['capistrano']["nfs_path"] = false
+default['magento']['capistrano']["nfs_symlinks"] = ["/media", "/staging", "/sitemaps", "/var/locks"]
 
 ::Chef::Node.send(:include, Opscode::OpenSSL::Password)
 
