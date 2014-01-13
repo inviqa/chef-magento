@@ -109,6 +109,8 @@ default['magento']['capistrano']["app_shared_dirs"] = ["/app/etc", "/sitemaps", 
 default['magento']['capistrano']["app_shared_files"] = ["/app/etc/local.xml"]
 default['magento']['capistrano']["nfs_path"] = false
 default['magento']['capistrano']["nfs_symlinks"] = ["/media", "/staging", "/sitemaps", "/var/locks"]
+default['magento']['capistrano']["deploy_owner"] = "deploy"
+default['magento']['capistrano']["deploy_group"] = "deploy"
 
 ::Chef::Node.send(:include, Opscode::OpenSSL::Password)
 
