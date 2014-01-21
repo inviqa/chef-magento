@@ -131,7 +131,7 @@
              </memcached>
              <% end %>
              <% end %>
-             <% if @magento['app']['cache_prefix'] %><prefix><![CDATA[<%= @magento['app']['cache_prefix'] %>]]></prefix><% end %>
+             <% if @magento['app']['cache_prefix'] != nil %><prefix><![CDATA[<%= @magento['app']['cache_prefix'] %>]]></prefix><% end %>
         </cache>
 
         <full_page_cache>
