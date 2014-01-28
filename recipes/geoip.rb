@@ -1,8 +1,8 @@
 #
 # Cookbook Name:: chef-magento
-# Recipe:: varnish
+# Recipe:: geoip
 #
-# Copyright 2012, Alistair Stead
+# Copyright 2013, Marco Lopes
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,16 +17,4 @@
 # limitations under the License.
 #
 
-include_recipe "chef-varnish"
-
-begin
-  t = resources(:template => File.join(node['varnish']['config_dir'], 'default.vcl'))
-  t.source "varnish.vcl.erb"
-  t.cookbook "chef-magento"
-  t.variables({
-    :params => node['varnish'],
-    :magento => node['magento']
-  })
-rescue Chef::Exceptions::ResourceNotFound
-  Chef::Log.warn "could not find template #{node['varnish']['config_dir']}/default.vcl to modify"
-end
+node['varnish']['cookies'].push('geoip');
