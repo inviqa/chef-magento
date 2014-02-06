@@ -33,7 +33,7 @@
                     <username><![CDATA[<%= @magento['db']['username'] %>]]></username>
                     <password><![CDATA[<%= @magento['db']['password'] %>]]></password>
                     <dbname><![CDATA[<%= @magento['db']['database'] %>]]></dbname>
-                    <persistent><![CDATA[false]]></persistent><!-- Persistent DB connection true / false / empty=false -->
+                    <persistent><![CDATA[0]]></persistent><!-- Persistent DB connection true / false / empty=false -->
                     <active>1</active>
                 </connection>
             </default_setup>
@@ -44,7 +44,7 @@
                       <password><![CDATA[<%= @magento['db']['password'] %>]]></password>
                       <dbname><![CDATA[<%= @magento['db']['database'] %>]]></dbname>
                       <type><![CDATA[pdo_mysql]]></type>
-                      <persistent><![CDATA[false]]></persistent><!-- Persistent DB connection true / false / empty=false -->
+                      <persistent><![CDATA[0]]></persistent><!-- Persistent DB connection true / false / empty=false -->
                       <active>1</active>
                   </connection>
               </default_read>
@@ -55,7 +55,7 @@
                       <password><![CDATA[<%= @magento['db']['password'] %>]]></password>
                       <dbname><![CDATA[<%= @magento['db']['database'] %>]]></dbname>
                       <type><![CDATA[pdo_mysql]]></type>
-                      <persistent><![CDATA[false]]></persistent><!-- Persistent DB connection true / false / empty=false -->
+                      <persistent><![CDATA[0]]></persistent><!-- Persistent DB connection true / false / empty=false -->
                       <active>1</active>
                   </connection>
               </default_write>
