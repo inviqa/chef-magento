@@ -1,3 +1,5 @@
+#include_attribute "nginx"
+
 # General settings
 default['magento']['dir'] = "/var/www/magento.development.local/public"
 
@@ -17,6 +19,7 @@ default['magento']['app']['slow_backend'] = "database" # database|file
 default['magento']['app']['backend_servers'] = Array.new
 
 
+default['magento']['redis']['redis_class'] = 'Cm_Cache_Backend_Redis'
 default['magento']['redis']['host'] = '127.0.0.1'
 default['magento']['redis']['port'] = '6379'
 default['magento']['redis']['timeout'] = '2.5'
@@ -87,3 +90,63 @@ default['magento']['server']['static_domains'] = Array.new
 default_unless['magento']['db']['password'] = secure_password
 default_unless['magento']['varnish']['perge_key'] = secure_password
 default_unless['magento']['admin']['password'] = secure_password
+
+#----------------------------------
+
+default['magento']['dir'] = "/var/www/magento.development.local/public"
+
+default['ssl'] = 'on'
+default['magento']['nginx']['basic_authentication'] = 'on'
+
+default['magento']['nginx']['ssl']['keyfile']   = 'magento.key'
+default['magento']['nginx']['ssl']['certfile']  = 'magento.crt'
+
+default['magento']['nginx']['unsecure_port']                    = '80'
+default['magento']['nginx']['secure_port']                      = '443'
+default['magento']['nginx']['servername']                       = 'magento.development.local'
+default['magento']['nginx']['developer_mode']                   = false
+default['magento']['nginx']['additional_config_path']           = '/mnt/magento.development.local/config.d'
+default['magento']['nginx']['docroot']                          = "/var/www"
+default['magento']['nginx']['storecode_mapping']                = [
+    "magento.development.local default",
+]
+
+default['nginx']['multi_accept']                = 'on'
+default['nginx']['server_tokens']               = 'off'
+default['nginx']['tcp_nopush']                  = 'on'
+default['nginx']['tcp_nodelay']                 = 'on'
+default['nginx']['gzip_vary']                   = 'on'
+default['nginx']['gzip_buffers']                = '16 8k'
+default['nginx']['gzip_min_length']             = '1024'
+default['nginx']['keepalive_timeout']           = '10'
+default['nginx']['fastcgi_connection_timeout']  = '65'
+default['nginx']['fastcgi_send_timeout']        = '7200'
+default['nginx']['fastcgi_read_timeout']        = '7200'
+default['nginx']['ssl_dir']                     = "#{node['nginx']['dir']}/ssl"
+
+default['php-fpm']['dir'] = "/etc/php-fpm.d"
+default['php-fpm']['process_manager']['type'] = "dynamic"
+default['php-fpm']['process_manager']['max_children'] = "50"
+default['php-fpm']['process_manager']['start_servers'] = "5"
+default['php-fpm']['process_manager']['min_spare_servers'] = "5"
+default['php-fpm']['process_manager']['max_spare_servers'] = "35"
+default['php-fpm']['process_manager']['max_requests'] = "0"
+
+default['magento']['php']['memory_limit'] = "512M"
+default['magento']['php']['max_execution_time'] = "120"
+default['magento']['php']['display_errors'] = "Off"
+default['magento']['php']['html_errors'] = "Off"
+default['magento']['php']['upload_max_filesize'] = '50M'
+
+default['magento']['varnish']['backend_servers'] = [
+    {
+        "name" => "web1",
+        "ip" => "127.0.0.1"
+    }
+]
+default['magento']['varnish']['trusted_servers'] = [
+    "127.0.0.1"
+]
+default['magento']['varnish']['ttl_for_static_files'] = '30d'
+
+default['webserver_type'] = 'apache'

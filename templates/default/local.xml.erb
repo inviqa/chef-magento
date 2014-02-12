@@ -78,8 +78,8 @@
         <% end %>
         <session_cache_limiter><![CDATA[nocache]]></session_cache_limiter><!-- see http://php.net/manual/en/function.session-cache-limiter.php#82174 for possible values -->
         <cache>
-             <backend><![CDATA[<%= @magento['app']['backend_cache'] %>]]></backend><!-- apc / memcached / xcache / Cm_Cache_Backend_Redis empty=file -->
-             <% if @magento['app']['backend_cache'] === 'Cm_Cache_Backend_Redis' %>
+             <backend><![CDATA[<%= @magento['app']['backend_cache'] %>]]></backend><!-- apc / memcached / xcache / Cm_Cache_Backend_Redis / Mage_Cache_Backed_Redis empty=file -->
+             <% if @magento['app']['backend_cache'] === @magento['redis']['redis_class'] %>
                 <backend_options>
                     <server><![CDATA[<%= @magento['redis']['host'] %>]]></server> <!-- or absolute path to unix socket for better performance -->
                      <port><![CDATA[<%= @magento['redis']['port'] %>]]></port>
@@ -122,8 +122,8 @@
         </cache>
 
         <full_page_cache>
-             <backend><![CDATA[<%= @magento['app']['backend_cache'] %>]]></backend><!-- apc / memcached / xcache / Cm_Cache_Backend_Redis empty=file -->
-             <% if @magento['app']['backend_cache'] === 'Cm_Cache_Backend_Redis' %>
+             <backend><![CDATA[<%= @magento['app']['backend_cache'] %>]]></backend><!-- apc / memcached / xcache / Cm_Cache_Backend_Redis / Mage_Cache_Backed_Redis empty=file -->
+             <% if @magento['app']['backend_cache'] === @magento['redis']['redis_class'] %>
                  <backend_options>
                      <server><![CDATA[<%= @magento['redis']['host'] %>]]></server> <!-- or absolute path to unix socket for better performance -->
                      <port><![CDATA[<%= @magento['redis']['port'] %>]]></port>

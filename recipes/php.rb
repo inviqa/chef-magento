@@ -1,6 +1,6 @@
 #
 # Cookbook Name:: chef-magento
-# Recipe:: default
+# Recipe:: php
 #
 # Copyright 2012, Alistair Stead
 #
@@ -17,10 +17,9 @@
 # limitations under the License.
 #
 
-include_recipe "chef-magento::php"
-if "#{node['webserver_type']}" == 'apache'
-    include_recipe "chef-magento::apache"
-else
-    include_recipe "chef-magento::nginx"
+include_recipe "chef-php-extra"
+if platform?("ubuntu", "debian")
+  include_recipe "php::module_curl"
 end
-
+include_recipe "chef-php-extra::module_mysql"
+include_recipe "chef-php-extra::module_memcache"

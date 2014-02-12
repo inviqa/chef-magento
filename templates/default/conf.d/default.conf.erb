@@ -1,0 +1,126 @@
+server {
+    listen <%= node['magento']['nginx']['unsecure_port'] %>;
+    <% if node['ssl'] %>
+        listen <%= node['magento']['nginx']['secure_port'] %> ssl;
+    <% end %>
+
+    <% if defined?(node['magento']['nginx'][:server_alias]) and !node['magento']['nginx'][:server_alias].nil? %>
+        server_name <%= node['magento']['nginx'][:servername] %> <% node['magento']['nginx'][:server_alias].each do |serveralias| %><%= serveralias %> <% end %>;
+    <% else %>
+        server_name <%= node['magento']['nginx'][:servername] %>;
+    <% end %>
+
+    root <%= node['magento']['dir'] %>;
+    access_log <%= node['nginx']['log_dir'] %>/<%= node['magento']['nginx'][:servername] %>-access.log main;
+    error_log <%= node['nginx']['log_dir'] %>/<%= node['magento']['nginx'][:servername] %>-error.log;
+
+    <% if node['ssl'] %>
+        ####################################################################################
+        ## SSL CONFIGURATION
+        ssl_certificate     <%= node['nginx']['ssl_dir'] %>/<%= node['magento']['nginx']['ssl']['certfile'] %>;
+        ssl_certificate_key <%= node['nginx']['ssl_dir'] %>/<%= node['magento']['nginx']['ssl']['keyfile'] %>;
+    <% end %>
+
+    ####################################################################################
+    ## Server maintenance block. insert dev ip 1.2.3.4 static address www.whatismyip.com
+
+    #if ($remote_addr !~ "^(1.2.3.4|1.2.3.4)$") {
+        #return 503;
+        #}
+
+    #error_page 503 @maintenance;
+    #location @maintenance {
+        #rewrite ^(.*)$ /error_page/503.html break;
+        #internal;
+        #access_log off;
+        #log_not_found off;
+        #}
+
+    ####################################################################################
+    ## 403 error log/page
+
+    #error_page 403 /403.html;
+    #location = /403.html {
+        #root /var/www/html/error_page;
+        #internal;
+        #access_log   /var/log/nginx/403.log  error403;
+        #}
+
+    ####################################################################################
+    ## Main Magento location
+
+    <% if node['magento']['nginx']['basic_authentication'] == 'on' %>
+        location = /LICENSE.txt {
+               auth_basic off;
+               allow all; # Allow all to see content
+        }
+    <% end %>
+
+    location / {
+
+        <% if node['magento']['nginx']['basic_authentication'] == 'on' %>
+            auth_basic "Restricted";
+            auth_basic_user_file <%= node['magento']['nginx']['docroot'] %>/<%= node['magento']['nginx']['servername'] %>/shared/.htpasswd;
+        <% end %>
+
+        include   /etc/nginx/mime.types;
+        try_files $uri $uri/ @handler;
+    }
+
+    ####################################################################################
+    ## These locations would be hidden by .htaccess normally, protected
+
+    location ~ ^(/(app/|downloader/|includes/|lib/|pkginfo/|var/)|\.git/|\.ht.+|errors/.+(\.phtml|\.xml)$) {
+        deny all;
+    }
+
+    ####################################################################################
+    ## Protecting /admin/ and /downloader/  1.2.3.4 = static ip (www.whatismyip.com)
+
+    #location /downloader/  {
+        #allow 1.2.3.4;  allow 1.2.3.4;  deny all;
+        #rewrite ^/downloader/(.*)$ /downloader/index.php$1;
+        #}
+    #location /admin  {
+        #allow 1.2.3.4; allow 1.2.3.4; deny all;
+        #rewrite / /@handler;
+        #}
+
+    ####################################################################################
+    ## Main Magento location
+
+    location @handler {
+        rewrite / /index.php?$args;
+    }
+
+    location ~ .php/ { ## Forward paths like /js/index.php/x.js to relevant handler
+        rewrite ^(.*.php)/ $1 last;
+    }
+
+    ####################################################################################
+    ## Execute PHP scripts
+
+    location ~ .php$ {
+        <% if node['magento']['nginx']['basic_authentication'] == 'on' %>
+            auth_basic "Restricted";
+            auth_basic_user_file <%= node['magento']['nginx']['docroot'] %>/<%= node['magento']['nginx']['servername'] %>/shared/.htpasswd;
+        <% end %>
+        add_header X-UA-Compatible 'IE=Edge,chrome=1';
+        try_files $uri $uri/ =404;
+        #try_files $uri $uri/ @handler;
+        fastcgi_pass   unix:/var/run/php5-fpm.sock;
+        fastcgi_param  SCRIPT_FILENAME  $document_root$fastcgi_script_name;
+        ## Store code with multi domain
+        fastcgi_param  MAGE_RUN_CODE $storecode;
+        fastcgi_param  MAGE_RUN_TYPE store; ## or website;
+        <% if node['magento']['nginx']['developer_mode'] %>
+            fastcgi_param MAGE_IS_DEVELOPER_MODE true;
+        <% end %>
+        include        fastcgi_params; ## See /etc/nginx/fastcgi_params
+
+        <% if node['magento']['nginx']['additional_config_path'] %>
+            # Include any additional configuration for the project
+            include <%= node['magento']['nginx']['additional_config_path'] %>/*.conf;
+        <% end %>
+    }
+}
