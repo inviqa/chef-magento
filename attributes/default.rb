@@ -43,6 +43,8 @@ default['magento']['apache']['enable_sendfile'] = "On"
 default['magento']['apache']['ssl']['keyfile'] = "ssl/magento.key"
 default['magento']['apache']['ssl']['certfile'] = "ssl/magento.pem"
 
+default['magento']['cronjob']['minute'] = "*/5"
+
 default['magento']['sites'] = Array.new
 
 default['magento']['php']['memory_limit'] = "512M"
@@ -62,6 +64,7 @@ default['magento']['admin']['lastname'] = "Admin"
 default['magento']['admin']['email'] = "chef@magento.com"
 default['magento']['admin']['user'] = "chef"
 default['magento']['admin']['password'] = '123123pass'
+default['varnish']['cookies'] = ['currency', 'store']
 
 default['magento']['varnish']['backend_servers'] = [
     {
@@ -81,6 +84,8 @@ default['magento']['sample_data']['url'] = "http://www.magentocommerce.com/downl
 
 default['magento']['server']['aliases'] = Array.new
 default['magento']['server']['static_domains'] = Array.new
+
+default['extra_hostnames'] = Array.new
 
 ::Chef::Node.send(:include, Opscode::OpenSSL::Password)
 

@@ -19,13 +19,14 @@
 
 include_recipe "chef-varnish"
 
-template "#{node['varnish']['config_dir']}/default.vcl" do
-  source "varnish.vcl.erb"
-  owner "root"
-  group "root"
-  mode 0644
-  variables({
+begin
+  t = resources(:template => File.join(node['varnish']['config_dir'], 'default.vcl'))
+  t.source "varnish.vcl.erb"
+  t.cookbook "chef-magento"
+  t.variables({
+    :params => node['varnish'],
     :magento => node['magento']
   })
-  notifies :restart, resources(:service => "varnish"), :delayed
+rescue Chef::Exceptions::ResourceNotFound
+  Chef::Log.warn "could not find template #{node['varnish']['config_dir']}/default.vcl to modify"
 end

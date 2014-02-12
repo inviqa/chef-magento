@@ -88,7 +88,8 @@ sub vcl_recv {
         req.request != "DELETE") {
             return (pipe);
     }
-    if (req.url ~ "^/(index.php/)?(<%= @magento['app']['admin_frontname'] %>|api|directory|\?___store)" || req.http.Cookie ~ "adminhtml") {
+
+    if (req.url ~ "^/(index.php/)?(<%= @magento['app']['admin_frontname'] %>|api|directory)" || req.url ~ "\?(.*&)*(___store=|SID=[a-zA-Z0-9]{16,})" || req.http.Cookie ~ "adminhtml") {
             return (pipe);
     }
 
@@ -170,7 +171,7 @@ sub vcl_recv {
     if (req.http.Cookie) {
         set req.http.Cookie = ";" + req.http.Cookie;
         set req.http.Cookie = regsuball(req.http.Cookie, "; +", ";");
-        set req.http.Cookie = regsuball(req.http.Cookie, ";(currency|store|geoip)=", "; \1=");
+        set req.http.Cookie = regsuball(req.http.Cookie, ";(<%= node['varnish']['cookies'].join("|") %>)=", "; \1=");
         set req.http.Cookie = regsuball(req.http.Cookie, ";[^ ][^;]*", "");
         set req.http.Cookie = regsuball(req.http.Cookie, "^[; ]+|[; ]+$", "");
 
@@ -230,16 +231,19 @@ sub vcl_fetch {
         set beresp.http.X-Vary = regsub(beresp.http.Vary, ",?\s?User-Agent,?", "\1");
     }
 
-    # These status codes should always pass through and never cache.
-    if (beresp.status == 503 || beresp.status == 500) {
-         set beresp.saintmode = 20s;
-
-         return (deliver);
+    # the site is in the maintenance mode
+    if (beresp.status == 503) {
+        set beresp.ttl = 1s;
+        return (deliver);
     }
 
+    # These status codes should always pass through and never cache.
     if (beresp.status >= 500) {
-         set beresp.grace = 60s;
-         return (restart);
+        set beresp.grace = 60s;
+        if (req.restarts < 3) {
+            return (restart);
+        }
+        return (deliver);
     }
 
     # Backend response includes ESI tags
