@@ -3,17 +3,16 @@ maintainer_email "alistair.stead@inviqa.com"
 license          "Apache 2.0"
 description      "Installs/Configures Magento"
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
-version          "1.0.2"
+version          "1.0.3"
 
 depends "php"
-depends "chef-php-extra"
 depends "git"
 depends "mysql"
 depends "database", "> 1.3.0"
-depends "apache2"
-depends "memcached"
-depends "nginx"
-# depends "redis" # This Opscode cookbook has an error
+suggests "apache2"
+suggests "nginx"
+suggests "memcached"
+suggests "redisio"
 suggests "chef-varnish"
 suggests "solr"
 

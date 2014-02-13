@@ -1,5 +1,3 @@
-#include_attribute "nginx"
-
 # General settings
 default['magento']['dir'] = "/var/www/magento.development.local/public"
 
