@@ -146,6 +146,7 @@ default['magento']['php']['max_execution_time'] = "120"
 default['magento']['php']['display_errors'] = "Off"
 default['magento']['php']['html_errors'] = "Off"
 default['magento']['php']['upload_max_filesize'] = '50M'
+default['magento']['php_mysql']['packages'] = nil
 
 default['magento']['varnish']['backend_servers'] = [
     {

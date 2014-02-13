@@ -21,5 +21,16 @@ include_recipe "php"
 if platform?("ubuntu", "debian")
   include_recipe "php::module_curl"
 end
-include_recipe "php::module_mysql"
 include_recipe "php::module_memcache"
+
+pkgs = node['magento']['php_mysql']['packages']
+
+if pkgs.nil? || pkgs.empty?
+  include_recipe "php::module_mysql"
+else
+  pkgs.each do |pkg|
+    package pkg do
+      action :install
+    end
+  end
+end
