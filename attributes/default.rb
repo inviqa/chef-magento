@@ -130,6 +130,17 @@ default['php-fpm']['process_manager']['min_spare_servers'] = "5"
 default['php-fpm']['process_manager']['max_spare_servers'] = "35"
 default['php-fpm']['process_manager']['max_requests'] = "0"
 
+case node['platform_family']
+when 'rhel', 'fedora'
+    if node['platform_version'].to_f < 6
+        default['php-fpm']['packages'] = %w{ php53u-fpm }
+    else
+        default['php-fpm']['packages'] = %w{ php-fpm }
+    end
+else
+    default['php-fpm']['packages'] = %w{ php5-fpm }
+end
+
 default['magento']['php']['memory_limit'] = "512M"
 default['magento']['php']['max_execution_time'] = "120"
 default['magento']['php']['display_errors'] = "Off"

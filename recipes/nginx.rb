@@ -18,22 +18,7 @@ include_recipe 'nginx::http_stub_status_module'
 
 include_recipe "php"
 
-if node['platform_version'].to_f < 6
-  packages = %w{ php53u-fpm }
-else
-  packages = %w{ php-fpm }
-end
-
-
-
-pkgs = value_for_platform(
-  [ "centos", "redhat", "fedora" ] => {
-    "default" => packages
-  },
-  [ "debian", "ubuntu" ] => {
-    "default" => %w{ php5-fpm }
-  }
-)
+pkgs = node['php-fpm']['packages']
 
 pkgs.each do |pkg|
   package pkg do
