@@ -16,15 +16,15 @@ include_recipe 'nginx::http_ssl_module'
 include_recipe 'nginx'
 include_recipe 'nginx::http_stub_status_module'
 
-include_recipe "chef-php-extra"
+include_recipe "php"
 
-if node['php']['ius'] == "5.4"
-  packages = %w{ php54-fpm }
-elsif node['php']['ius'] == "5.3"
+if node['platform_version'].to_f < 6
   packages = %w{ php53u-fpm }
 else
   packages = %w{ php-fpm }
 end
+
+
 
 pkgs = value_for_platform(
   [ "centos", "redhat", "fedora" ] => {
