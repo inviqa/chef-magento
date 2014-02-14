@@ -4,6 +4,9 @@ server {
         listen <%= node['magento']['nginx']['secure_port'] %> ssl;
     <% end %>
 
+    if ($server_port = <%= node['magento']['nginx']['secure_port'] %>) { set $https on; }
+    if ($server_port = <%= node['magento']['nginx']['unsecure_port'] %>) { set $https off; }
+
     <% if defined?(node['magento']['nginx'][:server_alias]) and !node['magento']['nginx'][:server_alias].nil? %>
         server_name <%= node['magento']['nginx'][:servername] %> <% node['magento']['nginx'][:server_alias].each do |serveralias| %><%= serveralias %> <% end %>;
     <% else %>
