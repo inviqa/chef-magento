@@ -1,21 +1,21 @@
 server {
-    listen <%= node['magento']['nginx']['unsecure_port'] %>;
+    listen <%= node['magento']['server']['unsecure_port'] %>;
     <% if node['ssl'] %>
-        listen <%= node['magento']['nginx']['secure_port'] %> ssl;
+        listen <%= node['magento']['server']['secure_port'] %> ssl;
     <% end %>
 
-    if ($server_port = <%= node['magento']['nginx']['secure_port'] %>) { set $https on; }
-    if ($server_port = <%= node['magento']['nginx']['unsecure_port'] %>) { set $https off; }
+    if ($server_port = <%= node['magento']['server']['secure_port'] %>) { set $https on; }
+    if ($server_port = <%= node['magento']['server']['unsecure_port'] %>) { set $https off; }
 
-    <% if defined?(node['magento']['nginx'][:server_alias]) and !node['magento']['nginx'][:server_alias].nil? %>
-        server_name <%= node['magento']['nginx'][:servername] %> <% node['magento']['nginx'][:server_alias].each do |serveralias| %><%= serveralias %> <% end %>;
+    <% if defined?(node['magento']['server'][:server_alias]) and !node['magento']['server'][:server_alias].nil? %>
+        server_name <%= node['magento']['server'][:servername] %> <% node['magento']['server'][:server_alias].each do |serveralias| %><%= serveralias %> <% end %>;
     <% else %>
-        server_name <%= node['magento']['nginx'][:servername] %>;
+        server_name <%= node['magento']['server'][:servername] %>;
     <% end %>
 
     root <%= node['magento']['dir'] %>;
-    access_log <%= node['nginx']['log_dir'] %>/<%= node['magento']['nginx'][:servername] %>-access.log main;
-    error_log <%= node['nginx']['log_dir'] %>/<%= node['magento']['nginx'][:servername] %>-error.log;
+    access_log <%= node['nginx']['log_dir'] %>/<%= node['magento']['server'][:servername] %>-access.log main;
+    error_log <%= node['nginx']['log_dir'] %>/<%= node['magento']['server'][:servername] %>-error.log;
 
     <% if node['ssl'] %>
         ####################################################################################
@@ -63,7 +63,7 @@ server {
 
         <% if node['magento']['nginx']['basic_authentication'] == 'on' %>
             auth_basic "Restricted";
-            auth_basic_user_file <%= node['magento']['nginx']['docroot'] %>/<%= node['magento']['nginx']['servername'] %>/shared/.htpasswd;
+            auth_basic_user_file <%= node['magento']['nginx']['docroot'] %>/<%= node['magento']['server']['servername'] %>/shared/.htpasswd;
         <% end %>
 
         include   /etc/nginx/mime.types;
@@ -106,7 +106,7 @@ server {
     location ~ .php$ {
         <% if node['magento']['nginx']['basic_authentication'] == 'on' %>
             auth_basic "Restricted";
-            auth_basic_user_file <%= node['magento']['nginx']['docroot'] %>/<%= node['magento']['nginx']['servername'] %>/shared/.htpasswd;
+            auth_basic_user_file <%= node['magento']['nginx']['docroot'] %>/<%= node['magento']['server']['servername'] %>/shared/.htpasswd;
         <% end %>
         add_header X-UA-Compatible 'IE=Edge,chrome=1';
         try_files $uri $uri/ =404;

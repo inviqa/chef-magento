@@ -31,10 +31,6 @@ default['magento']['redis']['compress_tags'] = '1'
 default['magento']['redis']['compress_threshold'] = '2048'
 default['magento']['redis']['compression_lib'] = 'gzip'
 
-default['magento']['apache']['unsecure_port'] = "80"
-default['magento']['apache']['secure_port'] = "443"
-default['magento']['apache']['servername'] = "magento.development.local"
-default['magento']['apache']['server_alias'] = Array.new
 default['magento']['apache']['docroot'] = "/var/www"
 default['magento']['apache']['path'] = "/public"
 default['magento']['apache']['developer_mode'] = false
@@ -80,8 +76,11 @@ default['magento']['global']['custom'] = ''
 
 default['magento']['sample_data']['url'] = "http://www.magentocommerce.com/downloads/assets/1.2.0/magento-sample-data-1.2.0.tar.gz"
 
-default['magento']['server']['aliases'] = Array.new
 default['magento']['server']['static_domains'] = Array.new
+default['magento']['server']['servername'] = "magento.development.local"
+default['magento']['server']['unsecure_port'] = "80"
+default['magento']['server']['secure_port'] = "443"
+default['magento']['server']['server_alias'] = Array.new
 
 ::Chef::Node.send(:include, Opscode::OpenSSL::Password)
 
@@ -99,9 +98,6 @@ default['magento']['nginx']['basic_authentication'] = 'on'
 default['magento']['nginx']['ssl']['keyfile']   = 'magento.key'
 default['magento']['nginx']['ssl']['certfile']  = 'magento.crt'
 
-default['magento']['nginx']['unsecure_port']                    = '80'
-default['magento']['nginx']['secure_port']                      = '443'
-default['magento']['nginx']['servername']                       = 'magento.development.local'
 default['magento']['nginx']['developer_mode']                   = false
 default['magento']['nginx']['additional_config_path']           = '/mnt/magento.development.local/config.d'
 default['magento']['nginx']['docroot']                          = "/var/www"

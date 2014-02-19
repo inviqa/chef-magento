@@ -25,17 +25,17 @@ directory node['magento']['apache']['docroot'] do
   action :create
 end
 
-directory "#{node['magento']['apache']['docroot']}/#{node['magento']['apache']['servername']}" do
+directory "#{node['magento']['apache']['docroot']}/#{node['magento']['server']['servername']}" do
   mode "0755"
   action :create
 end
 
-directory "#{node['magento']['apache']['docroot']}/#{node['magento']['apache']['servername']}#{node['magento']['apache']['path']}" do
+directory "#{node['magento']['apache']['docroot']}/#{node['magento']['server']['servername']}#{node['magento']['apache']['path']}" do
   mode "0755"
   action :create
 end
 
-web_app node['magento']['apache']['servername'] do
+web_app node['magento']['server']['servername'] do
   template "apache-vhost.conf.erb"
   ssl false
   apache node['apache']
@@ -45,7 +45,7 @@ web_app node['magento']['apache']['servername'] do
   notifies :reload, resources("service[apache2]"), :delayed
 end
 
-web_app "#{node['magento']['apache']['servername']}.ssl" do
+web_app "#{node['magento']['server']['servername']}.ssl" do
   template "apache-vhost.conf.erb"
   ssl true
   apache node['apache']
