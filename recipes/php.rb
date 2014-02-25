@@ -23,14 +23,11 @@ if platform?("ubuntu", "debian")
 end
 include_recipe "php::module_memcache"
 
-pkgs = node['magento']['php_mysql']['packages']
-
-if pkgs.nil? || pkgs.empty?
+mysql_pkg = node['magento']['php']['packages']['mysql']
+if mysql_pkg.nil?
   include_recipe "php::module_mysql"
 else
-  pkgs.each do |pkg|
-    package pkg do
-      action :install
-    end
+  package mysql_pkg do
+    action :install
   end
 end
