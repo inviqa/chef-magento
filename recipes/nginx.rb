@@ -12,20 +12,6 @@ directory "#{node['nginx']['dir']}/sites-available/" do
   recursive true
 end
 
-include_recipe 'nginx::http_ssl_module'
-include_recipe 'nginx'
-include_recipe 'nginx::http_stub_status_module'
-
-include_recipe "php"
-
-pkgs = node['php-fpm']['packages']
-
-pkgs.each do |pkg|
-  package pkg do
-    action :install
-  end
-end
-
 service "php-fpm" do
   supports :restart => true
   restart_command "/etc/init.d/php-fpm restart"
