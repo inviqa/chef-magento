@@ -179,6 +179,10 @@
              <% if @magento['app']['fpc_prefix'] != nil %><prefix><![CDATA[<%= @magento['app']['fpc_prefix'] %>]]></prefix><% end %>
         </full_page_cache>
 
+        <% if @magento['app']['skip_updates'] == true %>
+            <skip_process_modules_updates>1</skip_process_modules_updates>
+        <% end %>
+
         <%= @magento['global']['custom'] %>
     </global>
     <admin>
