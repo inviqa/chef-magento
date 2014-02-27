@@ -57,7 +57,7 @@ if File.exists?("#{node['magento']['dir']}/install.php")
     --license_agreement_accepted "yes" \
     --locale "#{node['magento']['app']['locale']}" \
     --timezone "#{node['magento']['app']['timezone']}" \
-    --default_currency "#{node['magento']['db']['currency']}" \
+    --default_currency "#{node['magento']['app']['currency']}" \
     --db_host "#{node['magento']['db']['host']}" \
     --db_name "#{node['magento']['db']['database']}" \
     --db_user "#{node['magento']['db']['username']}" \
