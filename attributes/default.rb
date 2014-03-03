@@ -16,6 +16,7 @@ default['magento']['app']['session_memcache_port'] = "11211"
 default['magento']['app']['backend_cache'] = "file" # apc|memcached|xcache|file|Cm_Cache_Backend_Redis
 default['magento']['app']['slow_backend'] = "database" # database|file
 default['magento']['app']['backend_servers'] = Array.new
+default['magento']['app']['skip_updates'] = false
 
 
 default['magento']['redis']['host'] = '127.0.0.1'
