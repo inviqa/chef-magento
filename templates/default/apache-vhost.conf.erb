@@ -11,9 +11,8 @@
   <% end %>
   SSLProtocol all
   SSLCipherSuite ALL:!ADH:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv2:+EXP:+eNULL
-
 <% else %>
-<VirtualHost *:<%= @params[:magento]['apache']['unsecure_port'] %>>
+  <VirtualHost *:<%= @params[:magento]['apache']['unsecure_port'] %>>
 <% end %>
 
   ServerName <%= @params[:site][:servername] %>
