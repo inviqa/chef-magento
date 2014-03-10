@@ -50,6 +50,8 @@ default['magento']['apache']['ssl']['protocols'] = [
 default['magento']['apache']['ssl']['ciphersuite'] = "ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:ECDH+AES128:DH+AES:ECDH
 +3DES:DH+3DES:RSA+AESGCM:RSA+AES:RSA+3DES:!aNULL:!MD5:!DSS;"
 
+default['magneto']['apache']['traceEnable'] = "off"
+
 default['magento']['cronjob']['minute'] = "*/5"
 
 default['magento']['cronjob']['minute'] = "*/5"
