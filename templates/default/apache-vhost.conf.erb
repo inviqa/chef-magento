@@ -28,6 +28,8 @@
 
   ServerSignature Off
 
+  TraceEnable <%= @params[:site]['traceEnable'] %>
+
 <% if @params[:site]['developer_mode'] %>
   SetEnv MAGE_IS_DEVELOPER_MODE true
 <% end %>
