@@ -42,6 +42,8 @@ default['magento']['apache']['enable_mmap'] = "On"
 default['magento']['apache']['enable_sendfile'] = "On"
 default['magento']['apache']['ssl']['keyfile'] = "ssl/magento.key"
 default['magento']['apache']['ssl']['certfile'] = "ssl/magento.pem"
+default['magento']['apache']['ssl']['session_cache_timeout'] = "300"
+
 
 default['magento']['sites'] = Array.new
 

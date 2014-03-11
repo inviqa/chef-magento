@@ -3,13 +3,18 @@
   SSLEngine on
   SSLCertificateKeyFile <%= @params[:site]['ssl']['keyfile'] %>
   SSLCertificateFile <%= @params[:site]['ssl']['certfile'] %>
+
   <% if defined?(@params[:site]['ssl']['cacertfile']) and !@params[:site]['ssl']['cacertfile'].nil? %>
   SSLCACertificateFile <%= @params[:site]['ssl']['cacertfile'] %>
   <% end %>
   <% if defined?(@params[:site]['ssl']['certchainfile']) and !@params[:site]['ssl']['certchainfile'].nil? %>
   SSLCertificateChainFile <%= @params[:site]['ssl']['certchainfile'] %>
   <% end %>
+
+  SSLSessionCacheTimeout <%= @params[:site]['ssl']['session_cache_timeout'] %>
   SSLProtocol all
+
+  SSLHonorCipherOrder on
   SSLCipherSuite ALL:!ADH:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv2:+EXP:+eNULL
 
 <% else %>
