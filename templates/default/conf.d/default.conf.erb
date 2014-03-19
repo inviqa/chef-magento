@@ -120,10 +120,10 @@ server {
             fastcgi_param MAGE_IS_DEVELOPER_MODE true;
         <% end %>
         include        fastcgi_params; ## See /etc/nginx/fastcgi_params
-
-        <% if node['magento']['nginx']['additional_config_path'] %>
-            # Include any additional configuration for the project
-            include <%= node['magento']['nginx']['additional_config_path'] %>/*.conf;
-        <% end %>
     }
+
+    <% if node['magento']['nginx']['additional_config_path'] %>
+        # Include any additional configuration for the project
+        include <%= node['magento']['nginx']['additional_config_path'] %>/*.conf;
+    <% end %>
 }
