@@ -279,10 +279,12 @@ sub vcl_fetch {
     } elseif (beresp.http.Cache-Control ~ "private") {
         # You are respecting the Cache-Control=private header from the backend
         set beresp.http.X-Cacheable = "NO:Cache-Control=private";
-
+        set beresp.ttl = 60s;
         return(hit_for_pass);
     } elseif (beresp.ttl <= 0s) {
         set beresp.http.X-Cacheable = "NO";
+        set beresp.ttl = 60s;
+        return(hit_for_pass);
     } else {
         # Varnish determined the object was cacheable
         remove beresp.http.Set-Cookie;
