@@ -3,6 +3,12 @@
 include "/etc/varnish/geoip.vcl";
 <% end %>
 
+<% if @magento['varnish']['additional_vcls'] %>
+    <% @magento['varnish']['additional_vcls'].each do |vcl| %>
+        include "/etc/varnish/<%= vcl %>";
+    <% end %>
+<% end %>
+
 # Create a health check to verify that the backend server is responding
 # correctly and in a timely manner.
 probe healthcheck {
