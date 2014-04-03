@@ -3,6 +3,12 @@
 include "/etc/varnish/geoip.vcl";
 <% end %>
 
+<% if @magento['varnish']['additional_vcls'] %>
+    <% @magento['varnish']['additional_vcls'].each do |vcl| %>
+        include "/etc/varnish/<%= vcl %>";
+    <% end %>
+<% end %>
+
 # Create a health check to verify that the backend server is responding
 # correctly and in a timely manner.
 probe healthcheck {
@@ -118,6 +124,12 @@ sub vcl_recv {
         return (pass);
     }
 
+    <% if @magento['varnish']['additional_recv_subs'] %>
+        <% @magento['varnish']['additional_recv_subs'].each do |recv_sub| %>
+            call <%= recv_sub %>;
+        <% end %>
+    <% end %>
+
     # Even though there are few possible values for Accept-Encoding, Varnish treats
     # them literally rather than semantically, so even a small difference which makes
     # no difference to the backend can reduce cache efficiency by making Varnish cache
@@ -221,6 +233,13 @@ sub vcl_hash {
     <% if node['varnish']['GeoIP_enabled'] %>
     hash_data(req.http.X-Geo-IP-Country);
     <% end %>
+
+    <% if @magento['varnish']['additional_hash_subs'] %>
+        <% @magento['varnish']['additional_hash_subs'].each do |hash_sub| %>
+            call <%= hash_sub %>;
+        <% end %>
+    <% end %>
+
     return (hash);
 }
 
