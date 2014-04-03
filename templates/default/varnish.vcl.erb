@@ -41,7 +41,7 @@ director backend_director <%= @magento['varnish']['director_strategy'] %> {
     <% end %>
     <% else %>
     <% @magento['varnish']['backend_servers'].each do |server| %>
-    { .backend = <%= server[:name] %>;<% if @magento['varnish']['director_strategy'] == 'random' %> .weight = 1;<% end %> }
+    { .backend = <%= server[:name] %>; }
     <% end %>
     <% end %>
 }
