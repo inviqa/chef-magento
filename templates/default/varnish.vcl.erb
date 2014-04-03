@@ -90,7 +90,7 @@ sub vcl_recv {
     }
 
     if (req.url ~ "^/(index.php/)?(<%= @magento['app']['admin_frontname'] %>|api|directory)" || req.url ~ "\?(.*&)*(___store=|SID=[a-zA-Z0-9]{16,})" || req.http.Cookie ~ "adminhtml") {
-            return (pipe);
+            return (pass);
     }
 
     if (req.backend.healthy) {
