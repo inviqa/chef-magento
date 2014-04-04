@@ -33,10 +33,16 @@ backend <%= server[:name] %> {
 
 # Create a backend Director to implement load balancing across
 # the list of servers. This can have a value of "round-robin" or "random"
-director backend_director random {
+director backend_director <%= @magento['varnish']['director_strategy'] %> {
+    <% if @magento['varnish']['director_strategy'] == 'random' %>
     .retries = 5;
     <% @magento['varnish']['backend_servers'].each do |server| %>
     { .backend = <%= server[:name] %>; .weight = 1; }
+    <% end %>
+    <% else %>
+    <% @magento['varnish']['backend_servers'].each do |server| %>
+    { .backend = <%= server[:name] %>; }
+    <% end %>
     <% end %>
 }
 # In order to protect access to the Varnish administration we will

@@ -77,7 +77,7 @@ default['magento']['varnish']['trusted_servers'] = [
     "127.0.0.1"
 ]
 default['magento']['varnish']['ttl_for_static_files'] = '30d'
-
+default['magento']['varnish']['director_strategy'] = 'random'
 # Custom XML Snippet
 default['magento']['global']['custom'] = ''
 
