@@ -34,6 +34,9 @@ backend <%= server[:name] %> {
     .first_byte_timeout = <%= server[:first_byte_timeout] %>;
     .between_bytes_timeout = <%= server[:between_bytes_timeout] %>;
     .probe = healthcheck;
+    <% if server[:max_connections] %>
+    .max_connections = <%= server[:max_connections] %>
+    <% end %>
 }
 <% end %>
 
