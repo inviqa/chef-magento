@@ -73,7 +73,8 @@ default['magento']['varnish']['backend_servers'] = [
         "ip" => "127.0.0.1",
         "connect_timeout" => '240s',
         "first_byte_timeout" => '240s',
-        "between_bytes_timeout" => '240s'
+        "between_bytes_timeout" => '240s',
+        "max_connections" => 800
     }
 ]
 default['magento']['varnish']['trusted_servers'] = [
