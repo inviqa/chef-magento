@@ -26,10 +26,12 @@ action :configure do
   }
   merge_deep node.set, site_data
 
-  def configure_apache(servername, is_ssl)
+  def configure_apache(new_resource, servername, is_ssl)
     web_app servername do
-      cookbook "chef-magento"
-      template "apache-vhost.conf.erb"
+      unless new_resource.template_cookbook.nil?
+        cookbook new_resource.template_cookbook
+      end
+      template new_resource.template
       ssl is_ssl
       apache node[:apache]
       php node[:magento][:php]
@@ -39,6 +41,6 @@ action :configure do
     end
   end
 
-  configure_apache(new_resource.servername, false)
-  configure_apache("#{new_resource.servername}.ssl", true)
+  configure_apache(new_resource, new_resource.servername, false)
+  configure_apache(new_resource, "#{new_resource.servername}.ssl", true)
 end

@@ -47,7 +47,10 @@ web_app node['magento']['apache']['servername'] do
 end
 
 web_app "#{node['magento']['apache']['servername']}.ssl" do
-  template "apache-vhost.conf.erb"
+  unless node['magento']['apache']['template_cookbook'].nil?
+    cookbook node['magento']['apache']['template_cookbook']
+  end
+  template node['magento']['apache']['template'] || "apache-vhost.conf.erb"
   ssl true
   apache node['apache']
   php node['magento']['php']
@@ -58,7 +61,10 @@ end
 
 node['magento']['sites'].each do |site|
     web_app site['servername'] do
-      template "apache-vhost.conf.erb"
+      unless site['template_cookbook'].nil?
+        cookbook site['template_cookbook']
+      end
+      template site['template'] || "apache-vhost.conf.erb"
       ssl false
       apache node['apache']
       php node['magento']['php']
@@ -68,7 +74,10 @@ node['magento']['sites'].each do |site|
     end
 
     web_app "#{site['servername']}.ssl" do
-      template "apache-vhost.conf.erb"
+      unless site['template_cookbook'].nil?
+        cookbook site['template_cookbook']
+      end
+      template site['template'] || "apache-vhost.conf.erb"
       ssl true
       apache node['apache']
       php node['magento']['php']
