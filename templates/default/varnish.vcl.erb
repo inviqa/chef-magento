@@ -1,4 +1,3 @@
-
 <% if node['varnish']['GeoIP_enabled'] %>
 include "/etc/varnish/geoip.vcl";
 <% end %>
@@ -35,7 +34,7 @@ backend <%= server[:name] %> {
     .between_bytes_timeout = <%= server[:between_bytes_timeout] %>;
     .probe = healthcheck;
     <% if server[:max_connections] %>
-    .max_connections = <%= server[:max_connections] %>
+    .max_connections = <%= server[:max_connections] %>;
     <% end %>
 }
 <% end %>
