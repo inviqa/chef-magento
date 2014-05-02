@@ -120,12 +120,12 @@ action :configure do
 
   if defined? node['magento']['site']['ssl']['data-bag']
     ssl_data_bag = Chef::EncryptedDataBagItem.load(
-      node['magento']['site']['ssl']['data-bag'],
-      node['magento']['site']['ssl']['data-bag-item'])
+      node['magento']['apache']['ssl']['data-bag'],
+      node['magento']['apache']['ssl']['data-bag-item'])
 
-    ['certfile', 'certchainfile', 'keyfile'].each do |filename|
+    ['certfile', 'certchainfile', 'keyfile'].each do |filekey|
       file filename do
-        content ssl_data_bag[filename]
+        content ssl_data_bag[node['magento']['apache']['ssl'][filekey]]
         mode 0600
       end
     end
