@@ -13,15 +13,15 @@ action :configure do
 
   site_data = {
     "magento" => {
-      "dir" => new_resource.docroot
-    },
-    "site" => {
-      "servername" => new_resource.servername,
-      "run_code" => new_resource.run_code,
-      "additional_config" => new_resource.additional_config,
-      "additional_rewites" => new_resource.additional_rewites,
-      "server_alias" => new_resource.server_alias,
-      "newrelic_name" => new_resource.newrelic_name
+      "dir" => new_resource.docroot,
+      "apache" => {
+        "servername" => new_resource.servername,
+        "run_code" => new_resource.run_code,
+        "additional_config" => new_resource.additional_config,
+        "additional_rewites" => new_resource.additional_rewites,
+        "server_alias" => new_resource.server_alias,
+        "newrelic_name" => new_resource.newrelic_name
+      }
     }
   }
   merge_deep node.set, site_data
@@ -35,7 +35,7 @@ action :configure do
       ssl is_ssl
       apache node[:apache]
       php node[:magento][:php]
-      site node[:site]
+      site node[:magento][:apache]
       magento node[:magento]
       notifies :reload, resources("service[apache2]"), :delayed
     end

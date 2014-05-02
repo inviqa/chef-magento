@@ -26,14 +26,14 @@ def merge_custom_data()
       "instance" => new_resource.instance,
       "environment" => new_resource.environment,
       "dir" => new_resource.dir,
-      "apache_document_root" => new_resource.apache_document_root
-    },
-    "site" => {
-      "servername" => new_resource.servername,
-      "newrelic_name" => new_resource.newrelic_name,
-      "run_code" => "",
-      "additional_rewites" => "",
-      "server_alias" => []
+      "apache_document_root" => new_resource.apache_document_root,
+      "apache" => {
+        "servername" => new_resource.servername,
+        "newrelic_name" => new_resource.newrelic_name,
+        "run_code" => "",
+        "additional_rewites" => "",
+        "server_alias" => []
+      }
     }
   }
 
@@ -118,13 +118,26 @@ action :configure do
     })
   end
 
+  if defined? node['magento']['site']['ssl']['data-bag']
+    ssl_data_bag = Chef::EncryptedDataBagItem.load(
+      node['magento']['site']['ssl']['data-bag'],
+      node['magento']['site']['ssl']['data-bag-item'])
+
+    ['certfile', 'certchainfile', 'keyfile'].each do |filename|
+      file filename do
+        content ssl_data_bag[filename]
+        mode 0600
+      end
+    end
+  end
+
   web_app new_resource.servername do
     cookbook "chef-magento"
     template "apache-vhost.conf.erb"
     ssl false
     apache node[:apache]
     php node[:magento][:php]
-    site node[:site]
+    site node[:magento][:apache]
     magento node[:magento]
     notifies :reload, resources("service[apache2]"), :delayed
   end
@@ -135,7 +148,7 @@ action :configure do
     ssl true
     apache node[:apache]
     php node[:magento][:php]
-    site node[:site]
+    site node[:magento][:apache]
     magento node[:magento]
     notifies :reload, resources("service[apache2]"), :delayed
   end
