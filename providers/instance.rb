@@ -118,7 +118,7 @@ action :configure do
     })
   end
 
-  if defined? node['magento']['site']['ssl']['data-bag']
+  if defined? node['magento']['apache']['ssl']['data-bag']
     ssl_data_bag = Chef::EncryptedDataBagItem.load(
       node['magento']['apache']['ssl']['data-bag'],
       node['magento']['apache']['ssl']['data-bag-item'])
