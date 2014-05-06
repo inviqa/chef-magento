@@ -20,7 +20,15 @@ action :configure do
         "additional_config" => new_resource.additional_config,
         "additional_rewites" => new_resource.additional_rewites,
         "server_alias" => new_resource.server_alias,
-        "newrelic_name" => new_resource.newrelic_name
+        "newrelic_name" => new_resource.newrelic_name,
+        "secure_ip" => nil,
+        "ssl" => {
+          "data-bag" => nil,
+          "data-bag-item" => nil,
+          "keyfile" => node.default['magento']['apache']['ssl']['keyfile'],
+          "certfile" => node.default['magento']['apache']['ssl']['certfile'],
+          "certchainfile" => nil,
+        }
       }
     }
   }
