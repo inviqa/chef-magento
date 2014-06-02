@@ -40,8 +40,11 @@ default['magento']['apache']['developer_mode'] = false
 default['magento']['apache']['additional_rewites'] = ""
 default['magento']['apache']['enable_mmap'] = "On"
 default['magento']['apache']['enable_sendfile'] = "On"
+default['magento']['apache']['parse_htaccess'] = false
 default['magento']['apache']['ssl']['keyfile'] = "ssl/magento.key"
 default['magento']['apache']['ssl']['certfile'] = "ssl/magento.pem"
+
+default['magento']['cronjob']['minute'] = "*/5"
 
 default['magento']['sites'] = Array.new
 
@@ -62,6 +65,7 @@ default['magento']['admin']['lastname'] = "Admin"
 default['magento']['admin']['email'] = "chef@magento.com"
 default['magento']['admin']['user'] = "chef"
 default['magento']['admin']['password'] = '123123pass'
+default['varnish']['cookies'] = ['currency', 'store']
 
 default['magento']['varnish']['backend_servers'] = [
     {
@@ -73,7 +77,10 @@ default['magento']['varnish']['trusted_servers'] = [
     "127.0.0.1"
 ]
 default['magento']['varnish']['ttl_for_static_files'] = '30d'
-
+default['magento']['varnish']['additional_vcls'] = []
+default['magento']['varnish']['additional_recv_subs'] = []
+default['magento']['varnish']['additional_hash_subs'] = []
+default['magento']['varnish']['director_strategy'] = 'random'
 # Custom XML Snippet
 default['magento']['global']['custom'] = ''
 
@@ -81,6 +88,8 @@ default['magento']['sample_data']['url'] = "http://www.magentocommerce.com/downl
 
 default['magento']['server']['aliases'] = Array.new
 default['magento']['server']['static_domains'] = Array.new
+
+default['extra_hostnames'] = Array.new
 
 ::Chef::Node.send(:include, Opscode::OpenSSL::Password)
 
