@@ -1,8 +1,8 @@
 #
 # Cookbook Name:: chef-magento
-# Recipe:: hosts
+# Recipe:: geoip
 #
-# Copyright 2012, Alistair Stead
+# Copyright 2013, Marco Lopes
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,14 +17,4 @@
 # limitations under the License.
 #
 
-template "/etc/hosts" do
-  source "hosts.erb"
-  owner "root"
-  group "root"
-  mode 0644
-  variables(
-    :fqdn => node['fqdn'],
-    :hostname => node['hostname'],
-    :extra_hostnames => node['extra_hostnames']
-  )
-end
+node['varnish']['cookies'].push('geoip');
