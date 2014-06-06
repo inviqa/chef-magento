@@ -60,11 +60,11 @@ default['magento']['db']['username'] = "magentouser"
 default['magento']['db']['read']['host'] = "localhost"
 default['magento']['db']['write']['host'] = "localhost"
 
-default['magento']['admin']['firstname'] = "Chef"
-default['magento']['admin']['lastname'] = "Admin"
-default['magento']['admin']['email'] = "chef@magento.com"
-default['magento']['admin']['user'] = "chef"
-default['magento']['admin']['password'] = '123123pass'
+default['magento']['admin']['firstname'] = "Admin"
+default['magento']['admin']['lastname'] = "Istrator"
+default['magento']['admin']['email'] = "root@localhost"
+default['magento']['admin']['user'] = "admin"
+default['magento']['admin']['password'] = 'admin'
 default['varnish']['cookies'] = ['currency', 'store']
 
 default['magento']['varnish']['backend_servers'] = [
