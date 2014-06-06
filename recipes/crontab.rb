@@ -29,7 +29,7 @@ template "crontab" do
 end
 
 execute "crontab" do
-  command "crontab -u root #{crontabfile}"
+  command "crontab -u #{node['magento']['cronjob']['user']} #{crontabfile}"
   action :run
   timeout 60
 end
