@@ -17,19 +17,12 @@
 # limitations under the License.
 #
 
-crontabfile = "#{Chef::Config[:file_cache_path]}/chef-crontab.txt"
+include_recipe "cron"
 
-template "crontab" do
-  path crontabfile
-  source "magento-crontab.erb"
-  mode 0655
-  variables({
-    :magento => node['magento']
-  })
-end
-
-execute "crontab" do
-  command "crontab -u #{node['magento']['cronjob']['user']} #{crontabfile}"
-  action :run
-  timeout 60
+cron_d 'magento-cron' do
+  minute  '*/5'
+  command '/bin/sh <%= node['magento']['dir'] %>/cron.sh'
+  user    node['magento']['cronjob']['user']
+  mailto  node['magento']['admin']['email']
+  action  :create
 end
