@@ -20,7 +20,7 @@
 include_recipe "cron"
 
 cron_d 'magento-cron' do
-  minute  '*/5'
+  minute  node['magento']['cronjob']['minute']
   command '/bin/sh <%= node['magento']['dir'] %>/cron.sh'
   user    node['magento']['cronjob']['user']
   mailto  node['magento']['admin']['email']
