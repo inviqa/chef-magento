@@ -13,6 +13,7 @@ depends "mysql"
 depends "database", "> 1.3.0"
 depends "apache2"
 depends "memcached"
+depends "cron", "~> 1.4.1"
 # depends "redis" # This Opscode cookbook has an error
 suggests "chef-varnish"
 suggests "solr"
