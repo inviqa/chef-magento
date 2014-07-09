@@ -1,5 +1,9 @@
 127.0.0.1   <%= @fqdn %> <%= @hostname %> <% @extra_hostnames.each  do |extra_hostname| %><%= extra_hostname %> <% end %> localhost localhost.localdomain
 
+<% @hosts[:entries].each do |host_entry| %>
+<%= host_entry %>
+<% end %>
+
 127.78.28.87 status-loopback
 
 # The following lines are desirable for IPv6 capable hosts
