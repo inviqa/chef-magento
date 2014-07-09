@@ -55,6 +55,9 @@
     AuthType Basic
     AuthName "Protected System"
     Require valid-user
+
+    SetEnvIf Request_URI ^/LICENSE.txt$ noauth=1
+    Allow from env=noauth
     <% end  %>
 
     <% if @params[:magento]['apache']['parse_htaccess'] %>
