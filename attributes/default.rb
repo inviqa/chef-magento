@@ -1,6 +1,7 @@
 # General settings
 default['magento']['dir'] = "/var/www/magento.development.local/public"
 
+default['magento']['app']['base_path'] = "public/"
 default['magento']['app']['locale'] = "en_GB"
 default['magento']['app']['timezone'] = "Europe/London"
 default['magento']['app']['currency'] = "GBP"
@@ -43,8 +44,19 @@ default['magento']['apache']['enable_sendfile'] = "On"
 default['magento']['apache']['parse_htaccess'] = false
 default['magento']['apache']['ssl']['keyfile'] = "ssl/magento.key"
 default['magento']['apache']['ssl']['certfile'] = "ssl/magento.pem"
+default['magento']['apache']['ssl']['protocols'] = [
+    "TLSv1", "TLSv1.1", "TLSv1.2"
+]
+default['magento']['apache']['ssl']['ciphersuite'] = "ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:ECDH+AES128:DH+AES:ECDH
++3DES:DH+3DES:RSA+AESGCM:RSA+AES:RSA+3DES:!aNULL:!MD5:!DSS;"
 
 default['magento']['cronjob']['minute'] = "*/5"
+default['magento']['cronjob']['user'] = 'apache'
+
+default['magento']['cronjob']['minute'] = "*/5"
+default['magento']['cronjob']['hour'] = "*"
+default['magento']['cronjob']['name'] = "magento-crontab"
+default['magento']['cronjob']['user'] = "root"
 
 default['magento']['sites'] = Array.new
 
@@ -57,26 +69,32 @@ default['magento']['php']['upload_max_filesize'] = '50M'
 default['magento']['db']['host'] = "localhost"
 default['magento']['db']['database'] = "magentodb"
 default['magento']['db']['username'] = "magentouser"
+default['magento']['db']['model'] = "mysql4"
 default['magento']['db']['read']['host'] = "localhost"
 default['magento']['db']['write']['host'] = "localhost"
 
-default['magento']['admin']['firstname'] = "Chef"
-default['magento']['admin']['lastname'] = "Admin"
-default['magento']['admin']['email'] = "chef@magento.com"
-default['magento']['admin']['user'] = "chef"
-default['magento']['admin']['password'] = '123123pass'
+default['magento']['admin']['firstname'] = "Admin"
+default['magento']['admin']['lastname'] = "Istrator"
+default['magento']['admin']['email'] = "root@localhost"
+default['magento']['admin']['user'] = "admin"
+default['magento']['admin']['password'] = 'admin'
 default['varnish']['cookies'] = ['currency', 'store']
 
 default['magento']['varnish']['backend_servers'] = [
     {
         "name" => "web1",
-        "ip" => "127.0.0.1"
+        "ip" => "127.0.0.1",
+        "connect_timeout" => '240s',
+        "first_byte_timeout" => '240s',
+        "between_bytes_timeout" => '240s',
+        "max_connections" => 800
     }
 ]
 default['magento']['varnish']['trusted_servers'] = [
     "127.0.0.1"
 ]
 default['magento']['varnish']['ttl_for_static_files'] = '30d'
+default['magento']['varnish']['probe']['timeout'] = '90s'
 default['magento']['varnish']['additional_vcls'] = []
 default['magento']['varnish']['additional_recv_subs'] = []
 default['magento']['varnish']['additional_hash_subs'] = []
@@ -90,6 +108,17 @@ default['magento']['server']['aliases'] = Array.new
 default['magento']['server']['static_domains'] = Array.new
 
 default['extra_hostnames'] = Array.new
+
+default['hosts']['entries'] = Array.new
+
+# Capistrano setup
+default['magento']['capistrano']['enabled'] = false
+default['magento']['capistrano']["app_shared_dirs"] = ["/app/etc", "/sitemaps", "/media", "/var", "/staging"]
+default['magento']['capistrano']["app_shared_files"] = ["/app/etc/local.xml"]
+default['magento']['capistrano']["nfs_path"] = false
+default['magento']['capistrano']["nfs_symlinks"] = ["/media", "/staging", "/sitemaps", "/var/locks"]
+default['magento']['capistrano']["deploy_owner"] = "deploy"
+default['magento']['capistrano']["deploy_group"] = "deploy"
 
 ::Chef::Node.send(:include, Opscode::OpenSSL::Password)
 
