@@ -12,11 +12,10 @@
   <% end %>
 
   SSLSessionCacheTimeout <%= @params[:site]['ssl']['session_cache_timeout'] %>
-  SSLProtocol all
 
   SSLHonorCipherOrder on
-  SSLCipherSuite ALL:!ADH:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv2:+EXP:+eNULL
-
+  SSLProtocol <% @params[:site]['ssl']['protocols'].each do |a| %><%= a %> <% end %>
+  SSLCipherSuite <%= @params[:site]['ssl']['ciphersuite'] %>
 <% else %>
 <VirtualHost *:<%= @params[:magento]['apache']['unsecure_port'] %>>
 <% end %>
@@ -60,11 +59,18 @@
     AuthType Basic
     AuthName "Protected System"
     Require valid-user
+
+    SetEnvIf Request_URI ^/LICENSE.txt$ noauth=1
+    Allow from env=noauth
     <% end  %>
 
+    <% if @params[:magento]['apache']['parse_htaccess'] %>
+    AllowOverride All
+    <% else %>
     ## Apache optimisation by disabling the .htaccess parsing
     ## Directives for securing directorys have been added to this file
     AllowOverride None
+    <% end %>
     Order allow,deny
     <% if @params[:apache]['allow_from'] %>
         <% @params[:apache]['allow_from'].each do |ip| %>

@@ -17,7 +17,13 @@
 # limitations under the License.
 #
 
-template "#{node['magento']['dir']}/app/etc/local.xml" do
+if node['magento']['capistrano']['enabled'] == true
+  config_path = "#{node['magento']['apache']['docroot']}/#{node['magento']['apache']['servername']}/shared/#{node['magento']['app']['base_path']}"
+else
+  config_path = node['magento']['dir']
+end
+
+template "#{config_path}/app/etc/local.xml" do
   source "local.xml.erb"
   mode 0644
   variables({
