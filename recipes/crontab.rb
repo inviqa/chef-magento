@@ -17,12 +17,14 @@
 # limitations under the License.
 #
 
-include_recipe "cron"
+cron = node[:magento][:cronjob]
 
-cron_d 'magento-cron' do
-  minute  node['magento']['cronjob']['minute']
-  command '/bin/sh <%= node['magento']['dir'] %>/cron.sh'
-  user    node['magento']['cronjob']['user']
+cron_d cron[:name] do
+  minute cron[:minute]
+  hour cron[:hour]
+  command "#{node['magento']['dir']}/cron.sh"
+  user cron[:user]
   mailto  node['magento']['admin']['email']
   action  :create
 end
+

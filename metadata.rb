@@ -15,8 +15,8 @@ depends "apache2"
 depends "memcached"
 depends "cron", "~> 1.4.1"
 # depends "redis" # This Opscode cookbook has an error
-suggests "chef-varnish"
-suggests "solr"
+depends "chef-varnish"
+depends "solr"
 
 %w{ ubuntu }.each do |os|
   supports os
