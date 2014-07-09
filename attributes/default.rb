@@ -47,6 +47,11 @@ default['magento']['apache']['ssl']['certfile'] = "ssl/magento.pem"
 default['magento']['cronjob']['minute'] = "*/5"
 default['magento']['cronjob']['user'] = 'apache'
 
+default['magento']['cronjob']['minute'] = "*/5"
+default['magento']['cronjob']['hour'] = "*"
+default['magento']['cronjob']['name'] = "magento-crontab"
+default['magento']['cronjob']['user'] = "root"
+
 default['magento']['sites'] = Array.new
 
 default['magento']['php']['memory_limit'] = "512M"
