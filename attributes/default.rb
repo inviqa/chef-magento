@@ -63,6 +63,7 @@ default['magento']['php']['upload_max_filesize'] = '50M'
 default['magento']['db']['host'] = "localhost"
 default['magento']['db']['database'] = "magentodb"
 default['magento']['db']['username'] = "magentouser"
+default['magento']['db']['model'] = "mysql4"
 default['magento']['db']['read']['host'] = "localhost"
 default['magento']['db']['write']['host'] = "localhost"
 
