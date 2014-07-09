@@ -41,10 +41,12 @@ default['magento']['apache']['developer_mode'] = false
 default['magento']['apache']['additional_rewites'] = ""
 default['magento']['apache']['enable_mmap'] = "On"
 default['magento']['apache']['enable_sendfile'] = "On"
+default['magento']['apache']['parse_htaccess'] = false
 default['magento']['apache']['ssl']['keyfile'] = "ssl/magento.key"
 default['magento']['apache']['ssl']['certfile'] = "ssl/magento.pem"
 
 default['magento']['cronjob']['minute'] = "*/5"
+default['magento']['cronjob']['user'] = 'apache'
 
 default['magento']['sites'] = Array.new
 
@@ -60,24 +62,32 @@ default['magento']['db']['username'] = "magentouser"
 default['magento']['db']['read']['host'] = "localhost"
 default['magento']['db']['write']['host'] = "localhost"
 
-default['magento']['admin']['firstname'] = "Chef"
-default['magento']['admin']['lastname'] = "Admin"
-default['magento']['admin']['email'] = "chef@magento.com"
-default['magento']['admin']['user'] = "chef"
-default['magento']['admin']['password'] = '123123pass'
+default['magento']['admin']['firstname'] = "Admin"
+default['magento']['admin']['lastname'] = "Istrator"
+default['magento']['admin']['email'] = "root@localhost"
+default['magento']['admin']['user'] = "admin"
+default['magento']['admin']['password'] = 'admin'
 default['varnish']['cookies'] = ['currency', 'store']
 
 default['magento']['varnish']['backend_servers'] = [
     {
         "name" => "web1",
-        "ip" => "127.0.0.1"
+        "ip" => "127.0.0.1",
+        "connect_timeout" => '240s',
+        "first_byte_timeout" => '240s',
+        "between_bytes_timeout" => '240s',
+        "max_connections" => 800
     }
 ]
 default['magento']['varnish']['trusted_servers'] = [
     "127.0.0.1"
 ]
 default['magento']['varnish']['ttl_for_static_files'] = '30d'
-
+default['magento']['varnish']['probe']['timeout'] = '90s'
+default['magento']['varnish']['additional_vcls'] = []
+default['magento']['varnish']['additional_recv_subs'] = []
+default['magento']['varnish']['additional_hash_subs'] = []
+default['magento']['varnish']['director_strategy'] = 'random'
 # Custom XML Snippet
 default['magento']['global']['custom'] = ''
 
