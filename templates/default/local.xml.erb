@@ -33,7 +33,7 @@
                     <username><![CDATA[<%= @magento['db']['username'] %>]]></username>
                     <password><![CDATA[<%= @magento['db']['password'] %>]]></password>
                     <dbname><![CDATA[<%= @magento['db']['database'] %>]]></dbname>
-                    <persistent><![CDATA[false]]></persistent><!-- Persistent DB connection true / false / empty=false -->
+                    <persistent><![CDATA[0]]></persistent><!-- Persistent DB connection true / false / empty=false -->
                     <active>1</active>
                     <use />
                     <model><%= @magento['db']['model']%></model>
@@ -48,7 +48,7 @@
                       <password><![CDATA[<%= @magento['db']['read']['password'] ? @magento['db']['read']['password'] : @magento['db']['password']%>]]></password>
                       <dbname><![CDATA[<%= @magento['db']['read']['database'] ? @magento['db']['read']['database'] : @magento['db']['database'] %>]]></dbname>
                       <type><![CDATA[pdo_mysql]]></type>
-                      <persistent><![CDATA[false]]></persistent><!-- Persistent DB connection true / false / empty=false -->
+                      <persistent><![CDATA[0]]></persistent><!-- Persistent DB connection true / false / empty=false -->
                       <active>1</active>
                       <use />
                       <model><%= @magento['db']['read']['model'] ? @magento['db']['read']['model'] : @magento['db']['model']%></model>
@@ -63,7 +63,7 @@
                       <password><![CDATA[<%= @magento['db']['write']['password'] ? @magento['db']['write']['password'] : @magento['db']['password']%>]]></password>
                       <dbname><![CDATA[<%= @magento['db']['write']['database'] ? @magento['db']['write']['database'] : @magento['db']['database']%>]]></dbname>
                       <type><![CDATA[pdo_mysql]]></type>
-                      <persistent><![CDATA[false]]></persistent><!-- Persistent DB connection true / false / empty=false -->
+                      <persistent><![CDATA[0]]></persistent><!-- Persistent DB connection true / false / empty=false -->
                       <active>1</active>
                       <use />
                       <model><%= @magento['db']['write']['model'] ? @magento['db']['write']['model'] : @magento['db']['model']%></model>
