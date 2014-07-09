@@ -28,11 +28,13 @@ end
 directory "#{node['magento']['apache']['docroot']}/#{node['magento']['apache']['servername']}" do
   mode "0755"
   action :create
+  recursive true
 end
 
 directory "#{node['magento']['apache']['docroot']}/#{node['magento']['apache']['servername']}#{node['magento']['apache']['path']}" do
   mode "0755"
   action :create
+  recursive true
 end
 
 web_app node['magento']['apache']['servername'] do
