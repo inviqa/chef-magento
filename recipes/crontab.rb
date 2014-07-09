@@ -24,4 +24,7 @@ cron_d cron[:name] do
   hour cron[:hour]
   command "#{node['magento']['dir']}/cron.sh"
   user cron[:user]
+  mailto  node['magento']['admin']['email']
+  action  :create
 end
+

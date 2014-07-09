@@ -1,6 +1,11 @@
-
 <% if node['varnish']['GeoIP_enabled'] %>
 include "/etc/varnish/geoip.vcl";
+<% end %>
+
+<% if @magento['varnish']['additional_vcls'] %>
+    <% @magento['varnish']['additional_vcls'].each do |vcl| %>
+        include "/etc/varnish/<%= vcl %>";
+    <% end %>
 <% end %>
 
 # Create a health check to verify that the backend server is responding
@@ -11,7 +16,7 @@ probe healthcheck {
          "Host: <%= @magento[:apache][:servername] %>"
          "Connection: close";
    .interval = 120s;
-   .timeout = 90s; # High values due to expected slow responses
+   .timeout = <%= @magento['varnish']['probe']['timeout'] %>;
    .window = 8;
    .threshold = 3;
    .initial = 3;
@@ -24,19 +29,28 @@ probe healthcheck {
 backend <%= server[:name] %> {
     .host = "<%= server[:ip] %>";
     .port = "<%= @magento['apache']['unsecure_port'] %>";
-    .connect_timeout = 240s; # High values due to expected slow responses
-    .first_byte_timeout = 240s; # High values due to expected slow responses
-    .between_bytes_timeout = 240s; # High values due to expected slow responses
+    .connect_timeout = <%= server[:connect_timeout] %>;
+    .first_byte_timeout = <%= server[:first_byte_timeout] %>;
+    .between_bytes_timeout = <%= server[:between_bytes_timeout] %>;
     .probe = healthcheck;
+    <% if server[:max_connections] %>
+    .max_connections = <%= server[:max_connections] %>;
+    <% end %>
 }
 <% end %>
 
 # Create a backend Director to implement load balancing across
 # the list of servers. This can have a value of "round-robin" or "random"
-director backend_director random {
+director backend_director <%= @magento['varnish']['director_strategy'] %> {
+    <% if @magento['varnish']['director_strategy'] == 'random' %>
     .retries = 5;
     <% @magento['varnish']['backend_servers'].each do |server| %>
     { .backend = <%= server[:name] %>; .weight = 1; }
+    <% end %>
+    <% else %>
+    <% @magento['varnish']['backend_servers'].each do |server| %>
+    { .backend = <%= server[:name] %>; }
+    <% end %>
     <% end %>
 }
 # In order to protect access to the Varnish administration we will
@@ -88,8 +102,9 @@ sub vcl_recv {
         req.request != "DELETE") {
             return (pipe);
     }
-    if (req.url ~ "^/(index.php/)?(<%= @magento['app']['admin_frontname'] %>|api|directory|\?___store)" || req.http.Cookie ~ "adminhtml") {
-            return (pipe);
+
+    if (req.url ~ "^/(index.php/)?(<%= @magento['app']['admin_frontname'] %>|api|directory)" || req.url ~ "\?(.*&)*(___store=|SID=[a-zA-Z0-9]{16,})" || req.http.Cookie ~ "adminhtml") {
+            return (pass);
     }
 
     if (req.backend.healthy) {
@@ -116,6 +131,12 @@ sub vcl_recv {
     if (req.url ~ "^/(index.php/)?varnish/storeswitcher") {
         return (pass);
     }
+
+    <% if @magento['varnish']['additional_recv_subs'] %>
+        <% @magento['varnish']['additional_recv_subs'].each do |recv_sub| %>
+            call <%= recv_sub %>;
+        <% end %>
+    <% end %>
 
     # Even though there are few possible values for Accept-Encoding, Varnish treats
     # them literally rather than semantically, so even a small difference which makes
@@ -170,7 +191,7 @@ sub vcl_recv {
     if (req.http.Cookie) {
         set req.http.Cookie = ";" + req.http.Cookie;
         set req.http.Cookie = regsuball(req.http.Cookie, "; +", ";");
-        set req.http.Cookie = regsuball(req.http.Cookie, ";(currency|store|geoip)=", "; \1=");
+        set req.http.Cookie = regsuball(req.http.Cookie, ";(<%= node['varnish']['cookies'].join("|") %>)=", "; \1=");
         set req.http.Cookie = regsuball(req.http.Cookie, ";[^ ][^;]*", "");
         set req.http.Cookie = regsuball(req.http.Cookie, "^[; ]+|[; ]+$", "");
 
@@ -220,6 +241,13 @@ sub vcl_hash {
     <% if node['varnish']['GeoIP_enabled'] %>
     hash_data(req.http.X-Geo-IP-Country);
     <% end %>
+
+    <% if @magento['varnish']['additional_hash_subs'] %>
+        <% @magento['varnish']['additional_hash_subs'].each do |hash_sub| %>
+            call <%= hash_sub %>;
+        <% end %>
+    <% end %>
+
     return (hash);
 }
 
@@ -230,16 +258,19 @@ sub vcl_fetch {
         set beresp.http.X-Vary = regsub(beresp.http.Vary, ",?\s?User-Agent,?", "\1");
     }
 
-    # These status codes should always pass through and never cache.
-    if (beresp.status == 503 || beresp.status == 500) {
-         set beresp.saintmode = 20s;
-
-         return (deliver);
+    # the site is in the maintenance mode
+    if (beresp.status == 503) {
+        set beresp.ttl = 1s;
+        return (deliver);
     }
 
+    # These status codes should always pass through and never cache.
     if (beresp.status >= 500) {
-         set beresp.grace = 60s;
-         return (restart);
+        set beresp.grace = 60s;
+        if (req.restarts < 3) {
+            return (restart);
+        }
+        return (deliver);
     }
 
     # Backend response includes ESI tags
@@ -279,10 +310,12 @@ sub vcl_fetch {
     } elseif (beresp.http.Cache-Control ~ "private") {
         # You are respecting the Cache-Control=private header from the backend
         set beresp.http.X-Cacheable = "NO:Cache-Control=private";
-
+        set beresp.ttl = 60s;
         return(hit_for_pass);
     } elseif (beresp.ttl <= 0s) {
         set beresp.http.X-Cacheable = "NO";
+        set beresp.ttl = 60s;
+        return(hit_for_pass);
     } else {
         # Varnish determined the object was cacheable
         remove beresp.http.Set-Cookie;

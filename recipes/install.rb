@@ -18,6 +18,7 @@
 #
 
 require 'mysql'
+require 'uri'
 
 def database_exists?
   begin
@@ -49,6 +50,8 @@ end
 
 if File.exists?("#{node['magento']['dir']}/install.php")
   if not_installed?
+    url = URI::HTTP.build({:host=>node['magento']['apache']['servername'],:port=>Integer(node['magento']['apache']['unsecure_port']),:path=>'/'})
+    secure_url = URI::HTTPS.build({:host=>node['magento']['apache']['servername'],:port=>Integer(node['magento']['apache']['secure_port']),:path=>'/'})
     install =   <<-EOH
     php -f install.php -- \
     --license_agreement_accepted "yes" \
@@ -59,13 +62,13 @@ if File.exists?("#{node['magento']['dir']}/install.php")
     --db_name "#{node['magento']['db']['database']}" \
     --db_user "#{node['magento']['db']['username']}" \
     --db_pass "#{node['magento']['db']['password']}" \
-    --url "http://#{node['magento']['apache']['servername']}/" \
+    --url "#{url}" \
     --skip_url_validation \
     --session_save "#{node['magento']['app']['session_save']}" \
     --admin_frontname "#{node['magento']['app']['admin_frontname']}" \
     --use_rewrites "#{node['magento']['app']['use_rewrites']}" \
     --use_secure "#{node['magento']['app']['use_secure']}" \
-    --secure_base_url "https://#{node['magento']['apache']['servername']}/" \
+    --secure_base_url "#{secure_url}" \
     --use_secure_admin "#{node['magento']['app']['user_secure_admin']}" \
     --admin_firstname "#{node['magento']['admin']['firstname']}" \
     --admin_lastname "#{node['magento']['admin']['lastname']}" \

@@ -1,8 +1,14 @@
 <% if @params[:ssl] %>
-<VirtualHost *:<%= @params[:magento]['apache']['secure_port'] %>>
+<VirtualHost <%= @params[:site]['secure_ip'] || '*' %>:<%= @params[:magento]['apache']['secure_port'] %>>
   SSLEngine on
-  SSLCertificateKeyFile ssl/magento.key
-  SSLCertificateFile ssl/magento.pem
+  SSLCertificateKeyFile <%= @params[:site]['ssl']['keyfile'] %>
+  SSLCertificateFile <%= @params[:site]['ssl']['certfile'] %>
+  <% if defined?(@params[:site]['ssl']['cacertfile']) and !@params[:site]['ssl']['cacertfile'].nil? %>
+  SSLCACertificateFile <%= @params[:site]['ssl']['cacertfile'] %>
+  <% end %>
+  <% if defined?(@params[:site]['ssl']['certchainfile']) and !@params[:site]['ssl']['certchainfile'].nil? %>
+  SSLCertificateChainFile <%= @params[:site]['ssl']['certchainfile'] %>
+  <% end %>
   SSLProtocol all
   SSLCipherSuite ALL:!ADH:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv2:+EXP:+eNULL
 
@@ -11,7 +17,9 @@
 <% end %>
 
   ServerName <%= @params[:site][:servername] %>
+  <% if defined?(@params[:site][:server_alias]) and !@params[:site][:server_alias].nil? %>
   ServerAlias <% @params[:site][:server_alias].each do |a| %><%= a %> <% end %>
+  <% end %>
 
   DocumentRoot <%= @params[:magento]['dir'] %>
 
@@ -40,18 +48,30 @@
     EnableSendfile <%= @params[:magento]['apache']['enable_sendfile'] %>
 
     <% if @params[:apache]['basic_username'] %>
+        <% if @params[:apache]['allow_from'] %>
+            Satisfy Any
+        <% end %>
     AuthUserFile <%= @params[:magento]['dir'] %>/.htpasswd
-        AuthType Basic
-        AuthName "Protected System"
-        Require valid-user
+    AuthType Basic
+    AuthName "Protected System"
+    Require valid-user
     <% end  %>
 
+    <% if @params[:magento]['apache']['parse_htaccess'] %>
+    AllowOverride All
+    <% else %>
     ## Apache optimisation by disabling the .htaccess parsing
     ## Directives for securing directorys have been added to this file
     AllowOverride None
+    <% end %>
     Order allow,deny
-    Allow from all
-
+    <% if @params[:apache]['allow_from'] %>
+        <% @params[:apache]['allow_from'].each do |ip| %>
+            Allow from <%= ip %>
+        <% end %>
+    <% else %>
+        Allow from all
+    <% end %>
     ############################################
     ## uncomment these lines for CGI mode
     ## make sure to specify the correct cgi php binary file name
@@ -257,12 +277,6 @@
 
     AddDefaultCharset Off
     #AddDefaultCharset UTF-8
-
-    ############################################
-    ## By default allow all access
-
-    Order allow,deny
-    Allow from all
 
     ############################################
     ## If running in cluster environment, uncomment this
