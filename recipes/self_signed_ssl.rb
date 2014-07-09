@@ -23,9 +23,9 @@ bash "Create SSL Certificates" do
   cwd "#{node['apache']['dir']}/ssl"
   code <<-EOH
   umask 022
-  openssl genrsa 2048 > magento.key
+  openssl genrsa 2048 | tee magento.key
   openssl req -batch -new -x509 -days 365 -key magento.key -out magento.crt
-  cat magento.crt magento.key > magento.pem
+  cat magento.crt magento.key | tee magento.pem
   EOH
   only_if { File.zero?("#{node['apache']['dir']}/ssl/magento.pem") }
   action :nothing
