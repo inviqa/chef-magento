@@ -21,17 +21,20 @@ include_recipe "apache2"
 include_recipe "chef-magento::hosts"
 
 directory node['magento']['apache']['docroot'] do
+  recursive true
   mode "0755"
   action :create
 end
 
 directory "#{node['magento']['apache']['docroot']}/#{node['magento']['apache']['servername']}" do
+  recursive true
   mode "0755"
   action :create
   recursive true
 end
 
 directory "#{node['magento']['apache']['docroot']}/#{node['magento']['apache']['servername']}#{node['magento']['apache']['path']}" do
+  recursive true
   mode "0755"
   action :create
   recursive true

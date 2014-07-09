@@ -37,6 +37,12 @@ else
   config_path = node['magento']['dir']
 end
 
+directory config_path do
+  recursive true
+  mode "0755"
+  action :create
+end
+
 template "#{config_path}/app/etc/local.xml" do
   source "local.xml.erb"
   mode 0644
