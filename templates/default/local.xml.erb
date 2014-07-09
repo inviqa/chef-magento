@@ -36,7 +36,7 @@
                     <persistent><![CDATA[false]]></persistent><!-- Persistent DB connection true / false / empty=false -->
                     <active>1</active>
                     <use />
-                    <model>mysql4</model>
+                    <model><%= @magento['db']['model']%></model>
                     <initStatements>SET NAMES utf8</initStatements>
                     <type>pdo_mysql</type>
                 </connection>
@@ -51,7 +51,7 @@
                       <persistent><![CDATA[false]]></persistent><!-- Persistent DB connection true / false / empty=false -->
                       <active>1</active>
                       <use />
-                      <model>mysql4</model>
+                      <model><%= @magento['db']['read']['model'] ? @magento['db']['read']['model'] : @magento['db']['model']%></model>
                       <initStatements>SET NAMES utf8</initStatements>
                       <type>pdo_mysql</type>
                   </connection>
@@ -66,7 +66,7 @@
                       <persistent><![CDATA[false]]></persistent><!-- Persistent DB connection true / false / empty=false -->
                       <active>1</active>
                       <use />
-                      <model>mysql4</model>
+                      <model><%= @magento['db']['write']['model'] ? @magento['db']['write']['model'] : @magento['db']['model']%></model>
                       <initStatements>SET NAMES utf8</initStatements>
                       <type>pdo_mysql</type>
                   </connection>
