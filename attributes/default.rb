@@ -1,4 +1,7 @@
 # General settings
+# Force Apache to disable Trace for PCI compliance & associated other security scans
+force_default['apache']['traceenable'] = 'Off'
+
 default['magento']['dir'] = "/var/www/magento.development.local/public"
 
 default['magento']['app']['base_path'] = "public/"
