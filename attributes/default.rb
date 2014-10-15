@@ -53,7 +53,7 @@ default['magento']['apache']['ssl']['ciphersuite'] = "ECDH+AESGCM:DH+AESGCM:ECDH
 default['magento']['cronjob']['minute'] = "*/5"
 default['magento']['cronjob']['user'] = 'apache'
 
-default['magento']['apache']['traceEnable'] = "off"
+default['magento']['apache']['trace_enable'] = "off"
 
 default['magento']['cronjob']['minute'] = "*/5"
 default['magento']['cronjob']['hour'] = "*"
