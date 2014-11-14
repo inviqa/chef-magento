@@ -19,19 +19,6 @@
 
 include_recipe "solr"
 
-directory node['solr']['config'] do
-    action      :delete
-    recursive   true
-end
-
-remote_directory node['solr']['config'] do
-  source       "solr.config"
-  owner        node['jetty']['user']
-  group        node['jetty']['group']
-  files_owner  node['jetty']['user']
-  files_group  node['jetty']['group']
-  files_backup 0
-  files_mode   "644"
-  purge        true
-  notifies     :restart, resources(:service => "jetty"), :immediately
-end
+conf_dir = resources("remote_directory[#{node['solr']['config']}]")
+conf_dir.cookbook "chef-magento"
+conf_dir.source "solr.config"
