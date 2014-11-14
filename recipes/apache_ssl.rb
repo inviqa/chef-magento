@@ -20,6 +20,6 @@
 include_recipe 'apache2::mod_ssl'
 
 template "#{node['apache']['dir']}/mods-available/ssl.conf" do
-  source "mod_ssl.conf.erb"
+  source "mod-ssl.conf.erb"
   mode 0644
 end
