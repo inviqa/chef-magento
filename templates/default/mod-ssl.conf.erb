@@ -84,7 +84,7 @@
   #SSLCipherSuite RC4-SHA:AES128-SHA:HIGH:MEDIUM:!aNULL:!MD5
   SSLHonorCipherOrder On
 
-  SSLProtocol <%= node['magento']['apache']['ssl']['protocols'] %>
+  SSLProtocol <% node['magento']['apache']['ssl']['protocols'].each do |a| %><%= a %> <% end %>
 
 
   #   Allow insecure renegotiation with clients which do not yet support the
