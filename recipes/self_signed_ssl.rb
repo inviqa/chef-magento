@@ -23,9 +23,8 @@ bash "Create SSL Certificates" do
   cwd "#{node['apache']['dir']}/ssl"
   code <<-EOH
   umask 022
-  openssl genrsa 2048 | tee magento.key
-  openssl req -batch -new -x509 -days 365 -key magento.key -out magento.crt
-  cat magento.crt magento.key | tee magento.pem
+  openssl genrsa 2048 > magento.key
+  openssl req -batch -new -x509 -days 365 -key magento.key -outform PEM -out magento.pem -subj "/C=GB/L=City/O=Company Name/OU=Development Operations/CN=#{node['magento']['apache']['servername']}"
   EOH
   only_if { File.zero?("#{node['apache']['dir']}/ssl/magento.pem") }
   action :nothing
@@ -36,5 +35,9 @@ cookbook_file "#{node['apache']['dir']}/ssl/magento.pem" do
   mode 0644
   owner "root"
   group "root"
+  not_if {
+    File.exists?("#{node['apache']['dir']}/ssl/magento.pem") &&
+    !File.zero?("#{node['apache']['dir']}/ssl/magento.pem")
+  }
   notifies :run, resources(:bash => "Create SSL Certificates"), :immediately
 end
