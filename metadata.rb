@@ -13,7 +13,7 @@ depends "mysql"
 depends "database", "> 1.3.0"
 depends "apache2"
 depends "memcached"
-depends "cron", "~> 1.4.0"
+depends "cron", "~> 1.4"
 # depends "redis" # This Opscode cookbook has an error
 depends "chef-varnish"
 depends "solr"
