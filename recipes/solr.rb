@@ -33,5 +33,5 @@ remote_directory node['solr']['config'] do
   files_backup 0
   files_mode   "644"
   purge        true
-  notifies     :restart, resources(:service => "jetty"), :immediately
+  notifies     :restart, 'service[jetty]', :immediately
 end

@@ -17,14 +17,14 @@
 # limitations under the License.
 #
 
-cron = node[:magento][:cronjob]
+cron = node['magento']['cronjob']
 
-cron_d cron[:name] do
-  minute cron[:minute]
-  hour cron[:hour]
+cron_d cron['name'] do
+  minute cron['minute']
+  hour cron['hour']
   command "#{node['magento']['dir']}/cron.sh"
-  user cron[:user]
+  user cron['user']
   mailto  node['magento']['admin']['email']
-  action  cron[:enabled] ? :create : :delete
+  action  cron['enabled'] ? :create : :delete
 end
 
