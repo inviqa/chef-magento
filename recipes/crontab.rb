@@ -25,6 +25,6 @@ cron_d cron[:name] do
   command "#{node['magento']['dir']}/cron.sh"
   user cron[:user]
   mailto  node['magento']['admin']['email']
-  action  :create
+  action  cron[:enabled] ? :create : :delete
 end
 
