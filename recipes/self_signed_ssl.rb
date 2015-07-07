@@ -36,5 +36,5 @@ cookbook_file "#{node['apache']['dir']}/ssl/magento.pem" do
   mode 0644
   owner "root"
   group "root"
-  notifies :run, resources(:bash => "Create SSL Certificates"), :immediately
+  notifies :run, 'bash[Create SSL Certificates]', :immediately
 end
