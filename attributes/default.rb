@@ -57,6 +57,7 @@ default['magento']['cronjob']['minute'] = "*/5"
 default['magento']['cronjob']['hour'] = "*"
 default['magento']['cronjob']['name'] = "magento-crontab"
 default['magento']['cronjob']['user'] = "root"
+default['magento']['cronjob']['enabled'] = true
 
 default['magento']['sites'] = Array.new
 
