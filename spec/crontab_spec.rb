@@ -13,7 +13,7 @@ describe 'chef-magento::crontab' do
     end
 
     it 'should run every 20 minutes per hour' do
-      expect(chef_run).to create_cron_d("magento-crontab").with(:minute => "*/5")
+      expect(chef_run).to create_cron_d("magento-crontab").with(:minute => "*")
     end
 
     it 'should run every hour per day' do
