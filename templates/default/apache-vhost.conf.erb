@@ -288,11 +288,33 @@
     # FileETag MTime Size
 
   </Directory>
-  <% ['app','downloader','error','includes','lib','var'].each do |dir| %>
-  <Directory <%= @params[:magento]['dir'] %>/<%= dir %>>
+  <%
+    [
+      '/app',
+      '/dev',
+      '/downloader',
+      '~ ^/error/.*\.(xml|phtml)$',
+      '/includes',
+      '/lib',
+      '/media/downloadable',
+      '/shell',
+      '/skin/frontend/rwd/default/scss',
+      '/frontend/rwd/enterprise/scss',
+      '/var',
+      '/.gitignore',
+      '/composer.json',
+      '/cron.php',
+      '/cron.sh',
+      '/index.php.sample',
+      '/install.php',
+      '/mage',
+      '/php.ini.sample',
+      '/RELEASE_NOTES.txt'
+    ].each do |dir| %>
+  <Location <%= dir %>>
       Order deny,allow
       Deny from all
-  </Directory>
+  </Location>
   <% end %>
 
   <Directory <%= @params[:magento]['dir'] %>/media>

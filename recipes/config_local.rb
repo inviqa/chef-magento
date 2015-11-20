@@ -17,6 +17,20 @@
 # limitations under the License.
 #
 
+if Chef::Config[:solo]
+  missing_attrs = %w(
+    crypt_key
+  ).select { |attr| magento['app'][attr].nil? }.map { |attr| "node['magento']['app']['#{attr}']" }
+
+  unless missing_attrs.empty?
+    fail "You must set #{missing_attrs.join(', ')} in chef-solo mode."
+  end
+else
+  # generate all passwords
+  node.set_unless['magento']['app']['crypt_key'] = secure_password
+  node.save
+end
+
 if node['magento']['capistrano']['enabled'] == true
   config_path = "#{node['magento']['apache']['docroot']}/#{node['magento']['apache']['servername']}/shared/#{node['magento']['app']['base_path']}"
 else
