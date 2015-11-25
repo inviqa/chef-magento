@@ -168,7 +168,7 @@ sub vcl_recv {
 
     # We should not cache any page for checkout and customer modules
     # @TODO With the completed CSI this should no longer be the case
-    if (req.url ~ "^/(index.php/)?(checkout|onestepcheckout|customer|catalog/product_compare|wishlist|postcode|staging)") {
+    if (req.url ~ "^/(index.php/)?(checkout|onestepcheckout|customer|catalog/product_compare|wishlist|postcode|staging|paypal)") {
         return (pass);
     }
 
