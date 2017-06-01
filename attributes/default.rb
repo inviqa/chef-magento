@@ -50,7 +50,7 @@ default['magento']['apache']['ssl']['certfile'] = "ssl/magento.pem"
 default['magento']['apache']['ssl']['protocols'] = [
     "All", "-SSLv2", "-SSLv3"
 ]
-default['magento']['apache']['ssl']['ciphersuite'] = "ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:ECDH+AES128:DH+AES:ECDH+3DES:DH+3DES:RSA+AESGCM:RSA+AES:RSA+3DES:!aNULL:!MD5:!DSS;"
+default['magento']['apache']['ssl']['ciphersuite'] = "SSLCipherSuite ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:ECDH+AES128:DH+AES:RSA+AESGCM:RSA+AES:!aNULL:!MD5:!DSSq"
 
 default['magento']['cronjob']['minute'] = "*/5"
 default['magento']['cronjob']['user'] = 'apache'

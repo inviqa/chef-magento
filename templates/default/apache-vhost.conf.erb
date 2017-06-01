@@ -1,4 +1,5 @@
 <% if @params[:ssl] %>
+NameVirtualHost <%= @params[:site]['secure_ip'] || '*' %>:<%= @params[:magento]['apache']['secure_port'] %>
 <VirtualHost <%= @params[:site]['secure_ip'] || '*' %>:<%= @params[:magento]['apache']['secure_port'] %>>
   SSLEngine on
   <% if defined?(@params[:site]['ssl']['keyfile']) -%>
@@ -23,6 +24,8 @@
 <VirtualHost *:<%= @params[:magento]['apache']['unsecure_port'] %>>
 <% end %>
 
+  EnableTrace off
+
   ServerName <%= @params[:site][:servername] %>
   <% if defined?(@params[:site][:server_alias]) and !@params[:site][:server_alias].nil? %>
   ServerAlias <% @params[:site][:server_alias].each do |a| %><%= a %> <% end %>
@@ -30,7 +33,7 @@
 
   DocumentRoot <%= @params[:magento]['dir'] %>
 
-  LogLevel info
+  LogLevel notice
   ErrorLog <%= @params[:apache]['log_dir'] %>/<%= @params[:site][:servername] %>-error.log
   CustomLog <%= @params[:apache]['log_dir'] %>/<%= @params[:site][:servername] %>-access.log combined
 
@@ -48,10 +51,234 @@
   SetEnvIf MAGE_RUN_TYPE !.* MAGE_RUN_TYPE=<%= @params[:site][:run_type] %>
 <% end %>
 
-<% if defined?(@params[:site]['additional_config']) %>
+  EnableMMAP <%= @params[:magento]['apache']['enable_mmap'] %>
+  EnableSendfile <%= @params[:magento]['apache']['enable_sendfile'] %>
+  ############################################
+  ## uncomment these lines for CGI mode
+  ## make sure to specify the correct cgi php binary file name
+  ## it might be /cgi-bin/php-cgi
+
+  #    Action php5-cgi /cgi-bin/php5-cgi
+  #    AddHandler php5-cgi .php
+
+  ############################################
+  ## GoDaddy specific options
+
+  #   Options -MultiViews
+
+  ## you might also need to add this line to php.ini
+  ##     cgi.fix_pathinfo = 1
+  ## if it still doesn't work, rename php.ini to php5.ini
+
+  ############################################
+  ## this line is specific for 1and1 hosting
+
+  #AddType x-mapp-php5 .php
+  #AddHandler x-mapp-php5 .php
+
+  ############################################
+  ## default index file
+
+  DirectoryIndex index.php
+
+  <IfModule mod_php5.c>
+
+    ############################################
+    ## adjust memory limit
+
+    #    php_value memory_limit 64M
+    php_value memory_limit <%= @params[:php]['memory_limit'] %>
+
+
+    ############################################
+    ## php tuning
+
+    php_value max_execution_time <%= @params[:php]['max_execution_time'] %>
+    php_value display_errors <%= @params[:php]['display_errors'] %>
+    php_value html_errors <%= @params[:php]['html_errors'] %>
+    php_value upload_max_filesize <%= @params[:php]['upload_max_filesize'] %>
+    php_value post_max_size <%= @params[:php]['upload_max_filesize'] %>
+
+    ############################################
+    ## disable magic quotes for php request vars
+
+    php_flag magic_quotes_gpc off
+
+    ############################################
+    ## disable automatic session start
+    ## before autoload was initialized
+
+    php_flag session.auto_start off
+
+    php_flag session.gc_maxlifetime 3600
+
+    ############################################
+    ## enable resulting html compression
+
+    #php_flag zlib.output_compression on
+
+    ###########################################
+    # disable user agent verification to not break multiple image upload
+
+    php_flag suhosin.session.cryptua off
+
+    ###########################################
+    # turn off compatibility with PHP4 when dealing with objects
+
+    php_flag zend.ze1_compatibility_mode Off
+
+  </IfModule>
+
+  <IfModule mod_security.c>
+    ###########################################
+    # disable POST processing to not break multiple image upload
+
+    SecFilterEngine Off
+    SecFilterScanPOST Off
+  </IfModule>
+
+  <IfModule mod_deflate.c>
+
+    ############################################
+    ## enable apache served files compression
+    ## http://developer.yahoo.com/performance/rules.html#gzip
+
+    # Insert filter on all content
+    ###SetOutputFilter DEFLATE
+    # Insert filter on selected content types only
+    AddOutputFilterByType DEFLATE text/css application/x-javascript text/javascript text/x-component text/html text/richtext image/svg+xml text/plain text/xsd text/xsl text/xml image/x-icon
+    #
+    # Netscape 4.x has some problems...
+    BrowserMatch ^Mozilla/4 gzip-only-text/html
+
+    # Netscape 4.06-4.08 have some more problems
+    BrowserMatch ^Mozilla/4\.0[678] no-gzip
+
+    # MSIE masquerades as Netscape, but it is fine
+    BrowserMatch \bMSIE !no-gzip !gzip-only-text/html
+
+    # Don't compress images
+    SetEnvIfNoCase Request_URI \.(?:gif|jpe?g|png)$ no-gzip dont-vary
+
+    # Make sure proxies don't deliver the wrong content
+    Header append Vary User-Agent env=!dont-vary
+
+  </IfModule>
+
+  <IfModule mod_ssl.c>
+
+    ############################################
+    ## make HTTPS env vars available for CGI mode
+
+    SSLOptions StdEnvVars
+
+  </IfModule>
+
+  AddType application/x-font-woff woff
+  AddType image/svg+xml svg svgz
+
+  <IfModule mod_expires.c>
+    ExpiresActive on
+    ExpiresDefault                                      "access plus 1 month"
+
+    # CSS
+    ExpiresByType text/css                              "access plus 1 year"
+
+    # Media files
+    ExpiresByType audio/ogg                             "access plus 1 month"
+    ExpiresByType image/bmp                             "access plus 1 month"
+    ExpiresByType image/gif                             "access plus 1 month"
+    ExpiresByType image/jpeg                            "access plus 1 month"
+    ExpiresByType image/jpg                             "access plus 1 month"
+    ExpiresByType image/png                             "access plus 1 month"
+    ExpiresByType image/svg+xml                         "access plus 1 month"
+    ExpiresByType image/webp                            "access plus 1 month"
+    ExpiresByType video/mp4                             "access plus 1 month"
+    ExpiresByType video/ogg                             "access plus 1 month"
+    ExpiresByType video/webm                            "access plus 1 month"
+
+    # Web fonts
+
+    # Embedded OpenType (EOT)
+    ExpiresByType application/vnd.ms-fontobject         "access plus 1 month"
+    ExpiresByType font/eot                              "access plus 1 month"
+
+    # OpenType
+    ExpiresByType font/opentype                         "access plus 1 month"
+
+    # TrueType
+    ExpiresByType application/x-font-ttf                "access plus 1 month"
+
+    # Web Open Font Format (WOFF) 1.0
+    ExpiresByType application/font-woff                 "access plus 1 month"
+    ExpiresByType application/x-font-woff               "access plus 1 month"
+    ExpiresByType font/woff                             "access plus 1 month"
+
+    # Web Open Font Format (WOFF) 2.0
+    ExpiresByType application/font-woff2                "access plus 1 month"
+
+    # Data interchange
+    ExpiresByType application/json                      "access plus 0 seconds"
+    ExpiresByType application/ld+json                   "access plus 0 seconds"
+    ExpiresByType application/schema+json               "access plus 0 seconds"
+    ExpiresByType application/vnd.geo+json              "access plus 0 seconds"
+    ExpiresByType application/xml                       "access plus 0 seconds"
+    ExpiresByType text/xml                              "access plus 0 seconds"
+
+    # Favicon (cannot be renamed!) and cursor images
+    ExpiresByType image/vnd.microsoft.icon              "access plus 1 week"
+    ExpiresByType image/x-icon                          "access plus 1 week"
+    ExpiresByType image/ico                             "access plus 1 month"
+    ExpiresByType image/icon                            "access plus 1 month"
+    ExpiresByType text/ico                              "access plus 1 month"
+
+    # HTML
+    ExpiresByType text/html                             "access plus 0 seconds"
+
+    # JavaScript
+    ExpiresByType application/javascript                "access plus 1 year"
+    ExpiresByType application/x-javascript              "access plus 1 year"
+    ExpiresByType text/javascript                       "access plus 1 year"
+
+
+    # Manifest files
+    ExpiresByType application/manifest+json             "access plus 1 week"
+    ExpiresByType application/x-web-app-manifest+json   "access plus 0 seconds"
+    ExpiresByType text/cache-manifest                   "access plus 0 seconds"
+
+    # Other
+    ExpiresByType text/x-cross-domain-policy            "access plus 1 week"
+    ExpiresByType application/x-shockwave-flash         "access plus 1 month"
+    ExpiresByType text/plain                            "access plus 1 hours"
+
+  </IfModule>
+
+  <IfModule mod_headers.c>
+    Header append Vary User-Agent env=!dont-vary
+
+    <FilesMatch "\.(ico|jpe?g|png|gif|swf|css|gz|js|woff)$">
+        Header set Cache-Control  "public, max-age=2592000"
+    </FilesMatch>
+  </IfModule>
+
+  ############################################
+  ## Prevent character encoding issues from server overrides
+  ## If you still have problems, use the second line instead
+
+  AddDefaultCharset Off
+  #AddDefaultCharset UTF-8
+
+  ############################################
+  ## If running in cluster environment, uncomment this
+  ## http://developer.yahoo.com/performance/rules.html#etags
+
+  FileETag none
+  # FileETag MTime Size
+
+  <% if defined?(@params[:site]['additional_config']) %>
   # Write any additional configuration
   <%= @params[:site]['additional_config'] %>
-<% end %>
+  <% end %>
 
   <Directory />
     Options FollowSymLinks
@@ -61,9 +288,6 @@
   <Directory <%= @params[:magento]['dir'] %>>
     Options FollowSymLinks
 
-    EnableMMAP <%= @params[:magento]['apache']['enable_mmap'] %>
-    EnableSendfile <%= @params[:magento]['apache']['enable_sendfile'] %>
-
     <% if @params[:apache]['basic_username'] %>
         <% if @params[:apache]['allow_from'] %>
             Satisfy Any
@@ -72,18 +296,11 @@
     AuthType Basic
     AuthName "Protected System"
     Require valid-user
-
-    SetEnvIf Request_URI ^/LICENSE.txt$ noauth=1
-    Allow from env=noauth
     <% end  %>
 
-    <% if @params[:magento]['apache']['parse_htaccess'] %>
-    AllowOverride All
-    <% else %>
     ## Apache optimisation by disabling the .htaccess parsing
     ## Directives for securing directorys have been added to this file
     AllowOverride None
-    <% end %>
     Order allow,deny
     <% if @params[:apache]['allow_from'] %>
         <% @params[:apache]['allow_from'].each do |ip| %>
@@ -92,125 +309,6 @@
     <% else %>
         Allow from all
     <% end %>
-    ############################################
-    ## uncomment these lines for CGI mode
-    ## make sure to specify the correct cgi php binary file name
-    ## it might be /cgi-bin/php-cgi
-
-    #    Action php5-cgi /cgi-bin/php5-cgi
-    #    AddHandler php5-cgi .php
-
-    ############################################
-    ## GoDaddy specific options
-
-    #   Options -MultiViews
-
-    ## you might also need to add this line to php.ini
-    ##     cgi.fix_pathinfo = 1
-    ## if it still doesn't work, rename php.ini to php5.ini
-
-    ############################################
-    ## this line is specific for 1and1 hosting
-
-    #AddType x-mapp-php5 .php
-    #AddHandler x-mapp-php5 .php
-
-    ############################################
-    ## default index file
-
-    DirectoryIndex index.php
-
-    <IfModule mod_php5.c>
-
-        ############################################
-        ## adjust memory limit
-
-        #    php_value memory_limit 64M
-        php_value memory_limit <%= @params[:php]['memory_limit'] %>
-
-
-        ############################################
-        ## php tuning
-
-        php_value max_execution_time <%= @params[:php]['max_execution_time'] %>
-        php_value display_errors <%= @params[:php]['display_errors'] %>
-        php_value html_errors <%= @params[:php]['html_errors'] %>
-        php_value upload_max_filesize <%= @params[:php]['upload_max_filesize'] %>
-
-        ############################################
-        ## disable magic quotes for php request vars
-
-        php_flag magic_quotes_gpc off
-
-        ############################################
-        ## disable automatic session start
-        ## before autoload was initialized
-
-        php_flag session.auto_start off
-
-        php_flag session.gc_maxlifetime 3600
-
-        ############################################
-        ## enable resulting html compression
-
-        #php_flag zlib.output_compression on
-
-        ###########################################
-        # disable user agent verification to not break multiple image upload
-
-        php_flag suhosin.session.cryptua off
-
-        ###########################################
-        # turn off compatibility with PHP4 when dealing with objects
-
-        php_flag zend.ze1_compatibility_mode Off
-
-    </IfModule>
-
-    <IfModule mod_security.c>
-        ###########################################
-        # disable POST processing to not break multiple image upload
-
-        SecFilterEngine Off
-        SecFilterScanPOST Off
-    </IfModule>
-
-    <IfModule mod_deflate.c>
-
-        ############################################
-        ## enable apache served files compression
-        ## http://developer.yahoo.com/performance/rules.html#gzip
-
-        # Insert filter on all content
-        ###SetOutputFilter DEFLATE
-        # Insert filter on selected content types only
-        AddOutputFilterByType DEFLATE text/css application/x-javascript text/javascript text/x-component text/html text/richtext image/svg+xml text/plain text/xsd text/xsl text/xml image/x-icon
-        #
-        # Netscape 4.x has some problems...
-        BrowserMatch ^Mozilla/4 gzip-only-text/html
-
-        # Netscape 4.06-4.08 have some more problems
-        BrowserMatch ^Mozilla/4\.0[678] no-gzip
-
-        # MSIE masquerades as Netscape, but it is fine
-        BrowserMatch \bMSIE !no-gzip !gzip-only-text/html
-
-        # Don't compress images
-        SetEnvIfNoCase Request_URI \.(?:gif|jpe?g|png)$ no-gzip dont-vary
-
-        # Make sure proxies don't deliver the wrong content
-        Header append Vary User-Agent env=!dont-vary
-
-    </IfModule>
-
-    <IfModule mod_ssl.c>
-
-        ############################################
-        ## make HTTPS env vars available for CGI mode
-
-        SSLOptions StdEnvVars
-
-    </IfModule>
 
     <IfModule mod_rewrite.c>
 
@@ -228,6 +326,15 @@
         ## path relative to web root
 
         #RewriteBase /
+
+        RewriteRule ^.*\.pagespeed\..*$ - [L]
+
+        ############################################
+        ## rewrite files for magento cachebuster
+
+        RewriteCond %{REQUEST_FILENAME} !-f
+        RewriteCond %{REQUEST_FILENAME} !-d
+        RewriteRule ^(.+)\.(\d+)\.(js|css|png|jpeg|jpg|gif)$ $1.$3 [L]
 
         <% if @params[:site]['additional_rewites'] != "" %>
         # Write any additional rewrite configuration
@@ -264,7 +371,6 @@
 
           RewriteRule .* index.php [L]
 
-
         ############################################
         ## Staging websites
 
@@ -291,51 +397,6 @@
           RewriteRule ^(staging/[a-zA-Z0-9_\-]*/).* $1index.php [L]
 
     </IfModule>
-
-    AddType application/x-font-woff woff
-
-    <IfModule mod_expires.c>
-        ExpiresActive on
-        ExpiresByType image/jpg "access plus 6 months"
-        ExpiresByType image/png "access plus 6 months"
-        ExpiresByType image/jpeg "access plus 6 months"
-        ExpiresByType image/gif "access plus 6 months"
-        ExpiresByType image/png "access plus 6 months"
-        ExpiresByType text/plain "access plus 6 months"
-        ExpiresByType text/ico "access plus 6 months"
-        ExpiresByType image/ico "access plus 6 months"
-        ExpiresByType image/icon "access plus 6 months"
-        ExpiresByType image/x-icon "access plus 6 months"
-        ExpiresByType application/x-font-woff "access plus 6 months"
-        ExpiresByType application/x-shockwave-flash "modification plus 6 months"
-        ExpiresByType text/css "access plus 1 week"
-        ExpiresByType text/javascript "access plus 1 week"
-        ExpiresByType text/xml "modification plus 2 hours"
-        ExpiresByType image/vnd.microsoft.icon "access plus 6 months"
-    </IfModule>
-
-    <IfModule mod_headers.c>
-        Header append Vary User-Agent env=!dont-vary
-
-        <FilesMatch "\.(ico|jpe?g|png|gif|swf|css|gz|js|woff)$">
-            Header set Cache-Control  "public, max-age=2592000"
-        </FilesMatch>
-    </IfModule>
-
-    ############################################
-    ## Prevent character encoding issues from server overrides
-    ## If you still have problems, use the second line instead
-
-    AddDefaultCharset Off
-    #AddDefaultCharset UTF-8
-
-    ############################################
-    ## If running in cluster environment, uncomment this
-    ## http://developer.yahoo.com/performance/rules.html#etags
-
-    FileETag none
-    # FileETag MTime Size
-
   </Directory>
   <% ['app','downloader','error','includes','lib','var'].each do |dir| %>
   <Directory <%= @params[:magento]['dir'] %>/<%= dir %>>
@@ -360,6 +421,12 @@
 
           Options +FollowSymLinks
           RewriteEngine on
+
+          ## rewrite files for magento cachebuster
+
+          RewriteCond %{REQUEST_FILENAME} !-f
+          RewriteCond %{REQUEST_FILENAME} !-d
+          RewriteRule ^(.+)\.(\d+)\.(js|css|png|jpeg|jpg|gif)$ $1.$3 [L]
 
           ############################################
           ## never rewrite for existing files
@@ -388,5 +455,11 @@
         php_value newrelic.appname "<%=@params[:site][:newrelic_name]%>"
       </IfModule>
     <% end %>
+
+    <Location ~ /rss/(catalog/(notifystock|review)|order/new)(/|$)>
+      Satisfy All
+      Order deny,allow
+      Deny from all
+    </Location>
 
 </VirtualHost>
