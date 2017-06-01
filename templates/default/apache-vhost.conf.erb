@@ -24,7 +24,7 @@ NameVirtualHost <%= @params[:site]['secure_ip'] || '*' %>:<%= @params[:magento][
 <VirtualHost *:<%= @params[:magento]['apache']['unsecure_port'] %>>
 <% end %>
 
-  EnableTrace off
+  TraceEnable off
 
   ServerName <%= @params[:site][:servername] %>
   <% if defined?(@params[:site][:server_alias]) and !@params[:site][:server_alias].nil? %>
