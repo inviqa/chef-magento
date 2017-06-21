@@ -456,7 +456,7 @@ NameVirtualHost <%= @params[:site]['secure_ip'] || '*' %>:<%= @params[:magento][
       </IfModule>
     <% end %>
 
-    <Location ~ /rss/(catalog/(notifystock|review)|order/new)(/|$)>
+    <Location ~ ^(/index\.php)?/?(.+/)?rss/(catalog/(notifystock|review)|order/new)(/|$)>
       Satisfy All
       Order deny,allow
       Deny from all
