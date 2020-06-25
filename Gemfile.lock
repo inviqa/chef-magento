@@ -39,7 +39,7 @@ GEM
     erubis (2.7.0)
     fauxhai (3.10.0)
       net-ssh
-    ffi (1.9.21)
+    ffi (1.13.1)
     ffi-yajl (1.4.0)
       ffi (~> 1.5)
       libyajl2 (~> 1.2)
